@@ -1,18 +1,56 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import './styles.css';
+import '@fontsource/poppins/300.css';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/700.css';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import ThemeConfig from '../src/ThemeConfig';
 
-function CustomApp({ Component, pageProps }: AppProps) {
-  return (
-    <>
-      <Head>
-        <title>Welcome to ui!</title>
-      </Head>
-      <main className="app">
-        <Component {...pageProps} />
-      </main>
-    </>
-  );
+function App ({ Component, pageProps }: AppProps) {
+    return (
+        <ThemeProvider theme={ ThemeConfig }>
+            <Head>
+                <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no' />
+            </Head>
+            <CssBaseline />
+            {/* <NotificationManager>
+                <AuthProvider usesCases={ {
+                    Trabajos: {
+                        icon: null,
+                        subItems: []
+                    },
+                    Usuarios: {
+                        icon: null,
+                        subItems: [
+                            {
+                                name: 'Administrar',
+                                url: '/dashboard/usuarios/administrar',
+                                permissions: [Roles.Admin]
+                            }
+                        ]
+                    },
+                    Vehiculos: {
+                        icon: null,
+                        subItems: []
+                    },
+                    Servicios: {
+                        icon: null,
+                        subItems: []
+                    },
+                    Repuestos: {
+                        icon: null,
+                        subItems: []
+                    },
+                    Informes: {
+                        icon: null,
+                        subItems: []
+                    }
+                } }> */}
+            <Component { ...pageProps } />
+            {/* </AuthProvider>
+            </NotificationManager> */}
+        </ThemeProvider>
+    );
 }
-
-export default CustomApp;
+export default App;
