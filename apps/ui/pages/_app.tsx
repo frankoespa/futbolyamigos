@@ -4,12 +4,14 @@ import '@fontsource/poppins/300.css';
 import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/500.css';
 import '@fontsource/poppins/700.css';
+import '@fontsource/poppins/800.css';
+import '@fontsource/poppins/900.css';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import ThemeConfig from '../src/ThemeConfig';
 
 function App ({ Component, pageProps }: AppProps) {
     return (
-        <ThemeProvider theme={ ThemeConfig }>
+        <ThemeProvider theme={ThemeConfig}>
             <Head>
                 <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no' />
             </Head>
@@ -47,7 +49,7 @@ function App ({ Component, pageProps }: AppProps) {
                         subItems: []
                     }
                 } }> */}
-            <Component { ...pageProps } />
+            <Component {...pageProps} />
             {/* </AuthProvider>
             </NotificationManager> */}
         </ThemeProvider>

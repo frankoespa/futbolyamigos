@@ -1,11 +1,12 @@
-import { Typography } from "@mui/material";
+import { Hero } from "../src/sections/Hero";
+import { Servicios } from "../src/sections/Servicios";
 
 export function Index () {
 
     return (
-        <Typography variant="h1" component="div" gutterBottom>
-            h1. Heading
-        </Typography>
+        <>
+            <Hero />
+        </>
     )
 
 }
