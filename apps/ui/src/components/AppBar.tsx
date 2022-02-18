@@ -9,8 +9,6 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
-import Image from 'next/image'
-import brandLogo from './../../public/brand.svg'
 
 const pages = ['Contacto', '¿Quienes Somos?', 'Torneos'];
 
@@ -31,12 +29,15 @@ export const Nav = () => {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <Image
+                        {/* <Image
                             src={brandLogo}
                             alt="brand-futbolyamigos"
                             width={100}
                             height={50}
-                        />
+                        /> */}
+                        <img src="/brand.svg" style={{
+                            width: '100px'
+                        }} alt='brand-futbolyamigos' />
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
@@ -74,13 +75,15 @@ export const Nav = () => {
                             ))}
                         </Menu>
                         <Box sx={{ flexGrow: 1 }} >
-                            <Image
+                            {/* <Image
                                 src={brandLogo}
                                 alt="brand-futbolyamigos"
                                 width={100}
                                 height={50}
-                            />
-
+                            /> */}
+                            <img src="/brand.svg" style={{
+                                width: '100px'
+                            }} alt='brand-futbolyamigos' />
                         </Box>
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }} flexDirection="row-reverse">
