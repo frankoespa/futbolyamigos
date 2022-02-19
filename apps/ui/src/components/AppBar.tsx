@@ -29,12 +29,6 @@ export const Nav = () => {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        {/* <Image
-                            src={brandLogo}
-                            alt="brand-futbolyamigos"
-                            width={100}
-                            height={50}
-                        /> */}
                         <img src="/brand.svg" style={{
                             width: '100px'
                         }} alt='brand-futbolyamigos' />
@@ -75,12 +69,6 @@ export const Nav = () => {
                             ))}
                         </Menu>
                         <Box sx={{ flexGrow: 1 }} >
-                            {/* <Image
-                                src={brandLogo}
-                                alt="brand-futbolyamigos"
-                                width={100}
-                                height={50}
-                            /> */}
                             <img src="/brand.svg" style={{
                                 width: '100px'
                             }} alt='brand-futbolyamigos' />
