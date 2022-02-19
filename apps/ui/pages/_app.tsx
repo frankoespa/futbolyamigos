@@ -8,6 +8,7 @@ import '@fontsource/poppins/800.css';
 import '@fontsource/poppins/900.css';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import ThemeConfig from '../src/ThemeConfig';
+import 'leaflet/dist/leaflet.css'
 
 function App ({ Component, pageProps }: AppProps) {
     return (
