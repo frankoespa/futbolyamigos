@@ -6,6 +6,7 @@ export function Index () {
     return (
         <>
             <Hero />
+            <Servicios />
         </>
     )
 
