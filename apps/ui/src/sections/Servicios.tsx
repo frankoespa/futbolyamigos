@@ -56,8 +56,8 @@ export const Servicios = () => {
                         </List>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <Typography variant='h3' sx={{ fontWeight: 800, color: 'text.secondary' }}>Servicios</Typography>
-                        <Typography variant='body1' sx={{ color: 'text.secondary' }}>Disponemos de los mejores servicios
+                        <Typography variant='h3' sx={{ fontWeight: 800, color: 'text.secondary' }} gutterBottom>Servicios</Typography>
+                        <Typography variant='body1' sx={{ color: 'text.secondary' }} paragraph>Disponemos de los mejores servicios
                             para nuestros jugadores.</Typography>
 
                     </Grid>

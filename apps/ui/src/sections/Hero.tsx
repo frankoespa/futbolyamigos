@@ -9,7 +9,7 @@ export const Hero = () => {
             position: 'relative'
         }}>
             <Nav />
-            <Container maxWidth="xl" sx={{ paddingTop: (t) => t.spacing(30) }}>
+            <Container maxWidth="xl" sx={{ paddingTop: { xs: 20, md: 30 } }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={6}>
                         <Typography variant='h1' sx={{ fontWeight: 900 }}>Un Torneo.</Typography>
