@@ -11,7 +11,7 @@ export const About = () => {
                         <Typography variant='body1' paragraph align="center">Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta aliquid quis laborum nisi neque, quasi sequi quia culpa omnis, laboriosam doloribus accusamus provident doloremque magni a error id. Voluptates, esse! Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, odit? At, culpa. Porro deleniti quod ipsum modi amet, blanditiis temporibus autem illum repellendus veritatis laboriosam beatae consectetur nesciunt corrupti ducimus.</Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <Typography variant='h3' sx={{ fontWeight: 800 }} gutterBottom align="center">Nuestros Valores</Typography>
+                        <Typography variant='h3' sx={{ fontWeight: 800 }} gutterBottom align="center">Nuestros <Typography component='span' color='secondary.main' variant='h3' sx={{ fontWeight: 800 }}>Valores</Typography></Typography>
 
                         <List>
                             <ListItem>
