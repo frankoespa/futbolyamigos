@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid, Typography } from "@mui/material"
+import { Box, Button, Container, Grid, Link, Typography } from "@mui/material"
 import { Nav } from "../components/AppBar"
 import { WhatsApp } from '@mui/icons-material'
 export const Hero = () => {
@@ -15,11 +15,11 @@ export const Hero = () => {
                         <Typography variant='h1' sx={{ fontWeight: 900 }}>Un Torneo.</Typography>
                         <Typography variant='h3' sx={{ fontWeight: 800, color: 'secondary.main' }}>Distinto.</Typography>
                         <Typography variant='h4' sx={{ fontWeight: 300, color: 'secondary.main' }}>Y Con Buenos Amigos.</Typography>
-                        <a href='https://api.whatsapp.com/send?phone=543416103946&text=Me%20quiero%20inscribir' target='_blank' rel="noreferrer" style={{ textDecoration: 'none' }}>
+                        <Link href='https://api.whatsapp.com/send?phone=543416103946&text=Quiero%20inscribir%20a%20mi%20equipo' target='_blank' rel="noreferrer" style={{ textDecoration: 'none' }}>
                             <Button variant="contained" startIcon={<WhatsApp />} color='secondary' sx={{
                                 marginTop: 5
                             }}>Contactar</Button>
-                        </a>
+                        </Link>
 
                     </Grid>
                 </Grid>

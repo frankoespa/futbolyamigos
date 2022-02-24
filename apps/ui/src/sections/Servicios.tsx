@@ -7,7 +7,7 @@ export const Servicios = () => {
     const matchMd = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
-        <Box bgcolor='secondary.main' py={15}>
+        <Box bgcolor='secondary.main' py={20}>
             <Container maxWidth="xl">
                 <Grid container spacing={2} direction={matchMd ? 'column-reverse' : 'row'}>
                     <Grid item xs={12} md={6}>

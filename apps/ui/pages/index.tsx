@@ -1,5 +1,6 @@
 import { About } from "../src/sections/About";
 import { Contact } from "../src/sections/Contact";
+import { Footer } from "../src/sections/Footer";
 import { Hero } from "../src/sections/Hero";
 import { Servicios } from "../src/sections/Servicios";
 
@@ -11,6 +12,7 @@ export function Index () {
             <Servicios />
             <About />
             <Contact />
+            <Footer />
         </>
     )
 

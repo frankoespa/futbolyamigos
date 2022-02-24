@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 
-const pages = ['Contacto', '¿Quienes Somos?', 'Torneos'];
+const pages = ['Contacto', 'Nosotros', 'Torneos'];
 
 export const Nav = () => {
 
@@ -74,7 +74,7 @@ export const Nav = () => {
                             }} alt='brand-futbolyamigos' />
                         </Box>
                     </Box>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }} flexDirection="row-reverse">
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} flexDirection="row-reverse">
                         {pages.map((page) => (
                             <Button
                                 key={page}
