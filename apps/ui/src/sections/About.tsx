@@ -3,7 +3,7 @@ import { Check } from "@mui/icons-material"
 
 export const About = () => {
     return (
-        <Box bgcolor='text.secondary' py={15}>
+        <Box bgcolor='text.secondary' py={20}>
             <Container maxWidth="xl">
                 <Grid container spacing={5}>
                     <Grid item xs={12} md={6}>
