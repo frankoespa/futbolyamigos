@@ -14,7 +14,7 @@ const Map = () => {
             />
             <Marker position={[-33.01370, -60.66802]} icon={iconMarker}>
                 <Popup>
-                    Torreón Polideportivo
+                    Complejo El Torreón
                 </Popup>
             </Marker>
             <Polygon pathOptions={{ color: theme.palette.secondary.main }} positions={[
