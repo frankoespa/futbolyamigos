@@ -1,55 +1,76 @@
 {
-  "root": "apps/ui",
-  "sourceRoot": "apps/ui",
-  "projectType": "application",
-  "targets": {
-    "build": {
-      "executor": "@nrwl/next:build",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "root": "apps/ui",
-        "outputPath": "dist/apps/ui"
-      },
-      "configurations": {
-        "production": {}
-      }
-    },
-    "serve": {
-      "executor": "@nrwl/next:server",
-      "options": {
-        "buildTarget": "ui:build",
-        "dev": true,
-        "proxyConfig": "apps/ui/proxy.conf.json"
-      },
-      "configurations": {
-        "production": {
-          "buildTarget": "ui:build:production",
-          "dev": false
+    "root": "apps/ui",
+    "sourceRoot": "apps/ui",
+    "projectType": "application",
+    "targets": {
+        "build": {
+            "executor": "@nrwl/next:build",
+            "outputs": [
+                "{options.outputPath}"
+            ],
+            "defaultConfiguration": "production",
+            "options": {
+                "root": "apps/ui",
+                "outputPath": "dist/apps/ui"
+            },
+            "configurations": {
+                "production": {}
+            }
+        },
+        "serve": {
+            "executor": "@nrwl/next:server",
+            "options": {
+                "buildTarget": "ui:build",
+                "dev": true,
+                "proxyConfig": "apps/ui/proxy.conf.json"
+            },
+            "configurations": {
+                "production": {
+                    "buildTarget": "ui:build:production",
+                    "dev": false
+                }
+            }
+        },
+        "serveUiAndApi": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "commands": [
+                    {
+                        "command": "nx run ui:serve"
+                    },
+                    {
+                        "command": "nx run api:serve"
+                    }
+                ]
+            }
+        },
+        "export": {
+            "executor": "@nrwl/next:export",
+            "options": {
+                "buildTarget": "ui:build:production"
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": [
+                "coverage/apps/ui"
+            ],
+            "options": {
+                "jestConfig": "apps/ui/jest.config.js",
+                "passWithNoTests": true
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": [
+                "{options.outputFile}"
+            ],
+            "options": {
+                "lintFilePatterns": [
+                    "apps/ui/**/*.{ts,tsx,js,jsx}"
+                ]
+            }
         }
-      }
     },
-    "export": {
-      "executor": "@nrwl/next:export",
-      "options": {
-        "buildTarget": "ui:build:production"
-      }
-    },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/ui"],
-      "options": {
-        "jestConfig": "apps/ui/jest.config.js",
-        "passWithNoTests": true
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/ui/**/*.{ts,tsx,js,jsx}"]
-      }
-    }
-  },
-  "tags": []
+    "tags": []
 }
