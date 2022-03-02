@@ -26,7 +26,7 @@ export const Footer = () => {
                         <Grid item xs={12} md={4}>
                             <Typography variant='body1' sx={{ fontWeight: 700 }} gutterBottom align="center">Seguínos</Typography>
                             <Stack direction="row" justifyContent='center'>
-                                <Link href='https://api.whatsapp.com/send?phone=543416103946&text=Quiero%20inscribir%20a%20mi%20equipo' target='_blank' rel="noreferrer" style={{ textDecoration: 'none' }}>
+                                <Link href='https://www.facebook.com/profile.php?id=100077334142489' target='_blank' rel="noreferrer" style={{ textDecoration: 'none' }}>
                                     <IconButton aria-label="facebook" color="secondary">
                                         <Facebook />
                                     </IconButton>
