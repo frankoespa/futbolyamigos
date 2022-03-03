@@ -9,6 +9,7 @@ import '@fontsource/poppins/900.css';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import ThemeConfig from '../src/ThemeConfig';
 import 'leaflet/dist/leaflet.css'
+import { NotificationManager } from '../src/notifications/NotificationManager';
 
 function App ({ Component, pageProps }: AppProps) {
     return (
@@ -17,7 +18,8 @@ function App ({ Component, pageProps }: AppProps) {
                 <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no' />
             </Head>
             <CssBaseline />
-            {/* <NotificationManager>
+            <NotificationManager>
+                {/* 
                 <AuthProvider usesCases={ {
                     Trabajos: {
                         icon: null,
@@ -50,9 +52,10 @@ function App ({ Component, pageProps }: AppProps) {
                         subItems: []
                     }
                 } }> */}
-            <Component {...pageProps} />
-            {/* </AuthProvider>
-            </NotificationManager> */}
+                <Component {...pageProps} />
+                {/* </AuthProvider>
+             */}
+            </NotificationManager>
         </ThemeProvider>
     );
 }
