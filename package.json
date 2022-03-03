@@ -27,6 +27,7 @@
         "class-validator": "0.13.2",
         "cookie-parser": "1.4.6",
         "core-js": "^3.6.5",
+        "formik": "2.2.9",
         "leaflet": "1.7.1",
         "leaflet-defaulticon-compatibility": "^0.1.1",
         "mdi-material-ui": "7.1.0",
@@ -43,7 +44,8 @@
         "reflect-metadata": "^0.1.13",
         "regenerator-runtime": "0.13.7",
         "rxjs": "^7.0.0",
-        "tslib": "^2.0.0"
+        "tslib": "^2.0.0",
+        "yup": "0.32.11"
     },
     "devDependencies": {
         "@nestjs/schematics": "^8.0.0",
