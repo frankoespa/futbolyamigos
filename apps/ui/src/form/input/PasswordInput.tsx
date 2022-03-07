@@ -9,7 +9,7 @@ interface IPropsInput {
     formManager: FormikProps<Record<any, any>>
 }
 
-export function TextInput (props: IPropsInput) {
+export function PasswordInput (props: IPropsInput) {
     const { name, label, disabled, size, formManager } = props;
     const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
 
@@ -33,7 +33,7 @@ export function TextInput (props: IPropsInput) {
             onBlur={handleBlur}
             error={(touched as Record<string, boolean>)[name] && Boolean((errors as Record<string, string>)[name])}
             helperText={(touched as Record<string, boolean>)[name] && (errors as Record<string, string>)[name]}
-            type='text'
+            type='password'
             size={size ? size : 'small'}
             variant='outlined'
             disabled={disabled ? disabled : false}

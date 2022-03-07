@@ -10,6 +10,8 @@ export const ThemeConfig = createTheme({
         },
         secondary: {
             main: '#FFAB3B',
+            // main: '#FCB85F',
+
         },
         error: {
             main: red.A400,
@@ -21,7 +23,7 @@ export const ThemeConfig = createTheme({
         background: {
             default: grey[200],
             paper: grey[50],
-        },
+        }
     },
     typography: {
         fontFamily: 'Poppins'

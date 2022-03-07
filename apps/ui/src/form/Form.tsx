@@ -1,18 +1,16 @@
 import { FormEvent } from "react";
 
-interface IProps
-{
+interface IProps {
     children: JSX.Element | JSX.Element[],
     handleSubmit: (e?: FormEvent<HTMLFormElement> | undefined) => void
 }
 
-export function Form (props: IProps)
-{
+export function Form (props: IProps) {
     const { children, handleSubmit } = props;
 
     return (
-        <form onSubmit={ handleSubmit }>
-            { children }
+        <form onSubmit={handleSubmit} autoComplete='off'>
+            {children}
         </form>
     )
 

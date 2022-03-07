@@ -1,5 +1,5 @@
-import { Types } from 'mongoose'
-import { Roles } from '../role/enums/Roles'
+import { Roles } from "../auth/Roles";
+import { Types } from "mongoose";
 
 export class UserDetailVM {
     _id: Types.ObjectId;

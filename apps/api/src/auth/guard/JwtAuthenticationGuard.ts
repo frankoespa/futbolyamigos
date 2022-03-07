@@ -2,7 +2,7 @@ import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/com
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
-import { KeyRole, Roles } from '../../role/enums/Roles';
+import { Roles, KeyRole } from '@futbolyamigos/data'
 import { UserDomain } from '../../user/domain/UserDomain';
 
 @Injectable()
@@ -18,10 +18,15 @@ export default class JwtAuthenticationGuard extends AuthGuard('jwt') {
 
         this.Roles = this.reflector.get<Roles[]>(KeyRole, context.getHandler());
 
-        return super.canActivate(context); super.handleRequest
+        return super.canActivate(context);
     }
 
-    handleRequest (err, user, info) {
+    handleRequest (error, user, info) {
+
+        if (error)
+        {
+            throw new UnauthorizedException(error.message);
+        }
 
         const userDomain = user as UserDomain;
 
