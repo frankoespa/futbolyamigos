@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      NEXT_PUBLIC_API_URL_BASE: ${{ secrets.NEXT_PUBLIC_API_URL_BASE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
