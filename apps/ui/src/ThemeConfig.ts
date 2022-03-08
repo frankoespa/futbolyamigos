@@ -9,8 +9,7 @@ export const ThemeConfig = createTheme({
             main: '#1B1B1E'
         },
         secondary: {
-            main: '#FFAB3B',
-            // main: '#FCB85F',
+            main: '#FCB85F',
 
         },
         error: {
