@@ -14,8 +14,8 @@ export const About = () => {
     ]
     return (
         <Box bgcolor='text.secondary' py={20}>
-            <Container maxWidth="xl">
-                <Grid container spacing={5}>
+            <Container >
+                <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
                         <Typography variant='h3' sx={{ fontWeight: 800 }} gutterBottom align="center">Nosotros</Typography>
                         <Typography variant='body1' paragraph align="center">Somos un equipo con mucha experiencia y ganas de satisfacer las necesidades del momento que, para muchos, es el momento más lindo de la semana, ese dia que te juntas con tus amigos a divertirte y a sacar ese jugador de fútbol que todos tenemos y llevamos bien adentro del corazón.</Typography>

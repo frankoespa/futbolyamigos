@@ -1,13 +1,10 @@
-import { Controller, Post, UseGuards, Res, Req, Get } from "@nestjs/common";
+import { Controller, Post, UseGuards, Res, Req, Get, HttpCode } from "@nestjs/common";
 import { RequestWithUser } from "../../global/base/RequestWithUser";
 import { LocalAuthGuard } from "../guard/LocalAuthGuard";
 import { AuthLogic } from "../providers/AuthLogic";
 import { Response } from 'express';
-import { UserDetailVM } from "../../viewmodels/UserDetailVM";
-import JwtAuthenticationGuard from "../guard/JwtAuthenticationGuard";
+import { UserDetailVM } from "@futbolyamigos/data";
 import { Auth } from "../decorators/AuthComposition";
-import { Roles } from "../../role/enums/Roles";
-
 
 @Controller('auth')
 export class AuthController {
@@ -36,15 +33,17 @@ export class AuthController {
         return response.sendStatus(200);
     }
 
-    @Auth([Roles.Admin])
+    @Auth([])
     @Get()
-    async GetInfo (@Req() request: RequestWithUser): Promise<UserDetailVM> {
-        return {
-            _id: request.user.Doc._id,
-            Email: request.user.Doc.Email,
-            RoleID: request.user.Doc.Role._id,
-            Nombre: request.user.Doc.Nombre,
-            Apellidos: request.user.Doc.Apellidos
-        }
+    @HttpCode(200)
+    async authenticate (@Req() request: RequestWithUser, @Res() response: Response<UserDetailVM>) {
+        const { user } = request;
+        return response.send({
+            _id: user.Doc._id,
+            Email: user.Doc.Email,
+            RoleID: user.Doc.Role._id,
+            Nombre: user.Doc.Nombre,
+            Apellidos: user.Doc.Apellidos
+        })
     }
 }

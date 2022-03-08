@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { RoleDomain } from "../../role/domain/RoleDomain";
-import { Roles } from "../../role/enums/Roles";
+import { Roles } from "@futbolyamigos/data";
 import { Role } from "../../role/schema/RoleSchema";
 import { DocumentLoaderDomainService } from "../../shared/providers/DocumentLoaderDomainService";
 import { UserDomain } from "../domain/UserDomain";

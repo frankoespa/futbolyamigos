@@ -5,10 +5,10 @@ export const Footer = () => {
     return (
         <>
             <Box bgcolor='text.secondary' py={10}>
-                <Container maxWidth="xl">
+                <Container>
                     <Grid container spacing={5}>
                         <Grid item xs={12} md={4} textAlign='center'>
-                            <img src="/brand.svg" style={{
+                            <img src="/main-brand.svg" style={{
                                 width: '100px'
                             }} alt='brand-futbolyamigos' />
                             <Typography variant='body2' align="center" sx={{ fontWeight: 300 }}>Fútbol para buenos amigos.</Typography>
@@ -44,7 +44,7 @@ export const Footer = () => {
             <Box bgcolor='secondary.main' py={1}>
                 <Container maxWidth="xl">
                     <Stack direction="row" justifyContent='center'>
-                        <Typography variant='caption' align="center" color='primary'>© {new Date().getFullYear()} Futbol&Amigos. All rights reserved.</Typography>
+                        <Typography variant='caption' align="center" color='primary'>© {new Date().getFullYear()} Futbol&Amigos. Todos los derechos reservados.</Typography>
                     </Stack>
                 </Container>
             </Box>

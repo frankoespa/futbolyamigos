@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { DocumentLoaderDomainService } from '../../shared/providers/DocumentLoaderDomainService';
@@ -18,6 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
                 (request: Request) => {
+                    if (!(request?.cookies.Authentication))
+                    {
+                        throw new UnauthorizedException();
+                    }
                     return request?.cookies?.Authentication
                 }]),
             ignoreExpiration: false,

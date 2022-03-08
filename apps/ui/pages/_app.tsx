@@ -9,6 +9,11 @@ import '@fontsource/poppins/900.css';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import ThemeConfig from '../src/ThemeConfig';
 import 'leaflet/dist/leaflet.css'
+import { NotificationManager } from '../src/notifications/NotificationManager';
+import { SWRConfig } from 'swr';
+import Axios from 'axios';
+
+Axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL_BASE;
 
 function App ({ Component, pageProps }: AppProps) {
     return (
@@ -17,42 +22,14 @@ function App ({ Component, pageProps }: AppProps) {
                 <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no' />
             </Head>
             <CssBaseline />
-            {/* <NotificationManager>
-                <AuthProvider usesCases={ {
-                    Trabajos: {
-                        icon: null,
-                        subItems: []
-                    },
-                    Usuarios: {
-                        icon: null,
-                        subItems: [
-                            {
-                                name: 'Administrar',
-                                url: '/dashboard/usuarios/administrar',
-                                permissions: [Roles.Admin]
-                            }
-                        ]
-                    },
-                    Vehiculos: {
-                        icon: null,
-                        subItems: []
-                    },
-                    Servicios: {
-                        icon: null,
-                        subItems: []
-                    },
-                    Repuestos: {
-                        icon: null,
-                        subItems: []
-                    },
-                    Informes: {
-                        icon: null,
-                        subItems: []
-                    }
-                } }> */}
-            <Component {...pageProps} />
-            {/* </AuthProvider>
-            </NotificationManager> */}
+            <NotificationManager>
+                <SWRConfig value={{
+                    fetcher: url => Axios.get(url).then(res => res.data),
+                    shouldRetryOnError: false
+                }}>
+                    <Component {...pageProps} />
+                </SWRConfig>
+            </NotificationManager>
         </ThemeProvider>
     );
 }

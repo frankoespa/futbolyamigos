@@ -8,7 +8,7 @@ export const Servicios = () => {
 
     return (
         <Box bgcolor='secondary.main' py={20}>
-            <Container maxWidth="xl">
+            <Container>
                 <Grid container spacing={2} direction={matchMd ? 'column-reverse' : 'row'}>
                     <Grid item xs={12} md={6}>
 

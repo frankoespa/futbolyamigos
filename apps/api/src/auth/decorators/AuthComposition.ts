@@ -1,5 +1,5 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
-import { Roles } from '../../role/enums/Roles';
+import { Roles } from '@futbolyamigos/data';
 import JwtAuthenticationGuard from '../guard/JwtAuthenticationGuard';
 import { Authorization } from '../../role/decorators/RoleDecorator';
 

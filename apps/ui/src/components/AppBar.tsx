@@ -9,10 +9,13 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
-
-const pages = ['Contacto', 'Nosotros', 'Torneos'];
+import Link from 'next/link';
+import { useTheme } from '@mui/system';
+import { KeyboardArrowDown } from '@mui/icons-material';
 
 export const Nav = () => {
+
+    const theme = useTheme()
 
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
@@ -24,12 +27,21 @@ export const Nav = () => {
         setAnchorElNav(null);
     };
 
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     return (
         <AppBar position="static" elevation={0}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <img src="/brand.svg" style={{
+                        <img src="/main-brand.svg" style={{
                             width: '100px'
                         }} alt='brand-futbolyamigos' />
                     </Box>
@@ -62,28 +74,92 @@ export const Nav = () => {
                                 display: { xs: 'block', md: 'none' }
                             }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
-                                    <Typography>{page}</Typography>
+                            <Link href='/' passHref>
+                                <MenuItem onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
+                                    <Typography>Inicio</Typography>
                                 </MenuItem>
-                            ))}
+                            </Link>
+                            <Link href='/torneos/mastreinta' passHref>
+                                <MenuItem onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
+                                    <Typography>Torneo(+30)</Typography>
+                                </MenuItem>
+                            </Link>
+                            <Link href='/torneos/libre' passHref>
+                                <MenuItem onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
+                                    <Typography>Torneo(Libre)</Typography>
+                                </MenuItem>
+                            </Link>
+                            <Link href='/nosotros' passHref>
+                                <MenuItem onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
+                                    <Typography>Nosotros</Typography>
+                                </MenuItem>
+                            </Link>
+                            <Link href='/contacto' passHref>
+                                <MenuItem onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
+                                    <Typography>Contacto</Typography>
+                                </MenuItem>
+                            </Link>
                         </Menu>
                         <Box sx={{ flexGrow: 1 }} >
-                            <img src="/brand.svg" style={{
+                            <img src="/main-brand.svg" style={{
                                 width: '100px'
                             }} alt='brand-futbolyamigos' />
                         </Box>
                     </Box>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} flexDirection="row-reverse">
-                        {pages.map((page) => (
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }} flexDirection="row" justifyContent='right'>
+                        <Link href='/' passHref>
                             <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, mx: 1, color: 'text.primary', display: 'block' }}
+                                sx={{ my: 2, mx: 1, color: 'text.primary' }}
                             >
-                                {page}
+                                Inicio
                             </Button>
-                        ))}
+                        </Link>
+
+                        <Button
+                            id="basic-button"
+                            sx={{ my: 2, mx: 1, color: 'text.primary' }}
+                            aria-controls={open ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? 'true' : undefined}
+                            onClick={handleClick}
+                            endIcon={<KeyboardArrowDown />}
+                        >
+                            Torneos
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                            PaperProps={{ style: { backgroundColor: theme.palette.text.secondary } }}
+                        >
+                            <Link href='/torneos/mastreinta' passHref>
+                                <MenuItem onClick={handleClose}>+30</MenuItem>
+                            </Link>
+                            <Link href='/torneos/libre' passHref>
+                                <MenuItem onClick={handleClose}>Libre</MenuItem>
+                            </Link>
+                        </Menu>
+
+                        <Link href='/nosotros' passHref>
+                            <Button
+                                onClick={handleCloseNavMenu}
+                                sx={{ my: 2, mx: 1, color: 'text.primary' }}
+                            >
+                                Nosotros
+                            </Button>
+                        </Link>
+                        <Link href='/contacto' passHref>
+                            <Button
+                                onClick={handleCloseNavMenu}
+                                sx={{ my: 2, mx: 1, color: 'text.primary' }}
+                            >
+                                Contacto
+                            </Button>
+                        </Link>
                     </Box>
 
                 </Toolbar>
