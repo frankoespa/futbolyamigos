@@ -7,14 +7,14 @@ export const useUser = () => {
     const { replace, pathname } = useRouter();
     const { data, error, mutate, } = useSWR<UserDetailVM, AxiosError<ExceptionResponseInterface>>('auth')
 
-    if (data && !error && pathname.includes('login'))
+    if (data && !error && pathname.includes('acceso'))
     {
         replace('admin');
     }
 
     if ((data || !data) && error && pathname.includes('admin'))
     {
-        replace('login');
+        replace('acceso');
     }
 
     return {
