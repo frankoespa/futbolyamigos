@@ -57,7 +57,7 @@ export const useApiManager = () => {
             showNotificationFail(error.response.data.message);
             if (error.response.data.status === 401)
             {
-                replace('acceso')
+                replace('login')
             }
         } else if (error.request)
         {
