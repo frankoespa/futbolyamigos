@@ -37,14 +37,14 @@ export function TextInput (props: IPropsInput) {
             size={size ? size : 'small'}
             variant='outlined'
             disabled={disabled ? disabled : false}
-            sx={{
-                input: { color: 'text.secondary' },
-                "& .MuiOutlinedInput-root:hover": {
-                    "& > fieldset": {
-                        borderColor: "text.secondary"
-                    }
-                }
-            }}
+            // sx={{
+            //     input: { color: 'text.secondary' },
+            //     "& .MuiOutlinedInput-root:hover": {
+            //         "& > fieldset": {
+            //             borderColor: "text.secondary"
+            //         }
+            //     }
+            // }}
             margin='normal'
         />
     );

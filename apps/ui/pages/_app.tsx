@@ -12,10 +12,64 @@ import 'leaflet/dist/leaflet.css'
 import { NotificationManager } from '../src/notifications/NotificationManager';
 import { SWRConfig } from 'swr';
 import Axios from 'axios';
+import { useRouter } from 'next/router';
+import LayoutAdmin from '../src/components/LayoutAdmin';
+import ThemeConfigAdmin from '../src/ThemeConfigAdmin';
+import AdapterMoment from '@mui/lab/AdapterMoment';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import "moment/locale/es";
 
 Axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL_BASE;
 
 function App ({ Component, pageProps }: AppProps) {
+    const { pathname } = useRouter();
+
+    if (pathname.includes('/admin'))
+    {
+        return (
+            <ThemeProvider theme={ThemeConfigAdmin}>
+                <Head>
+                    <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no' />
+                </Head>
+                <CssBaseline />
+                <NotificationManager>
+                    <SWRConfig value={{
+                        fetcher: url => Axios.get(url).then(res => res.data),
+                        shouldRetryOnError: false
+                    }}>
+                        <LocalizationProvider dateAdapter={AdapterMoment} locale='es'>
+                            <LayoutAdmin>
+                                <Component {...pageProps} />
+                            </LayoutAdmin>
+                        </LocalizationProvider>
+                    </SWRConfig>
+                </NotificationManager>
+            </ThemeProvider>
+        )
+    }
+
+    if (pathname.includes('/login'))
+    {
+        return (
+            <ThemeProvider theme={ThemeConfigAdmin}>
+                <Head>
+                    <meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no' />
+                </Head>
+                <CssBaseline />
+                <NotificationManager>
+                    <SWRConfig value={{
+                        fetcher: url => Axios.get(url).then(res => res.data),
+                        shouldRetryOnError: false
+                    }}>
+                        <LocalizationProvider dateAdapter={AdapterMoment} locale='es'>
+                            <Component {...pageProps} />
+                        </LocalizationProvider>
+                    </SWRConfig>
+                </NotificationManager>
+            </ThemeProvider>
+        )
+    }
+
     return (
         <ThemeProvider theme={ThemeConfig}>
             <Head>
