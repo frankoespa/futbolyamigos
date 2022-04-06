@@ -7,6 +7,10 @@ export abstract class DomainBase<T extends Document> {
         return await this.doc.save();
     }
 
+    async Delete (): Promise<T> {
+        return await this.doc.delete();
+    }
+
     get Doc (): Readonly<T> {
         return this.doc
     }

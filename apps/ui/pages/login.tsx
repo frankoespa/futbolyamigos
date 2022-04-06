@@ -11,14 +11,16 @@ import { useApiManager } from '../src/api/useApiManager';
 import { LoadingButton } from "@mui/lab";
 import { useUser } from '../src/api/auth/useUser';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 function Login () {
     const { Post } = useApiManager();
-    const { loading, mutate } = useUser();
+    const { replace } = useRouter()
+    const { loading } = useUser();
 
     const onSubmitSignIn = async (userSignin: UserSignInVM, formikHelpers: FormikHelpers<UserSignInVM>) => {
-        const userDetails = await Post('auth', 'login', userSignin);
-        if (userDetails) mutate();
+        await Post('auth/login', userSignin);
+        replace('/admin/torneos');
     };
 
     const formManager = useFormManager<UserSignInVM>({
@@ -42,7 +44,7 @@ function Login () {
             backgroundSize: '15px 15px'
         }}>
             <Head>
-                <title>Acceso</title>
+                <title>Login</title>
             </Head>
             {loading ?
                 <CircularProgress color='primary' />

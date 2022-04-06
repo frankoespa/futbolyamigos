@@ -7,6 +7,7 @@ import * as Autopopulate from 'mongoose-autopopulate'
 import { SharedModule } from '../shared/SharedModule';
 import { DbModule } from '../db/DbModule';
 import { RoleModule } from '../role/RoleModule';
+import { TorneoModule } from '../torneo/TorneoModule';
 
 @Module({
     imports: [
@@ -27,7 +28,8 @@ import { RoleModule } from '../role/RoleModule';
         UserModule,
         SharedModule,
         DbModule,
-        RoleModule
+        RoleModule,
+        TorneoModule
     ],
     controllers: [],
     providers: [],

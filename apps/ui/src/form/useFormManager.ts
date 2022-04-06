@@ -6,6 +6,7 @@ interface IProps<TypeValues> {
     initialValues: TypeValues;
     validations: ObjectShape;
     onSubmit: (values: TypeValues, form: FormikHelpers<TypeValues>) => Promise<void>;
+    validateOnMount?: boolean
 }
 
 export function useFormManager<TypeValues> (props: IProps<TypeValues>) {

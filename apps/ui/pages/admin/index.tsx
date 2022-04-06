@@ -1,24 +1,9 @@
-import { useUser } from "../../src/api/auth/useUser";
+function Index () {
 
 
-export function Index () {
-    const { user, loading } = useUser();
-
-    if (loading)
-    {
-        return 'loading'
-    }
-
-    if (user)
-    {
-        return (
-            <>
-                {JSON.stringify(user)}
-            </>
-        )
-    }
-
-
+    return (
+        'hola'
+    );
 }
 
 export default Index;

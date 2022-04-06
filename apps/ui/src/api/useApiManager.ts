@@ -8,12 +8,11 @@ export const useApiManager = () => {
     const { replace } = useRouter();
 
     async function Get<ResponseDataType> (
-        controllerName: string,
-        actionName: string
+        url: string
     ): Promise<ResponseDataType> {
 
         return new Promise((resolve, reject) => {
-            Axios.get<ResponseDataType>(`/${controllerName}/${actionName}`)
+            Axios.get<ResponseDataType>(`/${url}`)
                 .then(response => {
                     return resolve(response.data)
                 })
@@ -25,14 +24,13 @@ export const useApiManager = () => {
     }
 
     async function Post<ResponseDataType, BodyDataType> (
-        controllerName: string,
-        actionName: string,
-        body: BodyDataType
+        url: string,
+        body?: BodyDataType
     ): Promise<ResponseDataType | null> {
 
         try
         {
-            const { data } = await Axios.post<ResponseDataType>(`/${controllerName}/${actionName}`, body);
+            const { data } = await Axios.post<ResponseDataType>(`/${url}`, body ? body : null);
             return data;
         } catch (error)
         {
@@ -42,7 +40,32 @@ export const useApiManager = () => {
                 HandleError(error as AxiosError<ExceptionResponseInterface>)
             } else
             {
-                showNotificationFail((error as Error).message)
+                showNotificationFail((error as Error).message);
+                throw error;
+
+            }
+            return null;
+        }
+    }
+
+    async function Delete<ResponseDataType> (
+        url: string
+    ): Promise<ResponseDataType | null> {
+
+        try
+        {
+            const { data } = await Axios.delete<ResponseDataType>(`/${url}`);
+            return data;
+        } catch (error)
+        {
+
+            if (Axios.isAxiosError(error))
+            {
+                HandleError(error as AxiosError<ExceptionResponseInterface>)
+            } else
+            {
+                showNotificationFail((error as Error).message);
+                throw error;
 
             }
             return null;
@@ -57,25 +80,29 @@ export const useApiManager = () => {
             showNotificationFail(error.response.data.message);
             if (error.response.data.status === 401)
             {
-                replace('login')
+                replace('/login')
             }
+            throw error;
         } else if (error.request)
         {
             // The request was made but no response was received
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
-            showNotificationFail(error.message)
+            showNotificationFail(error.message);
+            throw error;
         } else
         {
             // Something happened in setting up the request that triggered an Error
             // console.log('Error', error.message);
-            showNotificationFail(error.message)
+            showNotificationFail(error.message);
+            throw error;
 
         }
     }
 
     return {
         Get,
-        Post
+        Post,
+        Delete
     };
 };
