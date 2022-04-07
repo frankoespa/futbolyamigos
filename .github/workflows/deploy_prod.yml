@@ -31,5 +31,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: package-api
-          path: dist\apps\api\main.js
+          path: ${{ github.workspace }}/dist/apps/api/main.js
           if-no-files-found: error
+GITHUB_WORKSPACE
