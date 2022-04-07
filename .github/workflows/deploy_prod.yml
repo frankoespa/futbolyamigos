@@ -33,4 +33,3 @@ jobs:
           name: package-api
           path: ${{ github.workspace }}/dist/apps/api/main.js
           if-no-files-found: error
-GITHUB_WORKSPACE
