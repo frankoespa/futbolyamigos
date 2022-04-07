@@ -19,9 +19,17 @@ jobs:
           node-version: '16'
       - name: Install dependencies
         run: npm ci
-      - name: Build
+      - name: Build UI
         run: npx nx run ui:export
-      - name: Deploy to Prod
+      - name: Build API
+        run: npx nx run api:build:production
+      - name: Deploy UI
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only hosting
+      - name: Create package Api
+        uses: actions/upload-artifact@v3
+        with:
+          name: package-api
+          path: dist\apps\api\main.js
+          if-no-files-found: error
