@@ -12,7 +12,7 @@ export const useApiManager = () => {
     ): Promise<ResponseDataType> {
 
         return new Promise((resolve, reject) => {
-            Axios.get<ResponseDataType>(`/${url}`)
+            Axios.get<ResponseDataType>(`/${url}`, { withCredentials: true })
                 .then(response => {
                     return resolve(response.data)
                 })
@@ -30,7 +30,7 @@ export const useApiManager = () => {
 
         try
         {
-            const { data } = await Axios.post<ResponseDataType>(`/${url}`, body ? body : null);
+            const { data } = await Axios.post<ResponseDataType>(`/${url}`, body ? body : null, { withCredentials: true });
             return data;
         } catch (error)
         {
