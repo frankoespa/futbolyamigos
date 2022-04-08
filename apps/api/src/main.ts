@@ -14,7 +14,7 @@ async function bootstrap () {
 
     const globalPrefix = 'api';
     app.setGlobalPrefix(globalPrefix);
-    app.enableCors({ origin: '*' });
+    app.enableCors({ origin: process.env.NODE_ENV === 'development' ? 'http://localhost:4200' : 'https://futbolyamigos.com.ar', credentials: true });
     app.use(cookieParser());
 
     app.useGlobalPipes(
