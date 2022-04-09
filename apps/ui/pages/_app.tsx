@@ -58,7 +58,7 @@ function App ({ Component, pageProps }: AppProps) {
                 <CssBaseline />
                 <NotificationManager>
                     <SWRConfig value={{
-                        fetcher: url => Axios.get(url).then(res => res.data),
+                        fetcher: url => Axios.get(url, { withCredentials: true }).then(res => res.data),
                         shouldRetryOnError: false
                     }}>
                         <LocalizationProvider dateAdapter={AdapterMoment} locale='es'>
