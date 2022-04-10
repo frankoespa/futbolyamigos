@@ -15,8 +15,6 @@ export function CheckBoxInput (props: IPropsInput) {
 
     const handleChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value === 'true' ? false : true;
-        console.log(value)
-        console.log(e.target.value)
         setFieldTouched(name);
         setFieldValue(name, value);
     }
@@ -28,7 +26,7 @@ export function CheckBoxInput (props: IPropsInput) {
                     checked={values[name]}
                     value={values[name]}
                     onChange={handleChangeCustom} />} label={label} disabled={disabled ? disabled : false} name={name}
-                    onBlur={handleBlur} />
+                />
             </FormGroup>
         </Stack >
     )

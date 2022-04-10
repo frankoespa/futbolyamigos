@@ -14,7 +14,8 @@ async function bootstrap () {
 
     const globalPrefix = 'api';
     app.setGlobalPrefix(globalPrefix);
-    app.enableCors({ origin: process.env.NODE_ENV === 'development' ? 'http://localhost:4200' : 'https://futbolyamigos.com.ar', credentials: true });
+    const configService = app.get(ConfigService);
+    app.enableCors({ origin: configService.get<string>('NODE_ENV') === 'development' ? 'http://localhost:4200' : 'https://futbolyamigos.com.ar', credentials: true });
     app.use(cookieParser());
 
     app.useGlobalPipes(
@@ -28,7 +29,6 @@ async function bootstrap () {
     );
     app.useGlobalFilters(new HttpExceptionFilter());
 
-    const configService = app.get(ConfigService);
     const initialDbData = app.get(InitialDataService);
     const userLogic = app.get(UserLogic);
 

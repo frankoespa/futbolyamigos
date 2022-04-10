@@ -54,7 +54,7 @@ export const useApiManager = () => {
 
         try
         {
-            const { data } = await Axios.delete<ResponseDataType>(`/${url}`);
+            const { data } = await Axios.delete<ResponseDataType>(`/${url}`, { withCredentials: true });
             return data;
         } catch (error)
         {
