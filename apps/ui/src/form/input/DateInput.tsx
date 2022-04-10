@@ -13,8 +13,7 @@ interface IPropsInput {
 
 export function DateInput (props: IPropsInput) {
     const { name, label, disabled, size, formManager } = props;
-    const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched
-    } = formManager;
+    const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
 
     return (
         <DatePicker
@@ -24,7 +23,7 @@ export function DateInput (props: IPropsInput) {
                 if (!date)
                 {
                     setFieldTouched(name);
-                    setFieldValue(name, null)
+                    setFieldValue(name, null);
 
                 } else
                 {
@@ -33,7 +32,6 @@ export function DateInput (props: IPropsInput) {
 
                 }
             }}
-
             renderInput={(params) => <TextField
                 {...params}
                 id={name}
@@ -48,6 +46,8 @@ export function DateInput (props: IPropsInput) {
                 margin='normal'
                 type='date'
             />}
+            clearable
+            clearText='Limpiar'
         />
     );
 }

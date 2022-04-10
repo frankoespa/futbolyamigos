@@ -60,7 +60,7 @@ function Index () {
     const { mutate } = useSWRConfig();
     const [torneoSeleccionado, setTorneoSeleccionado] = useState<GridSelectionModel>([]);
     const [showsectionDetalle, setShowSectionDetalle] = useState<boolean>(false);
-    const initialStateTorneoForm = {
+    const initialStateTorneoForm: RegistrarTorneoVM = {
         _id: null,
         Nombre: '',
         FechaInicio: null,
@@ -73,14 +73,15 @@ function Index () {
         initialValues: torneoForm,
         validations: {
             [Labels.Nombre]: Yup.string().required('requerido'),
-            [Labels.FechaInicio]: Yup.date().required('requerido').typeError('formato incorrecto'),
-            [Labels.FechaFin]: Yup.date().notRequired().nullable().typeError('formato incorrecto')
+            [Labels.FechaInicio]: Yup.date().required().typeError('formato incorrecto'),
+            [Labels.FechaFin]: Yup.date().nullable()
         },
         onSubmit: async (torneo: RegistrarTorneoVM, formikHelpers: FormikHelpers<RegistrarTorneoVM>) => {
             await Post('torneo', torneo);
             mutate('torneo', true);
             resetForm();
             setShowSectionDetalle(false);
+            setTorneoSeleccionado([]);
             showNotificationSuccess('Se guardó exitosamente.');
 
         }
@@ -92,15 +93,19 @@ function Index () {
     const onCreateDetail = () => {
         resetForm();
         setShowSectionDetalle(true);
+        setTorneoSeleccionado([]);
+
     };
 
     const onCancelDetail = () => {
         resetForm();
+        setTorneoSeleccionado([]);
         setShowSectionDetalle(false)
     };
 
     const resetForm = () => {
-        formManager.setValues(initialStateTorneoForm)
+        formManager.setValues(initialStateTorneoForm);
+        setTorneoForm(initialStateTorneoForm)
     }
 
     const onEditDetail = async () => {
@@ -118,8 +123,8 @@ function Index () {
         await Delete(`torneo/${torneoSeleccionado[0].toString()}`);
         mutate('torneo', true);
         setOpenDialog(false);
+        setTorneoSeleccionado([]);
         showNotificationSuccess('Se eliminó exitosamente.');
-
     };
 
     return (
