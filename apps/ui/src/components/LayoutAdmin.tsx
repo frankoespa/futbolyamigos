@@ -47,7 +47,7 @@ function LayoutAdmin (props: IProps) {
             >
                 <Toolbar variant='dense'>
                     <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-                        {pathname}
+                        {pathname.split('/').pop()}
                     </Typography>
                     <Typography variant="body1" noWrap>
                         {user?.Nombre}
@@ -121,20 +121,20 @@ function LayoutAdmin (props: IProps) {
                             <ListItemText primary={<Typography variant='body1' color='text.secondary'>Jugadores</Typography>} />
                         </ListItem>
                     </Link>
+                    <Link href='/admin/canchas' passHref>
+                        <ListItem button>
+                            <ListItemIcon>
+                                <SoccerField />
+                            </ListItemIcon>
+                            <ListItemText primary={<Typography variant='body1' color='text.secondary'>Canchas</Typography>} />
+                        </ListItem>
+                    </Link>
                     <Link href='/admin/torneos' passHref>
                         <ListItem button>
                             <ListItemIcon>
                                 <SportsSoccer />
                             </ListItemIcon>
                             <ListItemText primary={<Typography variant='body1' color='text.secondary'>Partidos</Typography>} />
-                        </ListItem>
-                    </Link>
-                    <Link href='/admin/torneos' passHref>
-                        <ListItem button>
-                            <ListItemIcon>
-                                <SoccerField />
-                            </ListItemIcon>
-                            <ListItemText primary={<Typography variant='body1' color='text.secondary'>Canchas</Typography>} />
                         </ListItem>
                     </Link>
                 </List>

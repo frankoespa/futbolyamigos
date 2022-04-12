@@ -20,5 +20,8 @@ export enum Labels {
     Detalle = 'Detalle',
     FechaInicio = 'FechaInicio',
     FechaFin = 'FechaFin',
-    Finalizado = 'Finalizado'
+    Finalizado = 'Finalizado',
+    Identificador = 'Identificador',
+    Canchas = 'Canchas',
+    Ok = 'Ok'
 }
