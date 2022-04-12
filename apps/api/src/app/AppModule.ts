@@ -8,6 +8,7 @@ import { SharedModule } from '../shared/SharedModule';
 import { DbModule } from '../db/DbModule';
 import { RoleModule } from '../role/RoleModule';
 import { TorneoModule } from '../torneo/TorneoModule';
+import { CanchaModule } from '../cancha/CanchaModule';
 
 @Module({
     imports: [
@@ -29,7 +30,8 @@ import { TorneoModule } from '../torneo/TorneoModule';
         SharedModule,
         DbModule,
         RoleModule,
-        TorneoModule
+        TorneoModule,
+        CanchaModule
     ],
     controllers: [],
     providers: [],

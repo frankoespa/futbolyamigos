@@ -1,23 +1,22 @@
 import SectionCollapse from '../../src/components/SectionCollapse';
 import { useRef, useState } from 'react';
-import { DataGrid, GridColDef, GridRowModel, GridSelectionModel, GridValueFormatterParams } from '@mui/x-data-grid';
-import moment from 'moment'
+import { DataGrid, GridColDef, GridRowModel, GridSelectionModel } from '@mui/x-data-grid';
 import { Button, Grid, Stack } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
-import { Labels } from "@futbolyamigos/data";
+import { Labels, Messages } from "@futbolyamigos/data";
 import * as Yup from 'yup';
-import { DateInput } from '../../src/form/input/DateInput';
 import { Form } from '../../src/form/Form';
 import { TextInput } from '../../src/form/input/TextInput';
 import { useApiManager } from '../../src/api/useApiManager';
 import { FormikHelpers } from 'formik';
-import { RegistrarTorneoVM } from "@futbolyamigos/data";
-import { CheckBoxInput } from '../../src/form/input/CheckBoxInput';
+import { RegistrarCanchaFormVM } from "@futbolyamigos/data";
 import { useSWRConfig } from "swr";
 import { useNotification } from '../../src/notifications/useNotification';
 import { DialogAlert } from '../../src/components/DialogAlert';
 import { useGetSWR } from '../../src/api/useGetSWR';
 import { LocaleDataGrid } from '../../src/components/datagrid/LocaleDataGrid';
+import { NumberInput } from '../../src/form/input/NumberInput';
+import { LoadingButton } from '@mui/lab';
 
 const columns: GridColDef[] = [
     {
@@ -26,31 +25,10 @@ const columns: GridColDef[] = [
         flex: 1
     },
     {
-        field: Labels.FechaInicio,
-        headerName: 'Fecha Inicio',
-        type: 'date',
-        flex: 1,
-        valueFormatter: (params: GridValueFormatterParams) => {
-            return moment(params.value as Date).format('DD-MM-YYYY');
-        },
-
-    },
-    {
-        field: Labels.FechaFin,
-        headerName: 'Fecha Fin',
-        type: 'date',
-        flex: 1,
-        valueFormatter: (params: GridValueFormatterParams) => {
-            if (!params.value) return null;
-            return moment(params.value as Date).format('D-M-YYYY');
-        }
-    },
-    {
-        field: Labels.Finalizado,
-        headerName: 'Finalizado',
-        type: 'boolean',
+        field: Labels.Identificador,
+        headerName: Labels.Identificador,
+        type: 'string',
         flex: 1
-
     }
 ];
 
@@ -58,62 +36,59 @@ function Index () {
     const { Post, Get, Delete } = useApiManager();
     const { showNotificationSuccess } = useNotification();
     const { mutate } = useSWRConfig();
-    const [torneoSeleccionado, setTorneoSeleccionado] = useState<GridSelectionModel>([]);
+    const [canchaSeleccionada, setCanchaSeleccionada] = useState<GridSelectionModel>([]);
     const [showsectionDetalle, setShowSectionDetalle] = useState<boolean>(false);
-    const initialStateTorneoForm: RegistrarTorneoVM = {
+    const initialStateCanchaForm: RegistrarCanchaFormVM = {
         _id: null,
         Nombre: '',
-        FechaInicio: null,
-        FechaFin: null,
-        Finalizado: false
+        Identificador: '',
     };
-    const [torneoForm, setTorneoForm] = useState<RegistrarTorneoVM>(initialStateTorneoForm);
+    const [canchaForm, setCanchaForm] = useState<RegistrarCanchaFormVM>(initialStateCanchaForm);
     const [openDialog, setOpenDialog] = useState(false);
-    const formManager = useFormManager<RegistrarTorneoVM>({
-        initialValues: torneoForm,
+    const formManager = useFormManager<RegistrarCanchaFormVM>({
+        initialValues: canchaForm,
         validations: {
             [Labels.Nombre]: Yup.string().required('requerido'),
-            [Labels.FechaInicio]: Yup.date().required().typeError('formato incorrecto'),
-            [Labels.FechaFin]: Yup.date().nullable()
+            [Labels.Identificador]: Yup.number().required('requerido')
         },
-        onSubmit: async (torneo: RegistrarTorneoVM, formikHelpers: FormikHelpers<RegistrarTorneoVM>) => {
-            await Post('torneo', torneo);
-            mutate('torneo', true);
-            resetForm();
+        onSubmit: async (cancha: RegistrarCanchaFormVM, formikHelpers: FormikHelpers<RegistrarCanchaFormVM>) => {
+            console.log(cancha)
+            await Post('cancha', cancha);
+            mutate('cancha', true);
             setShowSectionDetalle(false);
-            setTorneoSeleccionado([]);
-            showNotificationSuccess('Se guardó exitosamente.');
+            setCanchaSeleccionada([]);
+            resetForm();
+            showNotificationSuccess(Messages.SeGuardoExitosamente)
 
         }
 
     })
-
     const refNombreForm = useRef<HTMLElement>();
 
-    const { data: torneosFromDB, loading } = useGetSWR<RegistrarTorneoVM[]>('torneo');
+    const { data: canchasFromDB, loading } = useGetSWR<RegistrarCanchaFormVM[]>('cancha');
 
     const onCreateDetail = () => {
         resetForm();
         setShowSectionDetalle(true);
-        setTorneoSeleccionado([]);
+        setCanchaSeleccionada([]);
         focusNombreForm();
     };
 
     const onCancelDetail = () => {
         resetForm();
-        setTorneoSeleccionado([]);
+        setCanchaSeleccionada([]);
         setShowSectionDetalle(false)
     };
 
     const resetForm = () => {
-        formManager.setValues(initialStateTorneoForm);
-        setTorneoForm(initialStateTorneoForm)
+        formManager.setValues(initialStateCanchaForm);
+        setCanchaForm(initialStateCanchaForm)
     }
 
     const onEditDetail = async () => {
         resetForm();
-        const torneo = await Get<RegistrarTorneoVM>(`torneo/${torneoSeleccionado[0].toString()}`);
-        setTorneoForm(torneo);
+        const torneo = await Get<RegistrarCanchaFormVM>(`cancha/${canchaSeleccionada[0].toString()}`);
+        setCanchaForm(torneo);
         setShowSectionDetalle(true);
         focusNombreForm();
     };
@@ -123,11 +98,11 @@ function Index () {
     };
 
     const onDeleteDetail = async () => {
-        await Delete(`torneo/${torneoSeleccionado[0].toString()}`);
-        mutate('torneo', true);
+        await Delete(`cancha/${canchaSeleccionada[0].toString()}`);
+        mutate('cancha', true);
         setOpenDialog(false);
-        setTorneoSeleccionado([]);
-        showNotificationSuccess('Se eliminó exitosamente.');
+        setCanchaSeleccionada([]);
+        showNotificationSuccess(Messages.SeEliminoExitosamente);
     };
 
     const focusNombreForm = () => {
@@ -138,10 +113,10 @@ function Index () {
 
     return (
         <>
-            <SectionCollapse title={Labels.Torneos} expanded>
+            <SectionCollapse title={Labels.Canchas} expanded>
                 <DataGrid
                     loading={loading}
-                    rows={torneosFromDB?.length ? torneosFromDB : []}
+                    rows={canchasFromDB?.length ? canchasFromDB : []}
                     columns={columns}
                     localeText={LocaleDataGrid}
                     pageSize={5}
@@ -154,16 +129,16 @@ function Index () {
                     onSelectionModelChange={(newSelectionModel) => {
                         if (newSelectionModel.length > 1)
                         {
-                            const selectionSet = new Set(torneoSeleccionado);
+                            const selectionSet = new Set(canchaSeleccionada);
                             const result = newSelectionModel.filter((s) => !selectionSet.has(s));
-                            setTorneoSeleccionado(result);
+                            setCanchaSeleccionada(result);
 
                         } else
                         {
-                            setTorneoSeleccionado(newSelectionModel);
+                            setCanchaSeleccionada(newSelectionModel);
                         }
                     }}
-                    selectionModel={torneoSeleccionado}
+                    selectionModel={canchaSeleccionada}
                     checkboxSelection
                     sx={{
                         '.MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer': {
@@ -176,10 +151,10 @@ function Index () {
                     <Button variant="contained" onClick={onCreateDetail}>
                         {Labels.Crear}
                     </Button>
-                    <Button variant="contained" color='info' disabled={torneoSeleccionado.length ? false : true} onClick={onEditDetail}>
+                    <Button variant="contained" color='info' disabled={canchaSeleccionada.length ? false : true} onClick={onEditDetail}>
                         {Labels.Editar}
                     </Button>
-                    <Button variant="contained" color='error' disabled={torneoSeleccionado.length ? false : true} onClick={onDeleteDialogAlert}>
+                    <Button variant="contained" color='error' disabled={canchaSeleccionada.length ? false : true} onClick={onDeleteDialogAlert}>
                         {Labels.Eliminar}
                     </Button>
                 </Stack>
@@ -196,37 +171,24 @@ function Index () {
                             />
                         </Grid>
                         <Grid item xs={3}>
-                            <DateInput
-                                name={Labels.FechaInicio}
-                                label={Labels.FechaInicio}
-                                formManager={formManager}
-                            />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <DateInput
-                                name={Labels.FechaFin}
-                                label={Labels.FechaFin}
-                                formManager={formManager}
-                            />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <CheckBoxInput name={Labels.Finalizado}
-                                label={Labels.Finalizado}
+                            <NumberInput
+                                name={Labels.Identificador}
+                                label={Labels.Identificador}
                                 formManager={formManager}
                             />
                         </Grid>
                     </Grid>
                     <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
-                        <Button variant="contained" type='submit' color='success' disabled={!formManager.isValid}>
+                        <LoadingButton loading={formManager.isSubmitting} variant="contained" type='submit' color='success' disabled={!formManager.isValid}>
                             {Labels.Guardar}
-                        </Button>
+                        </LoadingButton>
                         <Button variant="contained" color='error' onClick={onCancelDetail}>
                             {Labels.Cancelar}
                         </Button>
                     </Stack>
                 </Form>
             </SectionCollapse>
-            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar torneo' content='Se eliminará el torneo. ¿Estás seguro?' handleOk={onDeleteDetail} handleCancel={onCancelDetail} />
+            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar cancha' content='Se eliminará la cancha. ¿Estás seguro?' handleOk={onDeleteDetail} />
         </>
     );
 }

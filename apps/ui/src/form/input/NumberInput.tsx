@@ -1,27 +1,27 @@
 import TextField from '@mui/material/TextField';
 import { FormikProps } from 'formik';
-import { Ref } from 'react';
+import * as Yup from 'yup';
+
 
 interface IPropsInput {
     name: string;
     label: string;
     disabled?: boolean;
     size?: 'medium' | 'small';
-    refElement?: Ref<HTMLElement>;
     formManager: FormikProps<Record<any, any>>
 }
 
-export function TextInput (props: IPropsInput) {
-    const { name, label, disabled, size, refElement, formManager } = props;
+export function NumberInput (props: IPropsInput) {
+    const { name, label, disabled, size, formManager } = props;
     const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
+    const schemaValueInput = Yup.number().positive().integer();
 
     const handleChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!/(\s)/g.test(e.target.value))
+        if (schemaValueInput.isValidSync(e.target.value) || e.target.value === '')
         {
             setFieldTouched(name);
             setFieldValue(name, e.target.value);
         }
-
     }
 
     return (
@@ -40,7 +40,6 @@ export function TextInput (props: IPropsInput) {
             variant='outlined'
             disabled={disabled ? disabled : false}
             margin='normal'
-            inputRef={refElement}
         />
     );
 }
