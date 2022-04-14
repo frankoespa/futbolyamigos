@@ -19,4 +19,9 @@ export class DocumentLoaderDomainService {
         return document ? new type(document) : null;
     }
 
+    Query<T extends Document> (nameModel: string): Model<T> {
+        const T_Model: Model<T> = this.connection.model(nameModel);
+        return T_Model;
+    }
+
 }

@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { RegistrarTorneoDTO } from '../dtos/RegistrarTorneoDTO';
 import { TorneoLogic } from '../providers/TorneoLogic';
 import { Auth } from '../../auth/decorators/AuthComposition';
-import { DropDownVM, RegistrarTorneoVM, Roles } from "@futbolyamigos/data";
+import { DropDownVM, RegistrarTorneoVM, Roles, TorneoResultadoDataView } from "@futbolyamigos/data";
 import { Types } from "mongoose";
 
 @Controller('torneo')
@@ -18,7 +18,7 @@ export class TorneoController {
 
     @Auth([Roles.Admin])
     @Get()
-    async ObtenerTodos (): Promise<RegistrarTorneoVM[]> {
+    async ObtenerTodos (): Promise<TorneoResultadoDataView[]> {
 
         return await this.torneoLogic.ObtenerTodos();
     }

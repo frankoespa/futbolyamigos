@@ -4,8 +4,9 @@ import { Torneo } from "../schema/TorneoSchema";
 import { TorneoDomain } from "../domain/TorneoDomain";
 import { TorneoRepository } from "../repository/TorneoRepository";
 import { RegistrarTorneoDTO } from "../dtos/RegistrarTorneoDTO";
-import { DropDownVM, RegistrarTorneoVM } from "@futbolyamigos/data";
+import { DropDownVM, RegistrarTorneoVM, TorneoResultadoDataView } from "@futbolyamigos/data";
 import { Types } from "mongoose";
+import { Equipo } from "../../equipo/schema/EquipoSchema";
 
 @Injectable()
 export class TorneoLogic {
@@ -30,16 +31,28 @@ export class TorneoLogic {
         }
     }
 
-    async ObtenerTodos (): Promise<RegistrarTorneoVM[]> {
+    async ObtenerTodos (): Promise<TorneoResultadoDataView[]> {
+
         const torneos = await this.torneoRepository.ReadAll();
 
-        return torneos.map<RegistrarTorneoVM>(t => ({
-            _id: t.Doc._id,
-            Nombre: t.Doc.Nombre,
-            FechaInicio: t.Doc.FechaInicio,
-            FechaFin: t.Doc.FechaFin,
-            Finalizado: t.Doc.Finalizado
-        }))
+        const equipoModel = this.documentLoaderService.Query<Equipo>(Equipo.name);
+
+        const torneoResultadoDataView: TorneoResultadoDataView[] = [];
+
+        for (const tDomain of torneos)
+        {
+            torneoResultadoDataView.push({
+                _id: tDomain.Doc._id,
+                Nombre: tDomain.Doc.Nombre,
+                FechaInicio: tDomain.Doc.FechaInicio,
+                FechaFin: tDomain.Doc.FechaFin,
+                Finalizado: tDomain.Doc.Finalizado,
+                TotalEquipos: await equipoModel.countDocuments({ Torneo: tDomain.Doc._id }).exec()
+            })
+
+        }
+
+        return torneoResultadoDataView;
     }
 
     async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarTorneoVM> {
