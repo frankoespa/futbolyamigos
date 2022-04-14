@@ -9,6 +9,7 @@ import { DbModule } from '../db/DbModule';
 import { RoleModule } from '../role/RoleModule';
 import { TorneoModule } from '../torneo/TorneoModule';
 import { CanchaModule } from '../cancha/CanchaModule';
+import { EquipoModule } from '../equipo/EquipoModule';
 
 @Module({
     imports: [
@@ -31,7 +32,8 @@ import { CanchaModule } from '../cancha/CanchaModule';
         DbModule,
         RoleModule,
         TorneoModule,
-        CanchaModule
+        CanchaModule,
+        EquipoModule
     ],
     controllers: [],
     providers: [],

@@ -118,7 +118,7 @@ function Index () {
                     loading={loading}
                     rows={canchasFromDB?.length ? canchasFromDB : []}
                     columns={columns}
-                    localeText={LocaleDataGrid}
+                    localeText={LocaleDataGrid.Spanish}
                     pageSize={5}
                     rowsPerPageOptions={[5]}
                     pagination

@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { RegistrarTorneoDTO } from '../dtos/RegistrarTorneoDTO';
 import { TorneoLogic } from '../providers/TorneoLogic';
 import { Auth } from '../../auth/decorators/AuthComposition';
-import { RegistrarTorneoVM, Roles } from "@futbolyamigos/data";
+import { DropDownVM, RegistrarTorneoVM, Roles } from "@futbolyamigos/data";
 import { Types } from "mongoose";
 
 @Controller('torneo')
@@ -37,10 +37,10 @@ export class TorneoController {
         return await this.torneoLogic.EliminarPorId(id);
     }
 
-    // @Auth([Roles.Admin])
-    // @Get()
-    // async GetAllNotFinalized (): Promise<void> {
+    @Auth([Roles.Admin])
+    @Get('dropdown/todos')
+    async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
 
-    //     return await this.torneoLogic.EliminarPorId();
-    // }
+        return await this.torneoLogic.ObtenerTodosDropDown();
+    }
 }

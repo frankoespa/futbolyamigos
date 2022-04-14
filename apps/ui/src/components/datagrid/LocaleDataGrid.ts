@@ -1,137 +1,143 @@
-import { GridLocaleText } from "@mui/x-data-grid";
+import { esES } from "@mui/x-data-grid";
 
-;
+const SPANISH_LOCALE = esES.components.MuiDataGrid.defaultProps.localeText;
 
-export const LocaleDataGrid: GridLocaleText = {
-    // Root
-    noRowsLabel: 'Sin registros',
-    noResultsOverlayLabel: 'No results found.',
-    errorOverlayDefaultLabel: 'An error occurred.',
+SPANISH_LOCALE.noRowsLabel = 'Sin registros'
 
-    // Density selector toolbar button text
-    toolbarDensity: 'Density',
-    toolbarDensityLabel: 'Density',
-    toolbarDensityCompact: 'Compact',
-    toolbarDensityStandard: 'Standard',
-    toolbarDensityComfortable: 'Comfortable',
+export const LocaleDataGrid = {
+    Spanish: SPANISH_LOCALE
+}
 
-    // Columns selector toolbar button text
-    toolbarColumns: 'Columns',
-    toolbarColumnsLabel: 'Select columns',
+// export const LocaleDataGrid: GridLocaleText = {
+//     // Root
+//     noRowsLabel: 'Sin registros',
+//     noResultsOverlayLabel: 'No results found.',
+//     errorOverlayDefaultLabel: 'An error occurred.',
 
-    // Filters toolbar button text
-    toolbarFilters: 'Filters',
-    toolbarFiltersLabel: 'Show filters',
-    toolbarFiltersTooltipHide: 'Hide filters',
-    toolbarFiltersTooltipShow: 'Show filters',
-    toolbarFiltersTooltipActive: (count) =>
-        count !== 1 ? `${count} active filters` : `${count} active filter`,
+//     // Density selector toolbar button text
+//     toolbarDensity: 'Density',
+//     toolbarDensityLabel: 'Density',
+//     toolbarDensityCompact: 'Compact',
+//     toolbarDensityStandard: 'Standard',
+//     toolbarDensityComfortable: 'Comfortable',
 
-    // Export selector toolbar button text
-    toolbarExport: 'Export',
-    toolbarExportLabel: 'Export',
-    toolbarExportCSV: 'Download as CSV',
-    toolbarExportPrint: 'Print',
+//     // Columns selector toolbar button text
+//     toolbarColumns: 'Columns',
+//     toolbarColumnsLabel: 'Select columns',
 
-    // Columns panel text
-    columnsPanelTextFieldLabel: 'Find column',
-    columnsPanelTextFieldPlaceholder: 'Column title',
-    columnsPanelDragIconLabel: 'Reorder column',
-    columnsPanelShowAllButton: 'Show all',
-    columnsPanelHideAllButton: 'Hide all',
+//     // Filters toolbar button text
+//     toolbarFilters: 'Filters',
+//     toolbarFiltersLabel: 'Show filters',
+//     toolbarFiltersTooltipHide: 'Hide filters',
+//     toolbarFiltersTooltipShow: 'Show filters',
+//     toolbarFiltersTooltipActive: (count) =>
+//         count !== 1 ? `${count} active filters` : `${count} active filter`,
 
-    // Filter panel text
-    filterPanelAddFilter: 'Add filter',
-    filterPanelDeleteIconLabel: 'Delete',
-    filterPanelLinkOperator: 'Logic operator',
-    filterPanelOperators: 'Operator', // TODO v6: rename to filterPanelOperator
-    filterPanelOperatorAnd: 'And',
-    filterPanelOperatorOr: 'Or',
-    filterPanelColumns: 'Columns',
-    filterPanelInputLabel: 'Value',
-    filterPanelInputPlaceholder: 'Filter value',
+//     // Export selector toolbar button text
+//     toolbarExport: 'Export',
+//     toolbarExportLabel: 'Export',
+//     toolbarExportCSV: 'Download as CSV',
+//     toolbarExportPrint: 'Print',
 
-    // Filter operators text
-    filterOperatorContains: 'contains',
-    filterOperatorEquals: 'equals',
-    filterOperatorStartsWith: 'starts with',
-    filterOperatorEndsWith: 'ends with',
-    filterOperatorIs: 'is',
-    filterOperatorNot: 'is not',
-    filterOperatorAfter: 'is after',
-    filterOperatorOnOrAfter: 'is on or after',
-    filterOperatorBefore: 'is before',
-    filterOperatorOnOrBefore: 'is on or before',
-    filterOperatorIsEmpty: 'is empty',
-    filterOperatorIsNotEmpty: 'is not empty',
-    filterOperatorIsAnyOf: 'is any of',
+//     // Columns panel text
+//     columnsPanelTextFieldLabel: 'Find column',
+//     columnsPanelTextFieldPlaceholder: 'Column title',
+//     columnsPanelDragIconLabel: 'Reorder column',
+//     columnsPanelShowAllButton: 'Show all',
+//     columnsPanelHideAllButton: 'Hide all',
 
-    // Filter values text
-    filterValueAny: 'any',
-    filterValueTrue: 'true',
-    filterValueFalse: 'false',
+//     // Filter panel text
+//     filterPanelAddFilter: 'Add filter',
+//     filterPanelDeleteIconLabel: 'Delete',
+//     filterPanelLinkOperator: 'Logic operator',
+//     filterPanelOperators: 'Operator', // TODO v6: rename to filterPanelOperator
+//     filterPanelOperatorAnd: 'And',
+//     filterPanelOperatorOr: 'Or',
+//     filterPanelColumns: 'Columns',
+//     filterPanelInputLabel: 'Value',
+//     filterPanelInputPlaceholder: 'Filter value',
 
-    // Column menu text
-    columnMenuLabel: 'Menu',
-    columnMenuShowColumns: 'Show columns',
-    columnMenuFilter: 'Filter',
-    columnMenuHideColumn: 'Hide',
-    columnMenuUnsort: 'Unsort',
-    columnMenuSortAsc: 'Sort by ASC',
-    columnMenuSortDesc: 'Sort by DESC',
+//     // Filter operators text
+//     filterOperatorContains: 'contains',
+//     filterOperatorEquals: 'equals',
+//     filterOperatorStartsWith: 'starts with',
+//     filterOperatorEndsWith: 'ends with',
+//     filterOperatorIs: 'is',
+//     filterOperatorNot: 'is not',
+//     filterOperatorAfter: 'is after',
+//     filterOperatorOnOrAfter: 'is on or after',
+//     filterOperatorBefore: 'is before',
+//     filterOperatorOnOrBefore: 'is on or before',
+//     filterOperatorIsEmpty: 'is empty',
+//     filterOperatorIsNotEmpty: 'is not empty',
+//     filterOperatorIsAnyOf: 'is any of',
 
-    // Column header text
-    columnHeaderFiltersTooltipActive: (count) =>
-        count !== 1 ? `${count} active filters` : `${count} active filter`,
-    columnHeaderFiltersLabel: 'Show filters',
-    columnHeaderSortIconLabel: 'Sort',
+//     // Filter values text
+//     filterValueAny: 'any',
+//     filterValueTrue: 'true',
+//     filterValueFalse: 'false',
 
-    // Rows selected footer text
-    footerRowSelected: (count) =>
-        count !== 1
-            ? `${count.toLocaleString()} seleccionados`
-            : `${count.toLocaleString()} seleccionado`,
+//     // Column menu text
+//     columnMenuLabel: 'Menu',
+//     columnMenuShowColumns: 'Show columns',
+//     columnMenuFilter: 'Filter',
+//     columnMenuHideColumn: 'Hide',
+//     columnMenuUnsort: 'Unsort',
+//     columnMenuSortAsc: 'Sort by ASC',
+//     columnMenuSortDesc: 'Sort by DESC',
 
-    // Total row amount footer text
-    footerTotalRows: 'Total:',
+//     // Column header text
+//     columnHeaderFiltersTooltipActive: (count) =>
+//         count !== 1 ? `${count} active filters` : `${count} active filter`,
+//     columnHeaderFiltersLabel: 'Show filters',
+//     columnHeaderSortIconLabel: 'Sort',
 
-    // Total visible row amount footer text
-    footerTotalVisibleRows: (visibleCount, totalCount) =>
-        `${visibleCount.toLocaleString()} de ${totalCount.toLocaleString()}`,
+//     // Rows selected footer text
+//     footerRowSelected: (count) =>
+//         count !== 1
+//             ? `${count.toLocaleString()} seleccionados`
+//             : `${count.toLocaleString()} seleccionado`,
 
-    // Checkbox selection text
-    checkboxSelectionHeaderName: 'Checkbox selection',
-    checkboxSelectionSelectAllRows: 'Select all rows',
-    checkboxSelectionUnselectAllRows: 'Unselect all rows',
-    checkboxSelectionSelectRow: 'Select row',
-    checkboxSelectionUnselectRow: 'Unselect row',
+//     // Total row amount footer text
+//     footerTotalRows: 'Total:',
 
-    // Boolean cell text
-    booleanCellTrueLabel: 'yes',
-    booleanCellFalseLabel: 'no',
+//     // Total visible row amount footer text
+//     footerTotalVisibleRows: (visibleCount, totalCount) =>
+//         `${visibleCount.toLocaleString()} de ${totalCount.toLocaleString()}`,
 
-    // Actions cell more text
-    actionsCellMore: 'more',
+//     // Checkbox selection text
+//     checkboxSelectionHeaderName: 'Checkbox selection',
+//     checkboxSelectionSelectAllRows: 'Select all rows',
+//     checkboxSelectionUnselectAllRows: 'Unselect all rows',
+//     checkboxSelectionSelectRow: 'Select row',
+//     checkboxSelectionUnselectRow: 'Unselect row',
 
-    // Column pinning text
-    pinToLeft: 'Pin to left',
-    pinToRight: 'Pin to right',
-    unpin: 'Unpin',
+//     // Boolean cell text
+//     booleanCellTrueLabel: 'yes',
+//     booleanCellFalseLabel: 'no',
 
-    // Tree Data
-    treeDataGroupingHeaderName: 'Group',
-    treeDataExpand: 'see children',
-    treeDataCollapse: 'hide children',
+//     // Actions cell more text
+//     actionsCellMore: 'more',
 
-    // Grouping columns
-    groupingColumnHeaderName: 'Group',
-    groupColumn: (name) => `Group by ${name}`,
-    unGroupColumn: (name) => `Stop grouping by ${name}`,
+//     // Column pinning text
+//     pinToLeft: 'Pin to left',
+//     pinToRight: 'Pin to right',
+//     unpin: 'Unpin',
 
-    // Master/detail
-    expandDetailPanel: 'Expand',
-    collapseDetailPanel: 'Collapse',
+//     // Tree Data
+//     treeDataGroupingHeaderName: 'Group',
+//     treeDataExpand: 'see children',
+//     treeDataCollapse: 'hide children',
 
-    // Used core components translation keys
-    MuiTablePagination: {},
-};
+//     // Grouping columns
+//     groupingColumnHeaderName: 'Group',
+//     groupColumn: (name) => `Group by ${name}`,
+//     unGroupColumn: (name) => `Stop grouping by ${name}`,
+
+//     // Master/detail
+//     expandDetailPanel: 'Expand',
+//     collapseDetailPanel: 'Collapse',
+
+//     // Used core components translation keys
+//     MuiTablePagination: {},
+// };
