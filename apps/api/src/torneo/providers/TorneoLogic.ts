@@ -4,7 +4,7 @@ import { Torneo } from "../schema/TorneoSchema";
 import { TorneoDomain } from "../domain/TorneoDomain";
 import { TorneoRepository } from "../repository/TorneoRepository";
 import { RegistrarTorneoDTO } from "../dtos/RegistrarTorneoDTO";
-import { RegistrarTorneoVM } from "@futbolyamigos/data";
+import { DropDownVM, RegistrarTorneoVM } from "@futbolyamigos/data";
 import { Types } from "mongoose";
 
 @Injectable()
@@ -60,5 +60,14 @@ export class TorneoLogic {
         if (!torneoDomain) return null;
 
         await torneoDomain.Delete()
+    }
+
+    async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
+        const torneos = await this.torneoRepository.ReadAll();
+
+        return torneos.map<DropDownVM<Types.ObjectId>>(t => ({
+            _id: t.Doc._id,
+            Description: t.Doc.Nombre
+        }))
     }
 }

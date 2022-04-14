@@ -23,5 +23,8 @@ export enum Labels {
     Finalizado = 'Finalizado',
     Identificador = 'Identificador',
     Canchas = 'Canchas',
-    Ok = 'Ok'
+    Ok = 'Ok',
+    NombreTorneo = 'NombreTorneo',
+    TorneoID = 'TorneoID',
+    Equipos = 'Equipos'
 }

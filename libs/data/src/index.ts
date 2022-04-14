@@ -12,5 +12,9 @@ export * from './lib/auth/UserSignInVM';
 export * from './lib/user/UserDetailVM';
 
 export * from './lib/torneo/RegistrarTorneoVM';
+
 export * from './lib/cancha/RegistrarCanchaVM';
 export * from './lib/cancha/RegistrarCanchaFormVM';
+
+export * from './lib/equipo/RegistrarEquipoVM';
+export * from './lib/equipo/EquipoResultadoDataView';

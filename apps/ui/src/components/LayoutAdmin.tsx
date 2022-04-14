@@ -105,7 +105,7 @@ function LayoutAdmin (props: IProps) {
                             <ListItemText primary={<Typography variant='body1' color='text.secondary'>Torneos</Typography>} />
                         </ListItem>
                     </Link>
-                    <Link href='/admin/torneos' passHref>
+                    <Link href='/admin/equipos' passHref>
                         <ListItem button>
                             <ListItemIcon>
                                 <Shield />
