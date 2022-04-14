@@ -4,7 +4,7 @@ import { DataGrid, GridColDef, GridRowModel, GridSelectionModel, GridValueFormat
 import moment from 'moment'
 import { Button, Grid, Stack } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
-import { Labels } from "@futbolyamigos/data";
+import { Labels, TorneoResultadoDataView } from "@futbolyamigos/data";
 import * as Yup from 'yup';
 import { DateInput } from '../../src/form/input/DateInput';
 import { Form } from '../../src/form/Form';
@@ -44,6 +44,13 @@ const columns: GridColDef[] = [
             if (!params.value) return null;
             return moment(params.value as Date).format('D-M-YYYY');
         }
+    },
+    {
+        field: Labels.TotalEquipos,
+        headerName: 'Total Equipos',
+        type: 'number',
+        flex: 1
+
     },
     {
         field: Labels.Finalizado,
@@ -90,7 +97,7 @@ function Index () {
 
     const refNombreForm = useRef<HTMLElement>();
 
-    const { data: torneosFromDB, loading } = useGetSWR<RegistrarTorneoVM[]>('torneo');
+    const { data: torneosFromDB, loading } = useGetSWR<TorneoResultadoDataView[]>('torneo');
 
     const onCreateDetail = () => {
         resetForm();

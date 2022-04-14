@@ -26,5 +26,6 @@ export enum Labels {
     Ok = 'Ok',
     NombreTorneo = 'NombreTorneo',
     TorneoID = 'TorneoID',
-    Equipos = 'Equipos'
+    Equipos = 'Equipos',
+    TotalEquipos = 'TotalEquipos'
 }
