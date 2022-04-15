@@ -2,6 +2,8 @@ export * from './lib/global/Global';
 export * from './lib/global/Labels';
 export * from './lib/global/Messages';
 
+export * from './lib/validations/Validator'
+
 export * from './lib/exception/ExceptionResponseInterface';
 
 export * from './lib/base/DropDownVM';

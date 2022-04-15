@@ -9,7 +9,7 @@ import { Form } from '../../src/form/Form';
 import { TextInput } from '../../src/form/input/TextInput';
 import { useApiManager } from '../../src/api/useApiManager';
 import { FormikHelpers } from 'formik';
-import { RegistrarCanchaFormVM } from "@futbolyamigos/data";
+import { RegistrarCanchaFormVM, Validator } from "@futbolyamigos/data";
 import { useSWRConfig } from "swr";
 import { useNotification } from '../../src/notifications/useNotification';
 import { DialogAlert } from '../../src/components/DialogAlert';
@@ -22,7 +22,8 @@ const columns: GridColDef[] = [
     {
         field: Labels.Nombre,
         headerName: Labels.Nombre,
-        flex: 1
+        flex: 1,
+        hideable: false
     },
     {
         field: Labels.Identificador,
@@ -122,8 +123,6 @@ function Index () {
                     pageSize={5}
                     rowsPerPageOptions={[5]}
                     pagination
-                    disableColumnFilter
-                    disableColumnMenu
                     disableSelectionOnClick
                     autoHeight
                     onSelectionModelChange={(newSelectionModel) => {
@@ -168,13 +167,15 @@ function Index () {
                                 label={Labels.Nombre}
                                 formManager={formManager}
                                 refElement={refNombreForm}
+                                validator={Validator.ConEspacios}
                             />
                         </Grid>
                         <Grid item xs={3}>
                             <NumberInput
                                 name={Labels.Identificador}
-                                label={Labels.Identificador}
+                                label='Nro Identificador'
                                 formManager={formManager}
+                                validator={Validator.SoloNumerosEnterosPositivos}
                             />
                         </Grid>
                     </Grid>

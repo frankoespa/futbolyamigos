@@ -4,7 +4,7 @@ import { DataGrid, GridColDef, GridRowModel, GridSelectionModel, GridValueFormat
 import moment from 'moment'
 import { Button, Grid, Stack } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
-import { Labels, TorneoResultadoDataView } from "@futbolyamigos/data";
+import { Labels, TorneoResultadoDataView, Validator } from "@futbolyamigos/data";
 import * as Yup from 'yup';
 import { DateInput } from '../../src/form/input/DateInput';
 import { Form } from '../../src/form/Form';
@@ -23,7 +23,8 @@ const columns: GridColDef[] = [
     {
         field: Labels.Nombre,
         headerName: Labels.Nombre,
-        flex: 1
+        flex: 1,
+        hideable: false
     },
     {
         field: Labels.FechaInicio,
@@ -154,8 +155,6 @@ function Index () {
                     pageSize={5}
                     rowsPerPageOptions={[5]}
                     pagination
-                    disableColumnFilter
-                    disableColumnMenu
                     disableSelectionOnClick
                     autoHeight
                     onSelectionModelChange={(newSelectionModel) => {
@@ -200,6 +199,7 @@ function Index () {
                                 label={Labels.Nombre}
                                 formManager={formManager}
                                 refElement={refNombreForm}
+                                validator={Validator.ConEspacios}
                             />
                         </Grid>
                         <Grid item xs={3}>

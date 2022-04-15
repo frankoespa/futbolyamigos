@@ -9,7 +9,7 @@ import { Form } from '../../src/form/Form';
 import { TextInput } from '../../src/form/input/TextInput';
 import { useApiManager } from '../../src/api/useApiManager';
 import { FormikHelpers } from 'formik';
-import { RegistrarEquipoVM, EquipoResultadoDataView } from "@futbolyamigos/data";
+import { RegistrarEquipoVM, EquipoResultadoDataView, Validator } from "@futbolyamigos/data";
 import { useSWRConfig } from "swr";
 import { useNotification } from '../../src/notifications/useNotification';
 import { DialogAlert } from '../../src/components/DialogAlert';
@@ -22,7 +22,8 @@ const columns: GridColDef[] = [
     {
         field: Labels.Nombre,
         headerName: Labels.Nombre,
-        flex: 1
+        flex: 1,
+        hideable: false
     },
     {
         field: Labels.NombreTorneo,
@@ -52,7 +53,6 @@ function Index () {
             [Labels.TorneoID]: Yup.string().required('requerido')
         },
         onSubmit: async (equipo: RegistrarEquipoVM, formikHelpers: FormikHelpers<RegistrarEquipoVM>) => {
-            console.log(equipo)
             await Post('equipo', equipo);
             mutate('equipo', true);
             setShowSectionDetalle(false);
@@ -122,8 +122,6 @@ function Index () {
                     pageSize={5}
                     rowsPerPageOptions={[5]}
                     pagination
-                    disableColumnFilter
-                    disableColumnMenu
                     disableSelectionOnClick
                     autoHeight
                     onSelectionModelChange={(newSelectionModel) => {
@@ -168,6 +166,7 @@ function Index () {
                                 label={Labels.Nombre}
                                 formManager={formManager}
                                 refElement={refNombreForm}
+                                validator={Validator.ConEspacios}
                             />
                         </Grid>
                         <Grid item xs={3}>
