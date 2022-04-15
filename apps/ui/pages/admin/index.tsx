@@ -2,7 +2,7 @@ function Index () {
 
 
     return (
-        'hola'
+        'inicio'
     );
 }
 
