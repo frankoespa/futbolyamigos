@@ -8,15 +8,23 @@ interface IPropsInput {
     disabled?: boolean;
     size?: 'medium' | 'small';
     refElement?: Ref<HTMLElement>;
-    formManager: FormikProps<Record<any, any>>
+    formManager: FormikProps<Record<any, any>>,
+    validator?: (value: string) => boolean
 }
 
 export function TextInput (props: IPropsInput) {
-    const { name, label, disabled, size, refElement, formManager } = props;
+    const { name, label, disabled, size, refElement, formManager, validator } = props;
     const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
 
     const handleChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!/(\s)/g.test(e.target.value))
+
+        if (validator && validator(e.target.value))
+        {
+            setFieldTouched(name);
+            setFieldValue(name, e.target.value);
+        }
+
+        if (!validator)
         {
             setFieldTouched(name);
             setFieldValue(name, e.target.value);
