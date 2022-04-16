@@ -21,3 +21,6 @@ export * from './lib/cancha/RegistrarCanchaFormVM';
 
 export * from './lib/equipo/RegistrarEquipoVM';
 export * from './lib/equipo/EquipoResultadoDataView';
+
+export * from './lib/jugador/JugadorResultadoDataView';
+export * from './lib/jugador/RegistrarJugadorVM';

@@ -9,25 +9,44 @@ interface IPropsInput {
     size?: 'medium' | 'small';
     refElement?: Ref<HTMLElement>;
     formManager: FormikProps<Record<any, any>>,
-    validator?: (value: string) => boolean
+    validator?: (value: string) => boolean,
+    textTransform?: 'uppercase' | 'lowercase' | 'none'
 }
 
 export function TextInput (props: IPropsInput) {
-    const { name, label, disabled, size, refElement, formManager, validator } = props;
+    const { name, label, disabled, size, refElement, formManager, validator, textTransform } = props;
     const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
 
     const handleChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
 
-        if (validator && validator(e.target.value))
+        let text = e.target.value;
+
+        if (textTransform)
+        {
+            switch (textTransform)
+            {
+                case 'uppercase':
+                    text = text.toUpperCase();
+                    break;
+                case 'lowercase':
+                    text = text.toLowerCase();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        if (validator && validator(text))
         {
             setFieldTouched(name);
-            setFieldValue(name, e.target.value);
+            setFieldValue(name, text);
         }
 
         if (!validator)
         {
             setFieldTouched(name);
-            setFieldValue(name, e.target.value);
+            setFieldValue(name, text);
         }
 
     }

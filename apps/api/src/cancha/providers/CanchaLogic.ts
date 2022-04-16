@@ -51,8 +51,11 @@ export class CanchaLogic {
     }
 
     async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarCanchaVM> {
+
         const canchaDomain = await this.canchaRepository.FindWithId(id);
-        if (!canchaDomain) return null;
+
+        if (!canchaDomain) throw new ValidationException(Messages.NoSeEncuentraLaCancha);
+
 
         return {
             _id: canchaDomain.Doc._id,

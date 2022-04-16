@@ -18,6 +18,7 @@ import { useNotification } from '../../src/notifications/useNotification';
 import { DialogAlert } from '../../src/components/DialogAlert';
 import { useGetSWR } from '../../src/api/useGetSWR';
 import { LocaleDataGrid } from '../../src/components/datagrid/LocaleDataGrid';
+import { LoadingButton } from '@mui/lab';
 
 const columns: GridColDef[] = [
     {
@@ -224,9 +225,9 @@ function Index () {
                         </Grid>
                     </Grid>
                     <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
-                        <Button variant="contained" type='submit' color='success' disabled={!formManager.isValid}>
+                        <LoadingButton loading={formManager.isSubmitting} variant="contained" type='submit' color='success' disabled={!formManager.isValid}>
                             {Labels.Guardar}
-                        </Button>
+                        </LoadingButton>
                         <Button variant="contained" color='error' onClick={onCancelDetail}>
                             {Labels.Cancelar}
                         </Button>
