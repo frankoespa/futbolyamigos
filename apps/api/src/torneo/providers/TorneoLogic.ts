@@ -75,6 +75,9 @@ export class TorneoLogic {
         const torneoDomain = await this.torneoRepository.FindWithId(id);
         if (!torneoDomain) return null;
 
+        await this.documentLoaderService.Query<Equipo>(Equipo.name).updateMany({ Torneo: id },
+            { Torneo: null }).exec();
+
         await torneoDomain.Delete()
     }
 

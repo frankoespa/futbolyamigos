@@ -33,5 +33,7 @@ export enum Labels {
     FechaNacimiento = 'FechaNacimiento',
     Telefono = 'Telefono',
     Jugadores = 'Jugadores',
-    EquipoID = 'EquipoID'
+    EquipoID = 'EquipoID',
+    TotalJugadores = 'TotalJugadores',
+
 }

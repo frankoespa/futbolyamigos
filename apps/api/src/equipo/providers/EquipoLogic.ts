@@ -9,6 +9,7 @@ import { Torneo } from "../../torneo/schema/TorneoSchema";
 import { TorneoDomain } from "../../torneo/domain/TorneoDomain";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
 import { Types } from "mongoose";
+import { Jugador } from "../../jugador/schema/JugadorSchema";
 
 @Injectable()
 export class EquipoLogic {
@@ -52,13 +53,24 @@ export class EquipoLogic {
     }
 
     async ObtenerTodos (): Promise<EquipoResultadoDataView[]> {
+
         const equipos = await this.equipoRepository.ReadAll();
 
-        return equipos.map<EquipoResultadoDataView>(t => ({
-            _id: t.Doc._id,
-            Nombre: t.Doc.Nombre,
-            NombreTorneo: t.Doc.Torneo ? t.Doc.Torneo.Nombre : null
-        }))
+        const jugadorModel = this.documentLoaderService.Query<Jugador>(Jugador.name);
+
+        const equipoResultadoDataView: EquipoResultadoDataView[] = [];
+
+        for (const eDomain of equipos)
+        {
+            equipoResultadoDataView.push({
+                _id: eDomain.Doc._id,
+                Nombre: eDomain.Doc.Nombre,
+                NombreTorneo: eDomain.Doc.Torneo ? eDomain.Doc.Torneo.Nombre : null,
+                TotalJugadores: await jugadorModel.countDocuments({ Equipo: eDomain.Doc._id }).exec()
+            })
+        }
+
+        return equipoResultadoDataView;
     }
 
     async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarEquipoVM> {
