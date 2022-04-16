@@ -8,11 +8,13 @@ interface IPropsInput {
     label: string;
     disabled?: boolean;
     size?: 'medium' | 'small';
-    formManager: FormikProps<Record<any, any>>
+    formManager: FormikProps<Record<any, any>>;
+    maxDate?: Moment;
+    disableFuture?: boolean
 }
 
 export function DateInput (props: IPropsInput) {
-    const { name, label, disabled, size, formManager } = props;
+    const { name, label, disabled, size, formManager, maxDate, disableFuture } = props;
     const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
 
     return (
@@ -48,6 +50,8 @@ export function DateInput (props: IPropsInput) {
             />}
             clearable
             clearText='Limpiar'
+            maxDate={maxDate ? maxDate : null}
+            disableFuture={disableFuture}
         />
     );
 }

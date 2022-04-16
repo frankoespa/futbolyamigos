@@ -42,7 +42,7 @@ function Index () {
     const initialStateEquipoForm: RegistrarEquipoVM = {
         _id: null,
         Nombre: '',
-        TorneoID: '',
+        TorneoID: null,
     };
     const [equipoForm, setEquipoForm] = useState<RegistrarEquipoVM>(initialStateEquipoForm);
     const [openDialog, setOpenDialog] = useState(false);
@@ -50,7 +50,7 @@ function Index () {
         initialValues: equipoForm,
         validations: {
             [Labels.Nombre]: Yup.string().required('requerido'),
-            [Labels.TorneoID]: Yup.string().required('requerido')
+            [Labels.TorneoID]: Yup.string().nullable()
         },
         onSubmit: async (equipo: RegistrarEquipoVM, formikHelpers: FormikHelpers<RegistrarEquipoVM>) => {
             await Post('equipo', equipo);
@@ -167,14 +167,16 @@ function Index () {
                                 formManager={formManager}
                                 refElement={refNombreForm}
                                 validator={Validator.ConEspacios}
+                                textTransform='uppercase'
                             />
                         </Grid>
                         <Grid item xs={3}>
                             <AutoCompleteInput
-                                urlApiData='torneo/dropdown/todos'
+                                urlApiData='torneo/dropdown/todosNoFinalizados'
                                 name={Labels.TorneoID}
                                 label={Labels.NombreTorneo}
-                                formManager={formManager} />
+                                formManager={formManager}
+                                nulleable />
                         </Grid>
                     </Grid>
                     <Stack direction='row' justifyContent="right" mt={2} spacing={1}>

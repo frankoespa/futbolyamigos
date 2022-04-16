@@ -201,6 +201,7 @@ function Index () {
                                 formManager={formManager}
                                 refElement={refNombreForm}
                                 validator={Validator.ConEspacios}
+                                textTransform='uppercase'
                             />
                         </Grid>
                         <Grid item xs={3}>

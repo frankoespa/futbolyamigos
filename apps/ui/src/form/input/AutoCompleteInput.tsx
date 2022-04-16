@@ -12,11 +12,12 @@ interface IPropsInput {
     disabled?: boolean;
     size?: 'medium' | 'small';
     refElement?: Ref<HTMLElement>;
-    formManager: FormikProps<Record<any, any>>
+    formManager: FormikProps<Record<any, any>>;
+    nulleable?: boolean
 }
 
 export function AutoCompleteInput (props: IPropsInput) {
-    const { name, label, disabled, size, refElement, formManager, urlApiData } = props;
+    const { name, label, disabled, size, refElement, formManager, urlApiData, nulleable } = props;
     const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
     const [inputValue, setInputValue] = useState('');
     const { data, loading } = useGetSWR<DropDownVM<string>[]>(urlApiData);
@@ -24,7 +25,7 @@ export function AutoCompleteInput (props: IPropsInput) {
     const valueForm = values[name];
 
     useEffect(() => {
-        if (valueForm == '')
+        if (valueForm == '' || valueForm == null)
         {
             setValue(null);
             setInputValue('')
@@ -40,7 +41,7 @@ export function AutoCompleteInput (props: IPropsInput) {
             onChange={(e, value: DropDownVM<string>) => {
                 setValue(value);
                 setFieldTouched(name);
-                setFieldValue(name, value !== null ? value._id : '');
+                setFieldValue(name, value !== null ? value._id : (nulleable ? null : ''));
             }}
             onBlur={handleBlur}
             inputValue={inputValue}

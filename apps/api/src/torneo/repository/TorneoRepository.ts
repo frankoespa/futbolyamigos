@@ -13,4 +13,9 @@ export class TorneoRepository extends RepositoryBase<Torneo, TorneoDomain> {
         super(torneoModel, TorneoDomain);
     }
 
+    async ObtenerTodosNoFinalizados (): Promise<Torneo[]> {
+
+        return await this.model.find({ Finalizado: false }).exec();
+    }
+
 }

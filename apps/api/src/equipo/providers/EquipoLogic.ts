@@ -20,25 +20,31 @@ export class EquipoLogic {
     async Registrar (registrarEquipoDTO: RegistrarEquipoDTO): Promise<void> {
 
         const equipoDomainPersisted = await this.equipoRepository.FindWithId(registrarEquipoDTO._id);
+        let torneoDomainPersisted: TorneoDomain = null;
 
-        const torneoDomainPersisted = await this.documentLoaderService.GetById<Torneo, TorneoDomain>(Torneo.name, TorneoDomain, registrarEquipoDTO.TorneoID);
-
-        if (!torneoDomainPersisted) throw new ValidationException(Messages.NoSeEncuentraElTorneo)
-        else
+        if (registrarEquipoDTO.TorneoID)
         {
-            if (torneoDomainPersisted.Doc.Finalizado) throw new ValidationException(Messages.ElTorneoSeEncuentraFinalizado);
+
+            torneoDomainPersisted = await this.documentLoaderService.GetById<Torneo, TorneoDomain>(Torneo.name, TorneoDomain, registrarEquipoDTO.TorneoID);
+
+            if (!torneoDomainPersisted) throw new ValidationException(Messages.NoSeEncuentraElTorneo)
+            else
+            {
+                if (torneoDomainPersisted.Doc.Finalizado) throw new ValidationException(Messages.ElTorneoSeEncuentraFinalizado);
+            }
+
         }
 
         if (equipoDomainPersisted)
         {
-            equipoDomainPersisted.Registrar(registrarEquipoDTO.Nombre, torneoDomainPersisted.Doc);
+            equipoDomainPersisted.Registrar(registrarEquipoDTO.Nombre, torneoDomainPersisted);
 
             equipoDomainPersisted.Save();
         } else
         {
             const equipoDomain = this.documentLoaderService.Create<Equipo, EquipoDomain>(Equipo.name, EquipoDomain);
 
-            equipoDomain.Registrar(registrarEquipoDTO.Nombre, torneoDomainPersisted.Doc);
+            equipoDomain.Registrar(registrarEquipoDTO.Nombre, torneoDomainPersisted);
 
             await equipoDomain.Save();
 
@@ -51,7 +57,7 @@ export class EquipoLogic {
         return equipos.map<EquipoResultadoDataView>(t => ({
             _id: t.Doc._id,
             Nombre: t.Doc.Nombre,
-            NombreTorneo: t.Doc.Torneo.Nombre
+            NombreTorneo: t.Doc.Torneo ? t.Doc.Torneo.Nombre : null
         }))
     }
 
@@ -64,7 +70,7 @@ export class EquipoLogic {
         return {
             _id: equipoDomain.Doc._id,
             Nombre: equipoDomain.Doc.Nombre,
-            TorneoID: equipoDomain.Doc.Torneo._id
+            TorneoID: equipoDomain.Doc.Torneo ? equipoDomain.Doc.Torneo._id : null
         }
     }
 

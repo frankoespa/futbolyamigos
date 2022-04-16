@@ -5,6 +5,6 @@ export class EquipoResultadoDataView {
 
     Nombre: string;
 
-    NombreTorneo: string
+    NombreTorneo?: string
 
 }
