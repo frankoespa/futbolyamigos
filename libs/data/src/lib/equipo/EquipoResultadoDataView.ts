@@ -7,4 +7,6 @@ export class EquipoResultadoDataView {
 
     NombreTorneo?: string
 
+    TotalJugadores: number
+
 }

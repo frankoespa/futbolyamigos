@@ -26,6 +26,14 @@ const columns: GridColDef[] = [
         hideable: false
     },
     {
+        field: Labels.TotalJugadores,
+        headerName: 'Total Jugadores',
+        type: 'number',
+        flex: 1,
+        align: 'left',
+        headerAlign: 'left'
+    },
+    {
         field: Labels.NombreTorneo,
         headerName: 'Torneo',
         type: 'string',

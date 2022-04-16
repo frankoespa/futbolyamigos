@@ -20,7 +20,7 @@ export class DocumentLoaderDomainService {
     }
 
     Query<T extends Document> (nameModel: string): Model<T> {
-        const T_Model: Model<T> = this.connection.model(nameModel);
+        const T_Model: Model<T> = this.connection.model<T>(nameModel);
         return T_Model;
     }
 

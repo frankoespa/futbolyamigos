@@ -51,7 +51,9 @@ const columns: GridColDef[] = [
         field: Labels.TotalEquipos,
         headerName: 'Total Equipos',
         type: 'number',
-        flex: 1
+        flex: 1,
+        align: 'left',
+        headerAlign: 'left'
 
     },
     {
