@@ -4,7 +4,7 @@ import { Equipo } from "../schema/EquipoSchema";
 import { EquipoDomain } from "../domain/EquipoDomain";
 import { EquipoRepository } from "../repository/EquipoRepository";
 import { RegistrarEquipoDTO } from "../dtos/RegistrarEquipoDTO";
-import { EquipoResultadoDataView, RegistrarEquipoVM, Messages } from "@futbolyamigos/data";
+import { EquipoResultadoDataView, RegistrarEquipoVM, Messages, DropDownVM } from "@futbolyamigos/data";
 import { Torneo } from "../../torneo/schema/TorneoSchema";
 import { TorneoDomain } from "../../torneo/domain/TorneoDomain";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
@@ -23,7 +23,7 @@ export class EquipoLogic {
 
         const torneoDomainPersisted = await this.documentLoaderService.GetById<Torneo, TorneoDomain>(Torneo.name, TorneoDomain, registrarEquipoDTO.TorneoID);
 
-        if (!torneoDomainPersisted) throw new ValidationException(Messages.ElTorneoNoExiste)
+        if (!torneoDomainPersisted) throw new ValidationException(Messages.NoSeEncuentraElTorneo)
         else
         {
             if (torneoDomainPersisted.Doc.Finalizado) throw new ValidationException(Messages.ElTorneoSeEncuentraFinalizado);
@@ -73,5 +73,15 @@ export class EquipoLogic {
         if (!equipoDomain) return null;
 
         await equipoDomain.Delete()
+    }
+
+    async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
+
+        const equipos = await this.equipoRepository.ReadAll();
+
+        return equipos.map<DropDownVM<Types.ObjectId>>(t => ({
+            _id: t.Doc._id,
+            Description: t.Doc.Nombre
+        }))
     }
 }

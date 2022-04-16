@@ -4,9 +4,10 @@ import { Torneo } from "../schema/TorneoSchema";
 import { TorneoDomain } from "../domain/TorneoDomain";
 import { TorneoRepository } from "../repository/TorneoRepository";
 import { RegistrarTorneoDTO } from "../dtos/RegistrarTorneoDTO";
-import { DropDownVM, RegistrarTorneoVM, TorneoResultadoDataView } from "@futbolyamigos/data";
+import { DropDownVM, Messages, RegistrarTorneoVM, TorneoResultadoDataView } from "@futbolyamigos/data";
 import { Types } from "mongoose";
 import { Equipo } from "../../equipo/schema/EquipoSchema";
+import { ValidationException } from "../../global/base/exceptions/ValidationException";
 
 @Injectable()
 export class TorneoLogic {
@@ -56,8 +57,10 @@ export class TorneoLogic {
     }
 
     async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarTorneoVM> {
+
         const torneoDomain = await this.torneoRepository.FindWithId(id);
-        if (!torneoDomain) return null;
+
+        if (!torneoDomain) throw new ValidationException(Messages.NoSeEncuentraElTorneo);
 
         return {
             _id: torneoDomain.Doc._id,

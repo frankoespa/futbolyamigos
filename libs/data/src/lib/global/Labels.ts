@@ -2,7 +2,7 @@ export enum Labels {
     Email = 'Email',
     Password = 'Password',
     Nombre = 'Nombre',
-    Apellidos = 'Apellido',
+    Apellidos = 'Apellidos',
     Enviar = 'Enviar',
     Ingresar = 'Ingresar',
     Buscar = 'Buscar',
@@ -25,7 +25,13 @@ export enum Labels {
     Canchas = 'Canchas',
     Ok = 'Ok',
     NombreTorneo = 'NombreTorneo',
+    NombreEquipo = 'NombreEquipo',
     TorneoID = 'TorneoID',
     Equipos = 'Equipos',
-    TotalEquipos = 'TotalEquipos'
+    TotalEquipos = 'TotalEquipos',
+    Nombres = 'Nombres',
+    FechaNacimiento = 'FechaNacimiento',
+    Telefono = 'Telefono',
+    Jugadores = 'Jugadores',
+    EquipoID = 'EquipoID'
 }
