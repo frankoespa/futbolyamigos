@@ -12,7 +12,7 @@ export class Equipo extends Document {
     @Prop({ required: true })
     Nombre: string;
 
-    @Prop({ type: Types.ObjectId, ref: Torneo.name, autopopulate: true, required: true })
+    @Prop({ type: Types.ObjectId, ref: Torneo.name, autopopulate: true, default: null })
     Torneo: Torneo;
 
 }

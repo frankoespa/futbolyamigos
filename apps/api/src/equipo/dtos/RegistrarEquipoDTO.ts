@@ -1,7 +1,6 @@
 import { RequiredString } from '../../global/base/validations/RequiredString';
 import { Types } from "mongoose";
 import { OptionalMongoId } from '../../global/base/validations/OptionalMongoId';
-import { RequiredMongoId } from '../../global/base/validations/RequiredMongoId';
 
 export class RegistrarEquipoDTO {
 
@@ -11,7 +10,7 @@ export class RegistrarEquipoDTO {
     @RequiredString()
     readonly Nombre: string;
 
-    @RequiredMongoId()
-    readonly TorneoID: Types.ObjectId
+    @OptionalMongoId()
+    readonly TorneoID?: Types.ObjectId
 
 }

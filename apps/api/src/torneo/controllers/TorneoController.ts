@@ -43,4 +43,11 @@ export class TorneoController {
 
         return await this.torneoLogic.ObtenerTodosDropDown();
     }
+
+    @Auth([Roles.Admin])
+    @Get('dropdown/todosNoFinalizados')
+    async ObtenerTodosNoFinalizadosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
+
+        return await this.torneoLogic.ObtenerTodosNoFinalizadosDropDown();
+    }
 }

@@ -4,6 +4,6 @@ export class RegistrarEquipoVM {
 
     Nombre: string;
 
-    TorneoID: string
+    TorneoID?: string
 
 }

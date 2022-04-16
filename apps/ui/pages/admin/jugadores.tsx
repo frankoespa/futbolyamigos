@@ -255,6 +255,7 @@ function Index () {
                                 name={Labels.FechaNacimiento}
                                 label={Labels.FechaNacimiento}
                                 formManager={formManager}
+                                disableFuture
                             />
                         </Grid>
                         <Grid item xs={3}>

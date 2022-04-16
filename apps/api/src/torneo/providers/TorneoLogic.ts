@@ -86,4 +86,14 @@ export class TorneoLogic {
             Description: t.Doc.Nombre
         }))
     }
+
+    async ObtenerTodosNoFinalizadosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
+
+        const torneos = await this.torneoRepository.ObtenerTodosNoFinalizados();
+
+        return torneos.map<DropDownVM<Types.ObjectId>>(t => ({
+            _id: t._id,
+            Description: t.Nombre
+        }))
+    }
 }
