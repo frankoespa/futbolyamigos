@@ -16,6 +16,6 @@ export class JugadorResultadoDataView {
 
     Telefono?: string;
 
-    NombreEquipo: string;
+    NombreEquipo?: string;
 
 }

@@ -4,7 +4,6 @@ import { Types } from "mongoose";
 import { OptionalMongoId } from '../../global/base/validations/OptionalMongoId';
 import { OptionalString } from '../../global/base/validations/OptionalString';
 import { OptionalEmail } from '../../global/base/validations/OptionalEmail';
-import { RequiredMongoId } from '../../global/base/validations/RequiredMongoId';
 
 export class RegistrarJugadorDTO {
 
@@ -29,7 +28,7 @@ export class RegistrarJugadorDTO {
     @OptionalString()
     readonly Telefono?: string;
 
-    @RequiredMongoId()
-    readonly EquipoID: Types.ObjectId
+    @OptionalMongoId()
+    readonly EquipoID?: Types.ObjectId
 
 }

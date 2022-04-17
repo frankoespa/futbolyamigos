@@ -97,9 +97,9 @@ function Index () {
         Apellidos: '',
         FechaNacimiento: null,
         Dni: '',
-        Email: '',
-        Telefono: '',
-        EquipoID: ''
+        Email: null,
+        Telefono: null,
+        EquipoID: null
     };
     const [jugadorForm, setJugadorForm] = useState<RegistrarJugadorVM>(initialStateJugadorForm);
     const [openDialog, setOpenDialog] = useState(false);
@@ -112,7 +112,7 @@ function Index () {
             [Labels.Dni]: Yup.string().required('requerido'),
             [Labels.Email]: Yup.string().email('email inválido').nullable(),
             [Labels.Telefono]: Yup.string().nullable().matches(/54[0-9][0-9][0-9][0-9]{7}/, { excludeEmptyString: true, message: 'El formato tiene que ser: +54 (xxx) x xx xx xx' }),
-            [Labels.EquipoID]: Yup.string().required('requerido')
+            [Labels.EquipoID]: Yup.string().nullable()
         },
         onSubmit: async (jugador: RegistrarJugadorVM, formikHelpers: FormikHelpers<RegistrarJugadorVM>) => {
             await Post('jugador', jugador);
@@ -263,7 +263,8 @@ function Index () {
                                 urlApiData='equipo/dropdown/todos'
                                 name={Labels.EquipoID}
                                 label={Labels.NombreEquipo}
-                                formManager={formManager} />
+                                formManager={formManager}
+                                nulleable />
                         </Grid>
                         <Grid item xs={3}>
                             <TextInput
@@ -291,7 +292,7 @@ function Index () {
                     </Stack>
                 </Form>
             </SectionCollapse>
-            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar jugador' content='Se eliminará el jugador. ¿Estás seguro?' handleOk={onDeleteDetail} handleCancel={onCancelDetail} />
+            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar jugador' content='Se eliminará el jugador. ¿Estás seguro?' handleOk={onDeleteDetail} />
         </>
     );
 }

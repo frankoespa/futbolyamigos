@@ -5,16 +5,18 @@ import { TorneoDomain } from "../domain/TorneoDomain";
 import { TorneoRepository } from "../repository/TorneoRepository";
 import { RegistrarTorneoDTO } from "../dtos/RegistrarTorneoDTO";
 import { DropDownVM, Messages, RegistrarTorneoVM, TorneoResultadoDataView } from "@futbolyamigos/data";
-import { Types } from "mongoose";
+import { Types, Connection } from "mongoose";
 import { Equipo } from "../../equipo/schema/EquipoSchema";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
+import { InjectConnection } from "@nestjs/mongoose";
 
 @Injectable()
 export class TorneoLogic {
 
     constructor (
         private readonly torneoRepository: TorneoRepository,
-        private readonly documentLoaderService: DocumentLoaderDomainService) {}
+        private readonly documentLoaderService: DocumentLoaderDomainService,
+        @InjectConnection() private connection: Connection) {}
 
     async Registrar (registrarTorneoDTO: RegistrarTorneoDTO): Promise<void> {
 
@@ -72,13 +74,33 @@ export class TorneoLogic {
     }
 
     async EliminarPorId (id: Types.ObjectId): Promise<void> {
+
         const torneoDomain = await this.torneoRepository.FindWithId(id);
-        if (!torneoDomain) return null;
 
-        await this.documentLoaderService.Query<Equipo>(Equipo.name).updateMany({ Torneo: id },
-            { Torneo: null }).exec();
+        if (!torneoDomain) return;
 
-        await torneoDomain.Delete()
+        const sesion = await this.connection.startSession();
+
+        try
+        {
+
+            sesion.startTransaction();
+
+            await this.documentLoaderService.Query<Equipo>(Equipo.name)
+                .updateMany({ Torneo: id }, { Torneo: null }, { session: sesion }).exec();
+            throw new Error('error en la transaccion')
+            await torneoDomain.Delete({ session: sesion });
+
+            await sesion.commitTransaction();
+
+            await sesion.endSession();
+
+        } catch (error)
+        {
+            await sesion.abortTransaction();
+
+            throw new ValidationException(error.message);
+        }
     }
 
     async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {

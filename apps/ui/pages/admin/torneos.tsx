@@ -94,7 +94,6 @@ function Index () {
             setShowSectionDetalle(false);
             setTorneoSeleccionado([]);
             showNotificationSuccess('Se guardó exitosamente.');
-
         }
 
     })
@@ -134,6 +133,7 @@ function Index () {
     };
 
     const onDeleteDetail = async () => {
+
         await Delete(`torneo/${torneoSeleccionado[0].toString()}`);
         mutate('torneo', true);
         setOpenDialog(false);
@@ -237,7 +237,7 @@ function Index () {
                     </Stack>
                 </Form>
             </SectionCollapse>
-            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar torneo' content='Se eliminará el torneo. ¿Estás seguro?' handleOk={onDeleteDetail} handleCancel={onCancelDetail} />
+            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar torneo' content='Se eliminará el torneo. ¿Estás seguro?' handleOk={onDeleteDetail} />
         </>
     );
 }

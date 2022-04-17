@@ -22,9 +22,16 @@ export class JugadorLogic {
 
         const jugadorDomainPersisted = await this.jugadorRepository.FindWithId(registrarJugadorDTO._id);
 
-        const equipoDomainPersisted = await this.documentLoaderService.GetById<Equipo, EquipoDomain>(Equipo.name, EquipoDomain, registrarJugadorDTO.EquipoID);
+        let equipoDomainPersisted: EquipoDomain = null;
 
-        if (!equipoDomainPersisted) throw new ValidationException(Messages.NoSeEncuentraElEquipo)
+        if (registrarJugadorDTO.EquipoID)
+        {
+
+            equipoDomainPersisted = await this.documentLoaderService.GetById<Equipo, EquipoDomain>(Equipo.name, EquipoDomain, registrarJugadorDTO.EquipoID);
+
+            if (!equipoDomainPersisted) throw new ValidationException(Messages.NoSeEncuentraElEquipo)
+
+        }
 
         const vo: RegistrarJugadorVO = {
             Nombres: registrarJugadorDTO.Nombres,
@@ -71,7 +78,7 @@ export class JugadorLogic {
             Dni: t.Doc.Dni,
             Email: t.Doc.Email,
             Telefono: t.Doc.Telefono,
-            NombreEquipo: t.Doc.Equipo.Nombre
+            NombreEquipo: t.Doc.Equipo ? t.Doc.Equipo.Nombre : null
         }))
     }
 
@@ -89,7 +96,7 @@ export class JugadorLogic {
             Dni: jugadorDomain.Doc.Dni,
             Email: jugadorDomain.Doc.Email,
             Telefono: jugadorDomain.Doc.Telefono,
-            EquipoID: jugadorDomain.Doc.Equipo._id
+            EquipoID: jugadorDomain.Doc.Equipo ? jugadorDomain.Doc.Equipo._id : null
         }
     }
 
