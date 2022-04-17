@@ -8,15 +8,17 @@ import { EquipoResultadoDataView, RegistrarEquipoVM, Messages, DropDownVM } from
 import { Torneo } from "../../torneo/schema/TorneoSchema";
 import { TorneoDomain } from "../../torneo/domain/TorneoDomain";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
-import { Types } from "mongoose";
+import { Types, Connection } from "mongoose";
 import { Jugador } from "../../jugador/schema/JugadorSchema";
+import { InjectConnection } from "@nestjs/mongoose";
 
 @Injectable()
 export class EquipoLogic {
 
     constructor (
         private readonly equipoRepository: EquipoRepository,
-        private readonly documentLoaderService: DocumentLoaderDomainService) {}
+        private readonly documentLoaderService: DocumentLoaderDomainService,
+        @InjectConnection() private connection: Connection) {}
 
     async Registrar (registrarEquipoDTO: RegistrarEquipoDTO): Promise<void> {
 
@@ -87,10 +89,34 @@ export class EquipoLogic {
     }
 
     async EliminarPorId (id: Types.ObjectId): Promise<void> {
+
         const equipoDomain = await this.equipoRepository.FindWithId(id);
+
         if (!equipoDomain) return null;
 
-        await equipoDomain.Delete()
+        const sesion = await this.connection.startSession();
+
+        try
+        {
+
+            sesion.startTransaction();
+
+            await this.documentLoaderService.Query<Jugador>(Jugador.name)
+                .updateMany({ Equipo: id }, { Equipo: null }, { session: sesion }).exec();
+
+            await equipoDomain.Delete({ session: sesion })
+
+            await sesion.commitTransaction();
+
+            await sesion.endSession();
+
+        } catch (error)
+        {
+            await sesion.abortTransaction();
+
+            throw new ValidationException(error.message);
+        }
+
     }
 
     async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
