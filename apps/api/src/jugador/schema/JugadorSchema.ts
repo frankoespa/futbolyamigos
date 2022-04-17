@@ -27,8 +27,8 @@ export class Jugador extends Document {
     @Prop({ default: null })
     Telefono?: string;
 
-    @Prop({ type: Types.ObjectId, ref: Equipo.name, autopopulate: true, required: true })
-    Equipo: Equipo;
+    @Prop({ type: Types.ObjectId, ref: Equipo.name, autopopulate: true, default: null })
+    Equipo?: Equipo;
 
 }
 

@@ -12,7 +12,7 @@ export class JugadorDomain extends DomainBase<Jugador> {
         this.doc.Dni = registrarJugadorVO.Dni;
         this.doc.Email = registrarJugadorVO.Email;
         this.doc.Telefono = registrarJugadorVO.Telefono;
-        this.doc.Equipo = registrarJugadorVO.EquipoDomain.Doc
+        this.doc.Equipo = registrarJugadorVO.EquipoDomain ? registrarJugadorVO.EquipoDomain.Doc : null
     }
 
 }

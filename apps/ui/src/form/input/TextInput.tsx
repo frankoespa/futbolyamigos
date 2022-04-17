@@ -57,7 +57,7 @@ export function TextInput (props: IPropsInput) {
             id={name}
             name={name}
             label={label}
-            value={values[name]}
+            value={values[name] === null ? '' : values[name]}
             onChange={handleChangeCustom}
             onBlur={handleBlur}
             error={(touched as Record<string, boolean>)[name] && Boolean((errors as Record<string, string>)[name])}
