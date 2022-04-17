@@ -53,14 +53,19 @@ function Index () {
             [Labels.Identificador]: Yup.number().required('requerido')
         },
         onSubmit: async (cancha: RegistrarCanchaFormVM, formikHelpers: FormikHelpers<RegistrarCanchaFormVM>) => {
-            console.log(cancha)
-            await Post('cancha', cancha);
-            mutate('cancha', true);
-            setShowSectionDetalle(false);
-            setCanchaSeleccionada([]);
-            resetForm();
-            showNotificationSuccess(Messages.SeGuardoExitosamente)
+            try
+            {
+                await Post('cancha', cancha);
+                mutate('cancha', true);
+                setShowSectionDetalle(false);
+                setCanchaSeleccionada([]);
+                resetForm();
+                showNotificationSuccess(Messages.SeGuardoExitosamente)
 
+            } catch (e)
+            {
+                return;
+            }
         }
 
     })
@@ -87,11 +92,18 @@ function Index () {
     }
 
     const onEditDetail = async () => {
-        resetForm();
-        const torneo = await Get<RegistrarCanchaFormVM>(`cancha/${canchaSeleccionada[0].toString()}`);
-        setCanchaForm(torneo);
-        setShowSectionDetalle(true);
-        focusNombreForm();
+        try
+        {
+            resetForm();
+            const torneo = await Get<RegistrarCanchaFormVM>(`cancha/${canchaSeleccionada[0].toString()}`);
+            setCanchaForm(torneo);
+            setShowSectionDetalle(true);
+            focusNombreForm();
+
+        } catch (e)
+        {
+            return;
+        }
     };
 
     const onDeleteDialogAlert = async () => {
@@ -99,11 +111,18 @@ function Index () {
     };
 
     const onDeleteDetail = async () => {
-        await Delete(`cancha/${canchaSeleccionada[0].toString()}`);
-        mutate('cancha', true);
-        setOpenDialog(false);
-        setCanchaSeleccionada([]);
-        showNotificationSuccess(Messages.SeEliminoExitosamente);
+        try
+        {
+            await Delete(`cancha/${canchaSeleccionada[0].toString()}`);
+            mutate('cancha', true);
+            setOpenDialog(false);
+            setCanchaSeleccionada([]);
+            showNotificationSuccess(Messages.SeEliminoExitosamente);
+
+        } catch (e)
+        {
+            return;
+        }
     };
 
     const focusNombreForm = () => {

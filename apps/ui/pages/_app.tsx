@@ -20,6 +20,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import "moment/locale/es";
 
 Axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL_BASE;
+Axios.defaults.withCredentials = true;
 
 function App ({ Component, pageProps }: AppProps) {
     const { pathname } = useRouter();
@@ -34,7 +35,7 @@ function App ({ Component, pageProps }: AppProps) {
                 <CssBaseline />
                 <NotificationManager>
                     <SWRConfig value={{
-                        fetcher: url => Axios.get(url, { withCredentials: true }).then(res => res.data),
+                        fetcher: url => Axios.get(url).then(res => res.data),
                         shouldRetryOnError: false
                     }}>
                         <LocalizationProvider dateAdapter={AdapterMoment} locale='es'>
@@ -58,7 +59,7 @@ function App ({ Component, pageProps }: AppProps) {
                 <CssBaseline />
                 <NotificationManager>
                     <SWRConfig value={{
-                        fetcher: url => Axios.get(url, { withCredentials: true }).then(res => res.data),
+                        fetcher: url => Axios.get(url).then(res => res.data),
                         shouldRetryOnError: false
                     }}>
                         <LocalizationProvider dateAdapter={AdapterMoment} locale='es'>

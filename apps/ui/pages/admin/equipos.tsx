@@ -61,12 +61,19 @@ function Index () {
             [Labels.TorneoID]: Yup.string().nullable()
         },
         onSubmit: async (equipo: RegistrarEquipoVM, formikHelpers: FormikHelpers<RegistrarEquipoVM>) => {
-            await Post('equipo', equipo);
-            mutate('equipo', true);
-            setShowSectionDetalle(false);
-            setEquipoSeleccionado([]);
-            resetForm();
-            showNotificationSuccess(Messages.SeGuardoExitosamente)
+            try
+            {
+                await Post('equipo', equipo);
+                mutate('equipo', true);
+                setShowSectionDetalle(false);
+                setEquipoSeleccionado([]);
+                resetForm();
+                showNotificationSuccess(Messages.SeGuardoExitosamente)
+
+            } catch (e)
+            {
+                return;
+            }
 
         }
 
@@ -94,11 +101,18 @@ function Index () {
     }
 
     const onEditDetail = async () => {
-        resetForm();
-        const equipo = await Get<RegistrarEquipoVM>(`equipo/${equipoSeleccionado[0].toString()}`);
-        setEquipoForm(equipo);
-        setShowSectionDetalle(true);
-        focusNombreForm();
+        try
+        {
+            resetForm();
+            const equipo = await Get<RegistrarEquipoVM>(`equipo/${equipoSeleccionado[0].toString()}`);
+            setEquipoForm(equipo);
+            setShowSectionDetalle(true);
+            focusNombreForm();
+
+        } catch (e)
+        {
+            return;
+        }
     };
 
     const onDeleteDialogAlert = async () => {
@@ -106,11 +120,18 @@ function Index () {
     };
 
     const onDeleteDetail = async () => {
-        await Delete(`equipo/${equipoSeleccionado[0].toString()}`);
-        mutate('equipo', true);
-        setOpenDialog(false);
-        setEquipoSeleccionado([]);
-        showNotificationSuccess(Messages.SeEliminoExitosamente);
+        try
+        {
+            await Delete(`equipo/${equipoSeleccionado[0].toString()}`);
+            mutate('equipo', true);
+            setOpenDialog(false);
+            setEquipoSeleccionado([]);
+            showNotificationSuccess(Messages.SeEliminoExitosamente);
+
+        } catch (e)
+        {
+            return;
+        }
     };
 
     const focusNombreForm = () => {

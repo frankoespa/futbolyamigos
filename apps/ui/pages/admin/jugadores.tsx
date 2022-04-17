@@ -115,12 +115,19 @@ function Index () {
             [Labels.EquipoID]: Yup.string().nullable()
         },
         onSubmit: async (jugador: RegistrarJugadorVM, formikHelpers: FormikHelpers<RegistrarJugadorVM>) => {
-            await Post('jugador', jugador);
-            mutate('jugador', true);
-            resetForm();
-            setShowSectionDetalle(false);
-            setJugadorSeleccionado([]);
-            showNotificationSuccess('Se guardó exitosamente.');
+            try
+            {
+                await Post('jugador', jugador);
+                mutate('jugador', true);
+                resetForm();
+                setShowSectionDetalle(false);
+                setJugadorSeleccionado([]);
+                showNotificationSuccess('Se guardó exitosamente.');
+
+            } catch (e)
+            {
+                return;
+            }
 
         }
 
@@ -149,11 +156,18 @@ function Index () {
     }
 
     const onEditDetail = async () => {
-        resetForm();
-        const jugador = await Get<RegistrarJugadorVM>(`jugador/${jugadorSeleccionado[0].toString()}`);
-        setJugadorForm(jugador);
-        setShowSectionDetalle(true);
-        focusNombreForm();
+        try
+        {
+            resetForm();
+            const jugador = await Get<RegistrarJugadorVM>(`jugador/${jugadorSeleccionado[0].toString()}`);
+            setJugadorForm(jugador);
+            setShowSectionDetalle(true);
+            focusNombreForm();
+
+        } catch (e)
+        {
+            return;
+        }
     };
 
     const onDeleteDialogAlert = async () => {
@@ -161,11 +175,18 @@ function Index () {
     };
 
     const onDeleteDetail = async () => {
-        await Delete(`jugador/${jugadorSeleccionado[0].toString()}`);
-        mutate('jugador', true);
-        setOpenDialog(false);
-        setJugadorSeleccionado([]);
-        showNotificationSuccess('Se eliminó exitosamente.');
+        try
+        {
+            await Delete(`jugador/${jugadorSeleccionado[0].toString()}`);
+            mutate('jugador', true);
+            setOpenDialog(false);
+            setJugadorSeleccionado([]);
+            showNotificationSuccess('Se eliminó exitosamente.');
+
+        } catch (e)
+        {
+            return;
+        }
     };
 
     const focusNombreForm = () => {

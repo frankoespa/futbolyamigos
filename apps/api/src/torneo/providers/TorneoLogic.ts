@@ -88,7 +88,7 @@ export class TorneoLogic {
 
             await this.documentLoaderService.Query<Equipo>(Equipo.name)
                 .updateMany({ Torneo: id }, { Torneo: null }, { session: sesion }).exec();
-            throw new Error('error en la transaccion')
+
             await torneoDomain.Delete({ session: sesion });
 
             await sesion.commitTransaction();
