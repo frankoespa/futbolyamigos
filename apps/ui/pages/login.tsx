@@ -19,8 +19,14 @@ function Login () {
     const { loading } = useUser();
 
     const onSubmitSignIn = async (userSignin: UserSignInVM, formikHelpers: FormikHelpers<UserSignInVM>) => {
-        await Post('auth/login', userSignin);
-        replace('/admin/torneos');
+        try
+        {
+            await Post('auth/login', userSignin);
+            replace('/admin/torneos');
+        } catch (e)
+        {
+            return;
+        }
     };
 
     const formManager = useFormManager<UserSignInVM>({

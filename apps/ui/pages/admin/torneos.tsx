@@ -88,12 +88,18 @@ function Index () {
             [Labels.FechaFin]: Yup.date().nullable()
         },
         onSubmit: async (torneo: RegistrarTorneoVM, formikHelpers: FormikHelpers<RegistrarTorneoVM>) => {
-            await Post('torneo', torneo);
-            mutate('torneo', true);
-            resetForm();
-            setShowSectionDetalle(false);
-            setTorneoSeleccionado([]);
-            showNotificationSuccess('Se guardó exitosamente.');
+            try
+            {
+                await Post('torneo', torneo);
+                mutate('torneo', true);
+                resetForm();
+                setShowSectionDetalle(false);
+                setTorneoSeleccionado([]);
+                showNotificationSuccess('Se guardó exitosamente.');
+            } catch (e)
+            {
+                return
+            }
         }
 
     })
@@ -121,11 +127,18 @@ function Index () {
     }
 
     const onEditDetail = async () => {
-        resetForm();
-        const torneo = await Get<RegistrarTorneoVM>(`torneo/${torneoSeleccionado[0].toString()}`);
-        setTorneoForm(torneo);
-        setShowSectionDetalle(true);
-        focusNombreForm();
+        try
+        {
+            resetForm();
+            const torneo = await Get<RegistrarTorneoVM>(`torneo/${torneoSeleccionado[0].toString()}`);
+            setTorneoForm(torneo);
+            setShowSectionDetalle(true);
+            focusNombreForm();
+
+        } catch (e)
+        {
+            return;
+        }
     };
 
     const onDeleteDialogAlert = async () => {
@@ -133,12 +146,17 @@ function Index () {
     };
 
     const onDeleteDetail = async () => {
-
-        await Delete(`torneo/${torneoSeleccionado[0].toString()}`);
-        mutate('torneo', true);
-        setOpenDialog(false);
-        setTorneoSeleccionado([]);
-        showNotificationSuccess('Se eliminó exitosamente.');
+        try
+        {
+            await Delete(`torneo/${torneoSeleccionado[0].toString()}`)
+            mutate('torneo', true);
+            setOpenDialog(false);
+            setTorneoSeleccionado([]);
+            showNotificationSuccess('Se eliminó exitosamente.');
+        } catch (e)
+        {
+            return;
+        }
     };
 
     const focusNombreForm = () => {
