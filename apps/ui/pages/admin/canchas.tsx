@@ -27,9 +27,11 @@ const columns: GridColDef[] = [
     },
     {
         field: Labels.Identificador,
-        headerName: Labels.Identificador,
-        type: 'string',
-        flex: 1
+        headerName: 'Nro',
+        type: 'number',
+        flex: 1,
+        align: 'left',
+        headerAlign: 'left'
     }
 ];
 
@@ -42,7 +44,7 @@ function Index () {
     const initialStateCanchaForm: RegistrarCanchaFormVM = {
         _id: null,
         Nombre: '',
-        Identificador: '',
+        Identificador: null,
     };
     const [canchaForm, setCanchaForm] = useState<RegistrarCanchaFormVM>(initialStateCanchaForm);
     const [openDialog, setOpenDialog] = useState(false);
@@ -50,7 +52,7 @@ function Index () {
         initialValues: canchaForm,
         validations: {
             [Labels.Nombre]: Yup.string().required('requerido'),
-            [Labels.Identificador]: Yup.number().required('requerido')
+            [Labels.Identificador]: Yup.number().nullable().required('requerido')
         },
         onSubmit: async (cancha: RegistrarCanchaFormVM, formikHelpers: FormikHelpers<RegistrarCanchaFormVM>) => {
             try

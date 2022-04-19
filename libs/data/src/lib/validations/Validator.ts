@@ -43,6 +43,16 @@ export class Validator {
 
     }
 
+    static SoloNumerosEnterosPositivosYCero (
+        value: string
+    ): boolean {
+        const schemaValueInput = Yup.number().positive().integer();
+        const total = value.length;
+        if (total > 1 && value[total - 1] == ' ') return false;
+        return schemaValueInput.isValidSync(value) || value === '' || value === '0'
+
+    }
+
     static NumeroTelefono (
         value: string
     ): boolean {

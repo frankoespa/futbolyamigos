@@ -1,4 +1,4 @@
-import { DatePicker } from '@mui/lab';
+import { DateTimePicker } from '@mui/lab';
 import TextField from '@mui/material/TextField';
 import { FormikProps } from 'formik';
 import { Moment } from 'moment';
@@ -16,12 +16,12 @@ interface IPropsInput {
 
 }
 
-export function DateInput (props: IPropsInput) {
+export function DateTimeInput (props: IPropsInput) {
     const { name, label, disabled, size, formManager, maxDate, disableFuture, refElement } = props;
     const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
 
     return (
-        <DatePicker
+        <DateTimePicker
             label={label}
             value={values[name]}
             onChange={(date: Moment) => {
@@ -33,7 +33,7 @@ export function DateInput (props: IPropsInput) {
                 } else
                 {
                     setFieldTouched(name);
-                    setFieldValue(name, date.hour(0).minute(0).second(0).millisecond(0).toISOString())
+                    setFieldValue(name, date.second(0).millisecond(0).toISOString())
 
                 }
             }}

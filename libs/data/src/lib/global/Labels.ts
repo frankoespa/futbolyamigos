@@ -35,5 +35,15 @@ export enum Labels {
     Jugadores = 'Jugadores',
     EquipoID = 'EquipoID',
     TotalJugadores = 'TotalJugadores',
+    Fecha = 'Fecha',
+    NroCancha = 'NroCancha',
+    NombreEquipoLocal = 'NombreEquipoLocal',
+    NombreEquipoVisitante = 'NombreEquipoVisitante',
+    CanchaID = 'CanchaID',
+    EquipoLocalID = 'EquipoLocalID',
+    EquipoVisitanteID = 'EquipoVisitanteID',
+    Partidos = 'Partidos',
+    ResultadoLocal = 'ResultadoLocal',
+    ResultadoVisitante = 'ResultadoVisitante'
 
 }

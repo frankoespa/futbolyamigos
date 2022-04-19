@@ -6,6 +6,6 @@ export class RegistrarCanchaFormVM {
 
     Nombre: string;
 
-    Identificador: string;
+    Identificador: number;
 
 }

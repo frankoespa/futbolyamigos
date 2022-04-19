@@ -128,4 +128,14 @@ export class EquipoLogic {
             Description: t.Doc.Nombre
         }))
     }
+
+    async ObtenerTodosDiscriminandoDropDown (torneoID: string, equipoID: string): Promise<DropDownVM<Types.ObjectId>[]> {
+
+        const equipos = await this.equipoRepository.ObtenerTodosDiscriminandoDropDown(torneoID, equipoID);
+
+        return equipos.map<DropDownVM<Types.ObjectId>>(t => ({
+            _id: t._id,
+            Description: t.Nombre
+        }))
+    }
 }

@@ -38,7 +38,7 @@ export class CanchaController {
     }
 
     @Auth([Roles.Admin])
-    @Get('todosDropDown')
+    @Get('dropdown/todos')
     async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
 
         return await this.canchaLogic.ObtenerTodosDropDown();
