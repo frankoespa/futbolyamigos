@@ -12,4 +12,8 @@ export class PartidoResultadoDataView {
 
     NombreEquipoVisitante: string;
 
+    ResultadoLocal?: number;
+
+    ResultadoVisitante?: number;
+
 }

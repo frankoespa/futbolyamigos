@@ -284,8 +284,7 @@ function Index () {
                                 urlApiData='equipo/dropdown/todos'
                                 name={Labels.EquipoID}
                                 label={Labels.NombreEquipo}
-                                formManager={formManager}
-                                nulleable />
+                                formManager={formManager} />
                         </Grid>
                         <Grid item xs={3}>
                             <TextInput

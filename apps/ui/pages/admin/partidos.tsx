@@ -1,6 +1,6 @@
 import SectionCollapse from '../../src/components/SectionCollapse';
 import { useRef, useState } from 'react';
-import { DataGrid, GridColDef, GridRowModel, GridSelectionModel, GridValueFormatterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowModel, GridSelectionModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import moment from 'moment'
 import { Button, Divider, Grid, Stack, Typography } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
@@ -38,20 +38,23 @@ const columns: GridColDef[] = [
         flex: 1,
     },
     {
+        field: 'Enfrentamiento',
+        headerName: 'Enfrentamiento',
+        type: 'string',
+        flex: 1,
+        valueGetter: (params: GridValueGetterParams<any, any>) => {
+
+            const resultadoLocal = params.row[Labels.ResultadoLocal] || params.row[Labels.ResultadoLocal] === 0 ? `[${params.row[Labels.ResultadoLocal]}]` : '';
+
+            const resultadoVisitante = params.row[Labels.ResultadoVisitante] || params.row[Labels.ResultadoVisitante] === 0 ? `[${params.row[Labels.ResultadoVisitante]}]` : '';
+
+            return `${params.row[Labels.NombreEquipoLocal]} ${resultadoLocal} vs ${resultadoVisitante} ${params.row[Labels.NombreEquipoVisitante]}`
+        },
+
+    },
+    {
         field: Labels.NroCancha,
         headerName: Labels.NroCancha,
-        type: 'string',
-        flex: 1,
-    },
-    {
-        field: Labels.NombreEquipoLocal,
-        headerName: 'Equipo Local',
-        type: 'string',
-        flex: 1,
-    },
-    {
-        field: Labels.NombreEquipoVisitante,
-        headerName: 'Equipo Visitante',
         type: 'string',
         flex: 1,
     }
@@ -167,6 +170,41 @@ function Index () {
         }, 0);
     }
 
+    const dependFetchEquipoLocalInput = () => {
+        if (!formManager.values[Labels.TorneoID])
+        {
+            return 'equipo/dropdown/todos';
+        } else
+        {
+            if (formManager.values[Labels.EquipoVisitanteID] !== null)
+            {
+                return `equipo/dropdown/todosDiscriminando?torneoID=${formManager.values[Labels.TorneoID]}&equipoID=${formManager.values[Labels.EquipoVisitanteID]}`
+            } else
+            {
+                return `equipo/dropdown/todosDiscriminando?torneoID=${formManager.values[Labels.TorneoID]}&equipoID=`
+            }
+        }
+
+    }
+
+    const dependFetchEquipoVisitanteInput = () => {
+        if (!formManager.values[Labels.TorneoID])
+        {
+            return 'equipo/dropdown/todos';
+
+        } else
+        {
+            if (formManager.values[Labels.EquipoLocalID] !== null)
+            {
+                return `equipo/dropdown/todosDiscriminando?torneoID=${formManager.values[Labels.TorneoID]}&equipoID=${formManager.values[Labels.EquipoLocalID]}`
+            } else
+            {
+                return `equipo/dropdown/todosDiscriminando?torneoID=${formManager.values[Labels.TorneoID]}&equipoID=`
+            }
+        }
+
+    }
+
     return (
         <>
             <SectionCollapse title={Labels.Partidos} expanded>
@@ -233,8 +271,7 @@ function Index () {
                                 urlApiData='torneo/dropdown/todosNoFinalizados'
                                 name={Labels.TorneoID}
                                 label='Torneo'
-                                formManager={formManager}
-                                nulleable />
+                                formManager={formManager} />
                         </Grid>
                     </Grid>
                     <Divider>Campo de juego</Divider>
@@ -244,8 +281,7 @@ function Index () {
                                 urlApiData='cancha/dropdown/todos'
                                 name={Labels.CanchaID}
                                 label={Labels.NroCancha}
-                                formManager={formManager}
-                                nulleable />
+                                formManager={formManager} />
                         </Grid>
 
                     </Grid>
@@ -253,11 +289,10 @@ function Index () {
                     <Grid container justifyContent='center'>
                         <Grid item xs={3}>
                             <AutoCompleteInput
-                                urlApiData='equipo/dropdown/todos'
+                                urlApiData={dependFetchEquipoLocalInput}
                                 name={Labels.EquipoLocalID}
                                 label='Equipo Local'
-                                formManager={formManager}
-                                nulleable />
+                                formManager={formManager} />
                         </Grid>
                         <Grid item>
                             <NumberInput
@@ -282,11 +317,10 @@ function Index () {
                         </Grid>
                         <Grid item xs={3}>
                             <AutoCompleteInput
-                                urlApiData='equipo/dropdown/todos'
+                                urlApiData={dependFetchEquipoVisitanteInput}
                                 name={Labels.EquipoVisitanteID}
                                 label='Equipo Visitante'
-                                formManager={formManager}
-                                nulleable />
+                                formManager={formManager} />
                         </Grid>
                     </Grid>
                     <Stack direction='row' justifyContent="right" mt={2} spacing={1}>

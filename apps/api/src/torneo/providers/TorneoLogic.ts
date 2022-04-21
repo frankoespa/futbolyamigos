@@ -9,6 +9,7 @@ import { Types, Connection } from "mongoose";
 import { Equipo } from "../../equipo/schema/EquipoSchema";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
 import { InjectConnection } from "@nestjs/mongoose";
+import { Partido } from "../../partido/schema/PartidoSchema";
 
 @Injectable()
 export class TorneoLogic {
@@ -87,7 +88,10 @@ export class TorneoLogic {
             sesion.startTransaction();
 
             await this.documentLoaderService.Query<Equipo>(Equipo.name)
-                .updateMany({ Torneo: id }, { Torneo: null }, { session: sesion }).exec();
+                .updateMany({ Torneo: new Types.ObjectId(id) }, { Torneo: null }, { session: sesion }).exec();
+
+            await this.documentLoaderService.Query<Partido>(Partido.name)
+                .deleteMany({ Torneo: new Types.ObjectId(id) }, { session: sesion }).exec();
 
             await torneoDomain.Delete({ session: sesion });
 

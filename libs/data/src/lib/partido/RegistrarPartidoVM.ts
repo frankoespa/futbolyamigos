@@ -2,18 +2,18 @@ export class RegistrarPartidoVM {
 
     _id?: string
 
-    readonly Fecha: string;
+    Fecha: Date;
 
-    readonly TorneoID: string;
+    TorneoID: string;
 
-    readonly CanchaID?: string;
+    CanchaID?: string;
 
-    readonly EquipoLocalID: string;
+    EquipoLocalID: string;
 
-    readonly EquipoVisitanteID: string;
+    EquipoVisitanteID: string;
 
-    readonly ResultadoLocal?: number;
+    ResultadoLocal?: number;
 
-    readonly ResultadoVisitante?: number;
+    ResultadoVisitante?: number;
 
 }

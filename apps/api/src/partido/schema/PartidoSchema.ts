@@ -14,17 +14,23 @@ export class Partido extends Document {
     @Prop({ required: true })
     Fecha: Date;
 
-    @Prop({ required: true, type: Torneo })
+    @Prop({ type: Types.ObjectId, ref: Torneo.name, autopopulate: true, required: true })
     Torneo: Torneo;
 
     @Prop({ type: Types.ObjectId, ref: Cancha.name, autopopulate: true, default: null })
     Cancha?: Cancha;
 
-    @Prop({ required: true, type: Equipo })
+    @Prop({ type: Types.ObjectId, ref: Equipo.name, autopopulate: true, required: true })
     EquipoLocal: Equipo;
 
-    @Prop({ required: true, type: Equipo })
+    @Prop({ type: Types.ObjectId, ref: Equipo.name, autopopulate: true, required: true })
     EquipoVisitante: Equipo;
+
+    @Prop({ default: null, min: 0 })
+    ResultadoLocal?: number;
+
+    @Prop({ default: null, min: 0 })
+    ResultadoVisitante?: number;
 
 }
 

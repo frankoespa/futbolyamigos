@@ -13,7 +13,16 @@ export class EquipoRepository extends RepositoryBase<Equipo, EquipoDomain> {
         super(equipoModel, EquipoDomain);
     }
 
-    async ObtenerTodosDiscriminandoDropDown (torneoID: string, equipoID: string): Promise<Equipo[]> {
+    async ObtenerTodosDiscriminandoDropDown (torneoID: string, equipoID?: string): Promise<Equipo[]> {
+
+        if (!equipoID)
+        {
+            return await this.model.find({
+                Torneo: new Types.ObjectId(torneoID),
+            }).exec()
+
+        }
+
         return await this.model.find({
             _id: { $ne: new Types.ObjectId(equipoID) },
             Torneo: new Types.ObjectId(torneoID),

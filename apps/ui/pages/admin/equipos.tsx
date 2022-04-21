@@ -204,8 +204,7 @@ function Index () {
                                 urlApiData='torneo/dropdown/todosNoFinalizados'
                                 name={Labels.TorneoID}
                                 label={Labels.NombreTorneo}
-                                formManager={formManager}
-                                nulleable />
+                                formManager={formManager} />
                         </Grid>
                     </Grid>
                     <Stack direction='row' justifyContent="right" mt={2} spacing={1}>

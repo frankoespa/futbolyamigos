@@ -44,10 +44,9 @@ export class EquipoController {
         return await this.equipoLogic.ObtenerTodosDropDown();
     }
 
-    // @Auth([Roles.Admin])
+    @Auth([Roles.Admin])
     @Get('dropdown/todosDiscriminando')
     async ObtenerTodosDiscriminandoDropDown (@Query('torneoID') torneoID: string, @Query('equipoID') equipoID: string): Promise<DropDownVM<Types.ObjectId>[]> {
-        console.log(torneoID, equipoID)
         return await this.equipoLogic.ObtenerTodosDiscriminandoDropDown(torneoID, equipoID);
     }
 }

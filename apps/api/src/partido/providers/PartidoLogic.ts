@@ -4,7 +4,7 @@ import { Partido } from "../schema/PartidoSchema";
 import { PartidoDomain } from "../domain/PartidoDomain";
 import { PartidoRepository } from "../repository/PartidoRepository";
 import { RegistrarPartidoDTO } from "../dtos/RegistrarPartidoDTO";
-import { DropDownVM, Messages, PartidoResultadoDataView, RegistrarTorneoVM, TorneoResultadoDataView } from "@futbolyamigos/data";
+import { DropDownVM, Messages, PartidoResultadoDataView, RegistrarPartidoVM } from "@futbolyamigos/data";
 import { Types, Connection } from "mongoose";
 import { Equipo } from "../../equipo/schema/EquipoSchema";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
@@ -34,7 +34,7 @@ export class PartidoLogic {
 
         const canchaDomain = await this.documentLoaderService.GetById<Cancha, CanchaDomain>(Cancha.name, CanchaDomain, registrarPartidoDTO.CanchaID);
 
-        const partidoDomain = this.documentLoaderService.Create<Partido, PartidoDomain>(Partido.name, PartidoDomain);
+        const partidoDomainPersisted = await this.partidoRepository.FindWithId(registrarPartidoDTO._id);
 
         const vo: RegistrarPartidoVO = {
             Fecha: registrarPartidoDTO.Fecha,
@@ -46,9 +46,18 @@ export class PartidoLogic {
             ResultadoVisitante: registrarPartidoDTO.ResultadoVisitante
         }
 
-        partidoDomain.Registrar(vo);
+        if (partidoDomainPersisted)
+        {
+            partidoDomainPersisted.Registrar(vo);
+            await partidoDomainPersisted.Save();
 
-        await partidoDomain.Save();
+        } else
+        {
+            const partidoDomainNew = this.documentLoaderService.Create<Partido, PartidoDomain>(Partido.name, PartidoDomain);
+            partidoDomainNew.Registrar(vo);
+            await partidoDomainNew.Save();
+
+        }
 
     }
 
@@ -62,24 +71,29 @@ export class PartidoLogic {
             NombreTorneo: p.Doc.Torneo.Nombre,
             NroCancha: p.Doc.Cancha ? p.Doc.Cancha.Identificador : null,
             NombreEquipoLocal: p.Doc.EquipoLocal.Nombre,
-            NombreEquipoVisitante: p.Doc.EquipoVisitante.Nombre
+            NombreEquipoVisitante: p.Doc.EquipoVisitante.Nombre,
+            ResultadoLocal: p.Doc.ResultadoLocal,
+            ResultadoVisitante: p.Doc.ResultadoVisitante
         }))
     }
 
-    // async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarTorneoVM> {
+    async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarPartidoVM> {
 
-    //     const torneoDomain = await this.torneoRepository.FindWithId(id);
+        const partidoDomain = await this.partidoRepository.FindWithId(id);
 
-    //     if (!torneoDomain) throw new ValidationException(Messages.NoSeEncuentraElTorneo);
+        if (!partidoDomain) throw new ValidationException(Messages.NoSeEncuentraElPartido);
 
-    //     return {
-    //         _id: torneoDomain.Doc._id,
-    //         Nombre: torneoDomain.Doc.Nombre,
-    //         FechaInicio: torneoDomain.Doc.FechaInicio,
-    //         FechaFin: torneoDomain.Doc.FechaFin,
-    //         Finalizado: torneoDomain.Doc.Finalizado
-    //     }
-    // }
+        return {
+            _id: partidoDomain.Doc._id,
+            Fecha: partidoDomain.Doc.Fecha,
+            TorneoID: partidoDomain.Doc.Torneo._id,
+            CanchaID: partidoDomain.Doc.Cancha ? partidoDomain.Doc.Cancha._id : null,
+            EquipoLocalID: partidoDomain.Doc.EquipoLocal._id,
+            EquipoVisitanteID: partidoDomain.Doc.EquipoVisitante._id,
+            ResultadoLocal: partidoDomain.Doc.ResultadoLocal,
+            ResultadoVisitante: partidoDomain.Doc.ResultadoVisitante
+        }
+    }
 
     // async EliminarPorId (id: Types.ObjectId): Promise<void> {
 

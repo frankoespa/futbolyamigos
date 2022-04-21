@@ -129,7 +129,7 @@ export class EquipoLogic {
         }))
     }
 
-    async ObtenerTodosDiscriminandoDropDown (torneoID: string, equipoID: string): Promise<DropDownVM<Types.ObjectId>[]> {
+    async ObtenerTodosDiscriminandoDropDown (torneoID: string, equipoID?: string): Promise<DropDownVM<Types.ObjectId>[]> {
 
         const equipos = await this.equipoRepository.ObtenerTodosDiscriminandoDropDown(torneoID, equipoID);
 

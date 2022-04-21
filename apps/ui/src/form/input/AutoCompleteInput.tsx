@@ -4,36 +4,38 @@ import { FormikProps } from 'formik';
 import { Ref, useEffect, useState } from 'react';
 import { useGetSWR } from '../../api/useGetSWR';
 import { DropDownVM } from "@futbolyamigos/data";
+import { Key } from "swr";
+
 
 interface IPropsInput {
-    urlApiData: string
+    urlApiData: Key
     name: string;
     label: string;
     disabled?: boolean;
     size?: 'medium' | 'small';
     refElement?: Ref<HTMLElement>;
     formManager: FormikProps<Record<any, any>>;
-    nulleable?: boolean
 }
 
 export function AutoCompleteInput (props: IPropsInput) {
-    const { name, label, disabled, size, refElement, formManager, urlApiData, nulleable } = props;
+    const { name, label, disabled, size, refElement, formManager, urlApiData } = props;
     const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
     const [inputValue, setInputValue] = useState('');
     const { data, loading } = useGetSWR<DropDownVM<string>[]>(urlApiData);
-    const [value, setValue] = useState(null);
     const valueForm = values[name];
+    const [value, setValue] = useState(null);
 
     useEffect(() => {
-        if (valueForm == '' || valueForm == null)
+        if (!valueForm)
         {
             setValue(null);
             setInputValue('')
         } else
         {
-            setValue(data?.find(i => i._id === valueForm))
+            if (!loading)
+                setValue(data.find(i => i._id === valueForm))
         }
-    }, [name, data, valueForm])
+    }, [valueForm, data, loading])
 
     return (
         <Autocomplete
@@ -41,7 +43,7 @@ export function AutoCompleteInput (props: IPropsInput) {
             onChange={(e, value: DropDownVM<string>) => {
                 setValue(value);
                 setFieldTouched(name);
-                setFieldValue(name, value !== null ? value._id : (nulleable ? null : ''));
+                setFieldValue(name, value !== null ? value._id : null);
             }}
             onBlur={handleBlur}
             inputValue={inputValue}

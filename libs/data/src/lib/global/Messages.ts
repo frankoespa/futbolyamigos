@@ -7,5 +7,6 @@ export const Messages = {
     NoSeEncuentraElJugador: 'No se encuentra el jugador.',
     NoSeEncuentraLaCancha: 'No se encuentra la cancha.',
     NoSeEncuentraElTorneo: 'No se encuentra el torneo.',
+    NoSeEncuentraElPartido: 'No se encuentra el partido.',
     DniEnUso: 'El dni ya se encuentra en uso.'
 }

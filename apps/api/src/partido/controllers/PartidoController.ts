@@ -2,7 +2,8 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { RegistrarPartidoDTO } from '../dtos/RegistrarPartidoDTO';
 import { PartidoLogic } from '../providers/PartidoLogic';
 import { Auth } from '../../auth/decorators/AuthComposition';
-import { PartidoResultadoDataView, Roles } from "@futbolyamigos/data";
+import { PartidoResultadoDataView, RegistrarPartidoVM, Roles } from "@futbolyamigos/data";
+import { Types } from "mongoose";
 
 @Controller('partido')
 export class PartidoController {
@@ -22,31 +23,17 @@ export class PartidoController {
         return await this.partidoLogic.ObtenerTodos();
     }
 
-    // @Auth([Roles.Admin])
-    // @Get(':id')
-    // async ObtenerPorId (@Param('id') id: Types.ObjectId): Promise<RegistrarTorneoVM> {
+    @Auth([Roles.Admin])
+    @Get(':id')
+    async ObtenerPorId (@Param('id') id: Types.ObjectId): Promise<RegistrarPartidoVM> {
 
-    //     return await this.torneoLogic.ObtenerPorId(id);
-    // }
+        return await this.partidoLogic.ObtenerPorId(id);
+    }
 
     // @Auth([Roles.Admin])
     // @Delete(':id')
     // async Eliminar (@Param('id') id: Types.ObjectId): Promise<void> {
 
     //     return await this.torneoLogic.EliminarPorId(id);
-    // }
-
-    // @Auth([Roles.Admin])
-    // @Get('dropdown/todos')
-    // async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
-
-    //     return await this.torneoLogic.ObtenerTodosDropDown();
-    // }
-
-    // @Auth([Roles.Admin])
-    // @Get('dropdown/todosNoFinalizados')
-    // async ObtenerTodosNoFinalizadosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
-
-    //     return await this.torneoLogic.ObtenerTodosNoFinalizadosDropDown();
     // }
 }
