@@ -236,9 +236,9 @@ function Index () {
                     <Button variant="contained" color='info' disabled={jugadorSeleccionado.length ? false : true} onClick={onEditDetail}>
                         {Labels.Editar}
                     </Button>
-                    <Button variant="contained" color='error' disabled={jugadorSeleccionado.length ? false : true} onClick={onDeleteDialogAlert}>
+                    {/* <Button variant="contained" color='error' disabled={jugadorSeleccionado.length ? false : true} onClick={onDeleteDialogAlert}>
                         {Labels.Eliminar}
-                    </Button>
+                    </Button> */}
                 </Stack>
             </SectionCollapse>
             <SectionCollapse title={Labels.Detalle} expanded={showsectionDetalle}>
@@ -284,8 +284,7 @@ function Index () {
                                 urlApiData='equipo/dropdown/todos'
                                 name={Labels.EquipoID}
                                 label={Labels.NombreEquipo}
-                                formManager={formManager}
-                                nulleable />
+                                formManager={formManager} />
                         </Grid>
                         <Grid item xs={3}>
                             <TextInput

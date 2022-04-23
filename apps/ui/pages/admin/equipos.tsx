@@ -1,6 +1,6 @@
 import SectionCollapse from '../../src/components/SectionCollapse';
 import { useRef, useState } from 'react';
-import { DataGrid, GridColDef, GridRowModel, GridSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowModel, GridSelectionModel, GridValueFormatterParams } from '@mui/x-data-grid';
 import { Button, Grid, Stack } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
 import { Labels, Messages } from "@futbolyamigos/data";
@@ -37,7 +37,10 @@ const columns: GridColDef[] = [
         field: Labels.NombreTorneo,
         headerName: 'Torneo',
         type: 'string',
-        flex: 1
+        flex: 1,
+        valueFormatter: (params: GridValueFormatterParams) => {
+            return params.value ?? 'Sin torneo'
+        },
     }
 ];
 
@@ -204,8 +207,7 @@ function Index () {
                                 urlApiData='torneo/dropdown/todosNoFinalizados'
                                 name={Labels.TorneoID}
                                 label={Labels.NombreTorneo}
-                                formManager={formManager}
-                                nulleable />
+                                formManager={formManager} />
                         </Grid>
                     </Grid>
                     <Stack direction='row' justifyContent="right" mt={2} spacing={1}>

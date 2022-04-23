@@ -11,6 +11,7 @@ import { ValidationException } from "../../global/base/exceptions/ValidationExce
 import { Types, Connection } from "mongoose";
 import { Jugador } from "../../jugador/schema/JugadorSchema";
 import { InjectConnection } from "@nestjs/mongoose";
+import { Partido } from "../../partido/schema/PartidoSchema";
 
 @Injectable()
 export class EquipoLogic {
@@ -23,6 +24,7 @@ export class EquipoLogic {
     async Registrar (registrarEquipoDTO: RegistrarEquipoDTO): Promise<void> {
 
         const equipoDomainPersisted = await this.equipoRepository.FindWithId(registrarEquipoDTO._id);
+
         let torneoDomainPersisted: TorneoDomain = null;
 
         if (registrarEquipoDTO.TorneoID)
@@ -40,6 +42,7 @@ export class EquipoLogic {
 
         if (equipoDomainPersisted)
         {
+
             equipoDomainPersisted.Registrar(registrarEquipoDTO.Nombre, torneoDomainPersisted);
 
             equipoDomainPersisted.Save();
@@ -94,6 +97,14 @@ export class EquipoLogic {
 
         if (!equipoDomain) return null;
 
+        const tienePartidosJugadosOporJugar = await this.TienePartidosJugadosOporJugar(equipoDomain);
+        console.log(tienePartidosJugadosOporJugar)
+
+        if (tienePartidosJugadosOporJugar)
+        {
+            throw new ValidationException(Messages.NoSePuedeEliminarElEquipoPorqueTienePartidos)
+        }
+
         const sesion = await this.connection.startSession();
 
         try
@@ -119,6 +130,20 @@ export class EquipoLogic {
 
     }
 
+    private async TienePartidosJugadosOporJugar (equipoDomain: EquipoDomain) {
+        const partidosJugadosOporJugar = await this.documentLoaderService
+            .Query<Partido>(Partido.name)
+            .find({
+                $or: [
+                    { EquipoLocal: new Types.ObjectId(equipoDomain.Doc._id) },
+                    { EquipoVisitante: new Types.ObjectId(equipoDomain.Doc._id) }
+                ]
+            })
+            .exec();
+
+        return partidosJugadosOporJugar.length > 0;
+    }
+
     async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
 
         const equipos = await this.equipoRepository.ReadAll();
@@ -126,6 +151,16 @@ export class EquipoLogic {
         return equipos.map<DropDownVM<Types.ObjectId>>(t => ({
             _id: t.Doc._id,
             Description: t.Doc.Nombre
+        }))
+    }
+
+    async ObtenerTodosDiscriminandoDropDown (torneoID: string, equipoID?: string): Promise<DropDownVM<Types.ObjectId>[]> {
+
+        const equipos = await this.equipoRepository.ObtenerTodosDiscriminandoDropDown(torneoID, equipoID);
+
+        return equipos.map<DropDownVM<Types.ObjectId>>(t => ({
+            _id: t._id,
+            Description: t.Nombre
         }))
     }
 }

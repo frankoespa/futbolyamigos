@@ -5,15 +5,18 @@ import { RegistrarCanchaDTO } from "../dtos/RegistrarCanchaDTO";
 import { CanchaRepository } from "../repository/CanchaRepository";
 import { Cancha } from "../schema/CanchaSchema";
 import { DropDownVM, RegistrarCanchaVM, Messages } from "@futbolyamigos/data";
-import { Types } from "mongoose";
+import { Types, Connection } from "mongoose";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
+import { InjectConnection } from "@nestjs/mongoose";
+import { Partido } from "../../partido/schema/PartidoSchema";
 
 @Injectable()
 export class CanchaLogic {
 
     constructor (
         private readonly canchaRepository: CanchaRepository,
-        private readonly documentLoaderService: DocumentLoaderDomainService) {}
+        private readonly documentLoaderService: DocumentLoaderDomainService,
+        @InjectConnection() private readonly connection: Connection) {}
 
     async Registrar (registrarCanchaDTO: RegistrarCanchaDTO): Promise<void> {
 
@@ -65,14 +68,38 @@ export class CanchaLogic {
     }
 
     async EliminarPorId (id: Types.ObjectId): Promise<void> {
-        const torneoDomain = await this.canchaRepository.FindWithId(id);
-        if (!torneoDomain) return null;
+        const canchaDomain = await this.canchaRepository.FindWithId(id);
 
-        await torneoDomain.Delete()
+        if (!canchaDomain) return null;
+
+        const session = await this.connection.startSession();
+
+        try
+        {
+
+            session.startTransaction();
+
+            await this.documentLoaderService.Query<Partido>(Partido.name)
+                .updateMany({ Cancha: new Types.ObjectId(id) }, { Cancha: null }, { session }).exec();
+
+            await canchaDomain.Delete({ session });
+
+            await session.commitTransaction();
+
+            await session.endSession();
+
+        } catch (error)
+        {
+            await session.abortTransaction();
+
+            throw new ValidationException(error.message);
+        }
     }
 
     async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
-        const canchas = await this.canchaRepository.ReadAll();
+        let canchas = await this.canchaRepository.ReadAll();
+
+        canchas = canchas.sort((a, b) => a.Doc.Identificador - b.Doc.Identificador);
 
         return canchas.map<DropDownVM<Types.ObjectId>>(t => ({
             _id: t.Doc._id,

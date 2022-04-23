@@ -1,8 +1,8 @@
 import SectionCollapse from '../../src/components/SectionCollapse';
 import { useRef, useState } from 'react';
-import { DataGrid, GridColDef, GridRowModel, GridSelectionModel, GridValueFormatterParams } from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridColDef, GridRowModel, GridSelectionModel, GridValueFormatterParams } from '@mui/x-data-grid';
 import moment from 'moment'
-import { Button, Grid, Stack } from '@mui/material';
+import { Box, Button, Grid, Stack } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
 import { Labels, TorneoResultadoDataView, Validator } from "@futbolyamigos/data";
 import * as Yup from 'yup';
@@ -19,6 +19,7 @@ import { DialogAlert } from '../../src/components/DialogAlert';
 import { useGetSWR } from '../../src/api/useGetSWR';
 import { LocaleDataGrid } from '../../src/components/datagrid/LocaleDataGrid';
 import { LoadingButton } from '@mui/lab';
+import { green, red } from "@mui/material/colors";
 
 const columns: GridColDef[] = [
     {
@@ -58,9 +59,15 @@ const columns: GridColDef[] = [
     },
     {
         field: Labels.Finalizado,
-        headerName: 'Finalizado',
-        type: 'boolean',
-        flex: 1
+        headerName: 'Estado',
+        type: 'string',
+        flex: 1,
+        valueFormatter: (params: GridValueFormatterParams) => {
+            return params.value ? 'Finalizado' : 'En curso';
+        },
+        cellClassName: (params: GridCellParams<boolean>) => {
+            return params.value ? 'finalizado' : 'encurso'
+        }
 
     }
 ];
@@ -168,37 +175,48 @@ function Index () {
     return (
         <>
             <SectionCollapse title={Labels.Torneos} expanded>
-                <DataGrid
-                    loading={loading}
-                    rows={torneosFromDB?.length ? torneosFromDB : []}
-                    columns={columns}
-                    localeText={LocaleDataGrid.Spanish}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    pagination
-                    disableSelectionOnClick
-                    autoHeight
-                    onSelectionModelChange={(newSelectionModel) => {
-                        if (newSelectionModel.length > 1)
-                        {
-                            const selectionSet = new Set(torneoSeleccionado);
-                            const result = newSelectionModel.filter((s) => !selectionSet.has(s));
-                            setTorneoSeleccionado(result);
+                <Box sx={{
+                    '& .encurso': {
+                        backgroundColor: green[300],
+                        color: 'white'
+                    },
+                    '& .finalizado': {
+                        backgroundColor: red[300],
+                        color: 'white'
+                    }
+                }}>
+                    <DataGrid
+                        loading={loading}
+                        rows={torneosFromDB?.length ? torneosFromDB : []}
+                        columns={columns}
+                        localeText={LocaleDataGrid.Spanish}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        pagination
+                        disableSelectionOnClick
+                        autoHeight
+                        onSelectionModelChange={(newSelectionModel) => {
+                            if (newSelectionModel.length > 1)
+                            {
+                                const selectionSet = new Set(torneoSeleccionado);
+                                const result = newSelectionModel.filter((s) => !selectionSet.has(s));
+                                setTorneoSeleccionado(result);
 
-                        } else
-                        {
-                            setTorneoSeleccionado(newSelectionModel);
-                        }
-                    }}
-                    selectionModel={torneoSeleccionado}
-                    checkboxSelection
-                    sx={{
-                        '.MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer': {
-                            display: "none"
-                        }
-                    }}
-                    getRowId={(row: GridRowModel) => row._id}
-                />
+                            } else
+                            {
+                                setTorneoSeleccionado(newSelectionModel);
+                            }
+                        }}
+                        selectionModel={torneoSeleccionado}
+                        checkboxSelection
+                        sx={{
+                            '.MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer': {
+                                display: "none"
+                            }
+                        }}
+                        getRowId={(row: GridRowModel) => row._id}
+                    />
+                </Box>
                 <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
                     <Button variant="contained" onClick={onCreateDetail}>
                         {Labels.Crear}
@@ -255,7 +273,7 @@ function Index () {
                     </Stack>
                 </Form>
             </SectionCollapse>
-            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar torneo' content='Se eliminará el torneo. ¿Estás seguro?' handleOk={onDeleteDetail} />
+            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar torneo' content='Se eliminará el torneo, todos sus partidos y se desasociarán todos los equipos inscriptos. ¿Estás realmente seguro?' handleOk={onDeleteDetail} />
         </>
     );
 }

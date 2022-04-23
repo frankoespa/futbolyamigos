@@ -9,6 +9,7 @@ import { Types, Connection } from "mongoose";
 import { Equipo } from "../../equipo/schema/EquipoSchema";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
 import { InjectConnection } from "@nestjs/mongoose";
+import { Partido } from "../../partido/schema/PartidoSchema";
 
 @Injectable()
 export class TorneoLogic {
@@ -16,15 +17,44 @@ export class TorneoLogic {
     constructor (
         private readonly torneoRepository: TorneoRepository,
         private readonly documentLoaderService: DocumentLoaderDomainService,
-        @InjectConnection() private connection: Connection) {}
+        @InjectConnection() private readonly connection: Connection) {}
 
     async Registrar (registrarTorneoDTO: RegistrarTorneoDTO): Promise<void> {
 
         const torneoDomainPersisted = await this.torneoRepository.FindWithId(registrarTorneoDTO._id);
+
         if (torneoDomainPersisted)
         {
-            torneoDomainPersisted.Registrar(registrarTorneoDTO);
-            torneoDomainPersisted.Save();
+            const session = await this.connection.startSession();
+
+            try
+            {
+
+                session.startTransaction();
+
+                if (registrarTorneoDTO.Finalizado && (registrarTorneoDTO.Finalizado !== torneoDomainPersisted.Doc.Finalizado))
+                {
+                    await this.documentLoaderService
+                        .Query<Equipo>(Equipo.name)
+                        .updateMany({ Torneo: new Types.ObjectId(torneoDomainPersisted.Doc._id) }, { Torneo: null }, { session })
+                        .exec();
+                }
+
+                torneoDomainPersisted.Registrar(registrarTorneoDTO);
+
+                await torneoDomainPersisted.Save({ session });
+
+                await session.commitTransaction();
+
+                await session.endSession();
+
+            } catch (error)
+            {
+                await session.abortTransaction();
+
+                throw new ValidationException(error.message);
+            }
+
         } else
         {
             const torneoDomain = this.documentLoaderService.Create<Torneo, TorneoDomain>(Torneo.name, TorneoDomain);
@@ -87,7 +117,10 @@ export class TorneoLogic {
             sesion.startTransaction();
 
             await this.documentLoaderService.Query<Equipo>(Equipo.name)
-                .updateMany({ Torneo: id }, { Torneo: null }, { session: sesion }).exec();
+                .updateMany({ Torneo: new Types.ObjectId(id) }, { Torneo: null }, { session: sesion }).exec();
+
+            await this.documentLoaderService.Query<Partido>(Partido.name)
+                .deleteMany({ Torneo: new Types.ObjectId(id) }, { session: sesion }).exec();
 
             await torneoDomain.Delete({ session: sesion });
 
