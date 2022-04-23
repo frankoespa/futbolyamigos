@@ -45,6 +45,14 @@ export class JugadorLogic {
 
         if (jugadorDomainPersisted)
         {
+            if (registrarJugadorDTO.EquipoID !== null &&
+                jugadorDomainPersisted.Doc.Equipo !== null &&
+                registrarJugadorDTO.EquipoID.toString() !== jugadorDomainPersisted.Doc.Equipo._id.toString() &&
+                jugadorDomainPersisted.Doc.Equipo.Torneo !== null &&
+                !jugadorDomainPersisted.Doc.Equipo.Torneo.Finalizado)
+            {
+                throw new ValidationException(Messages.NoSePuedeCambiarElEquipoAUnJugador)
+            }
 
             if (registrarJugadorDTO.Dni !== jugadorDomainPersisted.Doc.Dni)
             {

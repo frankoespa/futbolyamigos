@@ -4,7 +4,7 @@ import { Partido } from "../schema/PartidoSchema";
 import { PartidoDomain } from "../domain/PartidoDomain";
 import { PartidoRepository } from "../repository/PartidoRepository";
 import { RegistrarPartidoDTO } from "../dtos/RegistrarPartidoDTO";
-import { DropDownVM, Messages, PartidoResultadoDataView, RegistrarPartidoVM } from "@futbolyamigos/data";
+import { Messages, PartidoResultadoDataView, RegistrarPartidoVM } from "@futbolyamigos/data";
 import { Types, Connection } from "mongoose";
 import { Equipo } from "../../equipo/schema/EquipoSchema";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";

@@ -1,8 +1,6 @@
-import { Types } from "mongoose";
-
 export class TorneoResultadoDataView {
 
-    _id?: Types.ObjectId
+    _id?: string
 
     Nombre: string;
 

@@ -92,6 +92,11 @@ function Index () {
         onSubmit: async (partido: RegistrarPartidoVM, formikHelpers: FormikHelpers<RegistrarPartidoVM>) => {
             try
             {
+                if (partido.ResultadoLocal === null || partido.ResultadoVisitante === null)
+                {
+                    partido.ResultadoLocal = null;
+                    partido.ResultadoVisitante = null;
+                }
                 await Post('partido', partido);
                 mutate('partido', true);
                 resetForm();
