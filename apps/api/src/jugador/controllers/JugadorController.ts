@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { RegistrarJugadorDTO } from '../dtos/RegistrarJugadorDTO';
 import { JugadorLogic } from '../providers/JugadorLogic';
 import { Auth } from '../../auth/decorators/AuthComposition';
@@ -37,10 +37,9 @@ export class JugadorController {
         return await this.jugadorLogic.EliminarPorId(id);
     }
 
-    // @Auth([Roles.Admin])
-    // @Get('dropdown/todos')
-    // async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
-
-    //     return await this.torneoLogic.ObtenerTodosDropDown();
-    // }
+    @Auth([Roles.Admin])
+    @Get('dropdown/todosPorEquipo')
+    async ObtenerTodosPorEquipoDropDown (@Query('equipoID') equipoID: string): Promise<DropDownVM<Types.ObjectId>[]> {
+        return await this.jugadorLogic.ObtenerTodosPorEquipoDropDown(equipoID);
+    }
 }

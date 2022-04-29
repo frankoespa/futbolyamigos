@@ -27,3 +27,5 @@ export * from './lib/jugador/RegistrarJugadorVM';
 
 export * from './lib/partido/PartidoResultadoDataView';
 export * from './lib/partido/RegistrarPartidoVM'
+
+export * from './lib/gol/RegistrarGolVM'

@@ -4,6 +4,8 @@ export const Messages = {
     SeEliminoExitosamente: 'Se eliminó con éxito.',
     ElTorneoSeEncuentraFinalizado: 'El torneo se encuentra finalizado.',
     NoSeEncuentraElEquipo: 'No se encuentra el equipo.',
+    NoSeEncuentraElEquipoLocal: 'No se encuentra el equipo local.',
+    NoSeEncuentraElEquipoVisitante: 'No se encuentra el equipo visitante.',
     NoSeEncuentraElJugador: 'No se encuentra el jugador.',
     NoSeEncuentraLaCancha: 'No se encuentra la cancha.',
     NoSeEncuentraElTorneo: 'No se encuentra el torneo.',

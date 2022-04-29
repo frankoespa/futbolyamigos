@@ -14,4 +14,8 @@ export abstract class RepositoryBase<T extends Document, D extends DomainBase<T>
 
         return allDocs.map(doc => new this.typeDomain(doc));
     }
+
+    public Query (): Model<T> {
+        return this.model;
+    }
 }
