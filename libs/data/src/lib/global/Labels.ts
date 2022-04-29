@@ -44,6 +44,9 @@ export enum Labels {
     EquipoVisitanteID = 'EquipoVisitanteID',
     Partidos = 'Partidos',
     ResultadoLocal = 'ResultadoLocal',
-    ResultadoVisitante = 'ResultadoVisitante'
+    ResultadoVisitante = 'ResultadoVisitante',
+    JugadorID = 'JugadorID',
+    Cantidad = 'Cantidad',
+    Goles = 'Goles'
 
 }

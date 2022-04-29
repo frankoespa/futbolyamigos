@@ -3,6 +3,8 @@ import { Types } from "mongoose";
 import { OptionalMongoId } from '../../global/base/validations/OptionalMongoId';
 import { RequiredMongoId } from '../../global/base/validations/RequiredMongoId';
 import { OptionalInt } from '../../global/base/validations/OptionalInt';
+import { IsArray } from 'class-validator';
+import { RegistrarGolDTO } from './RegistrarGolDTO';
 
 export class RegistrarPartidoDTO {
 
@@ -29,5 +31,11 @@ export class RegistrarPartidoDTO {
 
     @OptionalInt()
     readonly ResultadoVisitante?: number;
+
+    @IsArray()
+    GolesEquipoLocal: RegistrarGolDTO[]
+
+    @IsArray()
+    GolesEquipoVisitante: RegistrarGolDTO[]
 
 }

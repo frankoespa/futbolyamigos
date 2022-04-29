@@ -12,7 +12,6 @@ export class PartidoController {
     @Auth([Roles.Admin])
     @Post()
     async Registrar (@Body() registrarPartidoDTO: RegistrarPartidoDTO): Promise<void> {
-
         return await this.partidoLogic.Registrar(registrarPartidoDTO);
     }
 
@@ -30,10 +29,10 @@ export class PartidoController {
         return await this.partidoLogic.ObtenerPorId(id);
     }
 
-    // @Auth([Roles.Admin])
-    // @Delete(':id')
-    // async Eliminar (@Param('id') id: Types.ObjectId): Promise<void> {
+    @Auth([Roles.Admin])
+    @Delete(':id')
+    async Eliminar (@Param('id') id: Types.ObjectId): Promise<void> {
 
-    //     return await this.torneoLogic.EliminarPorId(id);
-    // }
+        return await this.partidoLogic.EliminarPorId(id);
+    }
 }

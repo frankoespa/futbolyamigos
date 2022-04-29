@@ -1,3 +1,5 @@
+import { RegistrarGolVM } from "../gol/RegistrarGolVM";
+
 export class RegistrarPartidoVM {
 
     _id?: string
@@ -15,5 +17,9 @@ export class RegistrarPartidoVM {
     ResultadoLocal?: number;
 
     ResultadoVisitante?: number;
+
+    GolesEquipoLocal: RegistrarGolVM[];
+
+    GolesEquipoVisitante: RegistrarGolVM[]
 
 }

@@ -115,12 +115,18 @@ export class JugadorLogic {
         await jugadorDomain.Delete()
     }
 
-    // async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
-    //     const torneos = await this.torneoRepository.ReadAll();
+    async ObtenerTodosPorEquipoDropDown (equipoID: string): Promise<DropDownVM<Types.ObjectId>[]> {
+        const jugadoresPorEquipo = await this.jugadorRepository
+            .Query()
+            .find({
+                Equipo: new Types.ObjectId(equipoID)
+            })
+            .exec();
 
-    //     return torneos.map<DropDownVM<Types.ObjectId>>(t => ({
-    //         _id: t.Doc._id,
-    //         Description: t.Doc.Nombre
-    //     }))
-    // }
+        return jugadoresPorEquipo.map<DropDownVM<Types.ObjectId>>(t => ({
+            _id: t._id,
+            Description: `${t.Nombres} ${t.Apellidos}`
+        }))
+
+    }
 }

@@ -1,10 +1,10 @@
 import SectionCollapse from '../../src/components/SectionCollapse';
 import { useRef, useState } from 'react';
-import { DataGrid, GridColDef, GridRowModel, GridSelectionModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridColDef, GridColumns, GridRowModel, GridRowParams, GridSelectionModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import moment from 'moment'
-import { Button, Divider, Grid, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
-import { Labels, TorneoResultadoDataView, Validator } from "@futbolyamigos/data";
+import { Labels, TorneoResultadoDataView, Validator, RegistrarGolVM, RegistrarJugadorVM } from "@futbolyamigos/data";
 import * as Yup from 'yup';
 import { Form } from '../../src/form/Form';
 import { useApiManager } from '../../src/api/useApiManager';
@@ -19,6 +19,9 @@ import { AutoCompleteInput } from '../../src/form/input/AutoCompleteInput';
 import { LoadingButton } from '@mui/lab';
 import { DateTimeInput } from '../../src/form/input/DateTimeInput';
 import { NumberInput } from '../../src/form/input/NumberInput';
+import { Portal } from '@mui/base';
+import { Add, Delete as DeleteIcon, SportsSoccer } from '@mui/icons-material'
+
 
 const columns: GridColDef[] = [
     {
@@ -62,7 +65,7 @@ const columns: GridColDef[] = [
 
 function Index () {
     const { Post, Get, Delete } = useApiManager();
-    const { showNotificationSuccess } = useNotification();
+    const { showNotificationSuccess, showNotificationFail } = useNotification();
     const { mutate } = useSWRConfig();
     const [partidoSeleccionado, setPartidoSeleccionado] = useState<GridSelectionModel>([]);
     const [showsectionDetalle, setShowSectionDetalle] = useState<boolean>(false);
@@ -74,9 +77,25 @@ function Index () {
         EquipoLocalID: null,
         EquipoVisitanteID: null,
         ResultadoLocal: null,
-        ResultadoVisitante: null
+        ResultadoVisitante: null,
+        GolesEquipoLocal: [],
+        GolesEquipoVisitante: []
     };
-    const [partidoForm, setJugadorForm] = useState<RegistrarPartidoVM>(initialStatePartidoForm);
+
+    const initialStateGolLocalForm: RegistrarGolVM = {
+        _id: null,
+        JugadorID: null,
+        Nombre: null,
+        Cantidad: null
+    };
+
+    const initialStateGolVisitanteForm: RegistrarGolVM = {
+        _id: null,
+        JugadorID: null,
+        Nombre: null,
+        Cantidad: null
+    };
+    const [partidoForm, setPartidoForm] = useState<RegistrarPartidoVM>(initialStatePartidoForm);
     const [openDialog, setOpenDialog] = useState(false);
     const formManager = useFormManager<RegistrarPartidoVM>({
         initialValues: partidoForm,
@@ -92,11 +111,27 @@ function Index () {
         onSubmit: async (partido: RegistrarPartidoVM, formikHelpers: FormikHelpers<RegistrarPartidoVM>) => {
             try
             {
-                if (partido.ResultadoLocal === null || partido.ResultadoVisitante === null)
+                let sumaGolesLocal = 0;
+                partido.GolesEquipoLocal.forEach(i => { sumaGolesLocal += i.Cantidad });
+                let sumaGolesVisitante = 0;
+                partido.GolesEquipoVisitante.forEach(i => { sumaGolesVisitante += i.Cantidad });
+
+                if (partido.ResultadoLocal === null && partido.ResultadoVisitante !== null ||
+                    partido.ResultadoVisitante === null && partido.ResultadoLocal !== null)
                 {
-                    partido.ResultadoLocal = null;
-                    partido.ResultadoVisitante = null;
+                    showNotificationFail('El Resultado cargado no es correcto.')
+                    throw new Error();
                 }
+
+                if (partido.ResultadoLocal === null && sumaGolesLocal > 0 ||
+                    partido.ResultadoVisitante === null && sumaGolesVisitante > 0 ||
+                    sumaGolesLocal !== partido.ResultadoLocal ||
+                    sumaGolesVisitante !== partido.ResultadoVisitante)
+                {
+                    showNotificationFail('El Resultado no coincide con los goles cargados.')
+                    throw new Error();
+                }
+
                 await Post('partido', partido);
                 mutate('partido', true);
                 resetForm();
@@ -113,7 +148,72 @@ function Index () {
 
     })
 
+    const formManagerGolesLocal = useFormManager<RegistrarGolVM>({
+        initialValues: initialStateGolLocalForm,
+        validations: {
+            [Labels.JugadorID]: Yup.string().nullable(),
+            [Labels.Cantidad]: Yup.number().nullable()
+        },
+        onSubmit: async (gol: RegistrarGolVM, formikHelpers: FormikHelpers<RegistrarGolVM>) => {
+            try
+            {
+                if (partidoForm.GolesEquipoLocal.some(i => i.JugadorID === gol.JugadorID))
+                {
+                    showNotificationFail('El jugador que intentas agregar ya se encuentra en la lista.')
+                    throw new Error();
+                }
+
+                const jugador = await Get<RegistrarJugadorVM>(`jugador/${gol.JugadorID}`);
+                gol.Nombre = `${jugador.Nombres} ${jugador.Apellidos}`
+                setPartidoForm({
+                    ...formManager.values,
+                    GolesEquipoLocal: [...partidoForm.GolesEquipoLocal, gol]
+                })
+                resetGolLocalForm()
+
+            } catch (e)
+            {
+                return;
+            }
+
+        }
+
+    })
+
+    const formManagerGolesVisitante = useFormManager<RegistrarGolVM>({
+        initialValues: initialStateGolVisitanteForm,
+        validations: {
+            [Labels.JugadorID]: Yup.string().nullable(),
+            [Labels.Cantidad]: Yup.number().nullable()
+        },
+        onSubmit: async (gol: RegistrarGolVM, formikHelpers: FormikHelpers<RegistrarGolVM>) => {
+            try
+            {
+                if (partidoForm.GolesEquipoVisitante.some(i => i.JugadorID === gol.JugadorID))
+                {
+                    showNotificationFail('El jugador que intentas agregar ya se encuentra en la lista.')
+                    throw new Error();
+                }
+
+                const jugador = await Get<RegistrarJugadorVM>(`jugador/${gol.JugadorID}`);
+                gol.Nombre = `${jugador.Nombres} ${jugador.Apellidos}`
+                setPartidoForm({
+                    ...formManager.values,
+                    GolesEquipoVisitante: [...partidoForm.GolesEquipoVisitante, gol]
+                })
+                resetGolVisitanteForm()
+
+            } catch (e)
+            {
+                return;
+            }
+
+        }
+
+    })
+
     const refFechaForm = useRef<HTMLInputElement>();
+    const containerGolesSection = useRef(null);
 
     const { data: partidosFromDB, loading } = useGetSWR<TorneoResultadoDataView[]>('partido');
 
@@ -132,7 +232,17 @@ function Index () {
 
     const resetForm = () => {
         formManager.setValues(initialStatePartidoForm);
-        setJugadorForm(initialStatePartidoForm)
+        resetGolLocalForm();
+        resetGolVisitanteForm();
+        setPartidoForm(initialStatePartidoForm)
+    }
+
+    const resetGolLocalForm = () => {
+        formManagerGolesLocal.setValues(initialStateGolLocalForm);
+    }
+
+    const resetGolVisitanteForm = () => {
+        formManagerGolesVisitante.setValues(initialStateGolVisitanteForm);
     }
 
     const onEditDetail = async () => {
@@ -140,7 +250,7 @@ function Index () {
         {
             resetForm();
             const partido = await Get<RegistrarPartidoVM>(`partido/${partidoSeleccionado[0].toString()}`);
-            setJugadorForm(partido);
+            setPartidoForm(partido);
             setShowSectionDetalle(true);
             focusFechaForm();
 
@@ -209,6 +319,136 @@ function Index () {
         }
 
     }
+
+    const dependFetchJugadoresLocalInput = () => {
+        if (!formManager.values[Labels.EquipoLocalID])
+        {
+            return null
+
+        } else
+        {
+
+            return `jugador/dropdown/todosPorEquipo?equipoID=${formManager.values[Labels.EquipoLocalID]}`
+
+        }
+
+    }
+
+    const dependFetchJugadoresVisitanteInput = () => {
+        if (!formManager.values[Labels.EquipoVisitanteID])
+        {
+            return null
+
+        } else
+        {
+
+            return `jugador/dropdown/todosPorEquipo?equipoID=${formManager.values[Labels.EquipoVisitanteID]}`
+
+        }
+
+    }
+
+    const disabledButtonAddGolLocal = (): boolean => {
+        let sumaGoles = 0;
+
+        partidoForm.GolesEquipoLocal.forEach(gol => {
+            sumaGoles += gol.Cantidad
+        })
+
+        return formManager.values[Labels.ResultadoLocal] === null ||
+            sumaGoles === formManager.values[Labels.ResultadoLocal] ||
+            (formManagerGolesLocal.values[Labels.Cantidad] + sumaGoles) > formManager.values[Labels.ResultadoLocal]
+    }
+
+    const disabledButtonAddGolVisitante = (): boolean => {
+        let sumaGoles = 0;
+
+        partidoForm.GolesEquipoVisitante.forEach(gol => {
+            sumaGoles += gol.Cantidad
+        })
+
+        return formManager.values[Labels.ResultadoVisitante] === null ||
+            sumaGoles === formManager.values[Labels.ResultadoVisitante] ||
+            (formManagerGolesVisitante.values[Labels.Cantidad] + sumaGoles) > formManager.values[Labels.ResultadoVisitante]
+    }
+
+    const deleteGolLocal = (params: GridRowParams) => {
+        setPartidoForm({
+            ...formManager.values,
+            GolesEquipoLocal: partidoForm.GolesEquipoLocal.filter(v => v.JugadorID !== params.id)
+        })
+
+    }
+
+    const deleteGolVisitante = (params: GridRowParams) => {
+        setPartidoForm({
+            ...formManager.values,
+            GolesEquipoVisitante: partidoForm.GolesEquipoVisitante.filter(v => v.JugadorID !== params.id)
+        })
+
+    }
+
+    const columnsGolesLocal: GridColumns = [
+        {
+            field: Labels.Nombre,
+            headerName: 'Nombre',
+            type: 'string',
+            flex: 1,
+        },
+        {
+            field: Labels.Cantidad,
+            headerName: Labels.Cantidad,
+            type: 'number',
+            flex: 1,
+            align: 'left',
+            headerAlign: 'left'
+        },
+        {
+            field: 'actions',
+            type: 'actions',
+            getActions: (params: GridRowParams) => [
+                <GridActionsCellItem
+                    icon={<DeleteIcon />}
+                    label="Delete"
+                    onClick={() => deleteGolLocal(params)}
+                    key={1}
+                />,
+            ]
+
+
+        }
+    ];
+
+    const columnsGolesVisitante: GridColumns = [
+        {
+            field: Labels.Nombre,
+            headerName: 'Nombre',
+            type: 'string',
+            flex: 1,
+        },
+        {
+            field: Labels.Cantidad,
+            headerName: Labels.Cantidad,
+            type: 'number',
+            flex: 1,
+            align: 'left',
+            headerAlign: 'left'
+        },
+        {
+            field: 'actions',
+            type: 'actions',
+            getActions: (params: GridRowParams) => [
+                <GridActionsCellItem
+                    icon={<DeleteIcon />}
+                    label="Delete"
+                    onClick={() => deleteGolVisitante(params)}
+                    key={1}
+                />,
+            ]
+
+
+        }
+    ];
 
     return (
         <>
@@ -297,7 +537,8 @@ function Index () {
                                 urlApiData={dependFetchEquipoLocalInput}
                                 name={Labels.EquipoLocalID}
                                 label='Equipo Local'
-                                formManager={formManager} />
+                                formManager={formManager}
+                                disabled={formManager.values['_id'] !== null} />
                         </Grid>
                         <Grid item>
                             <NumberInput
@@ -325,9 +566,11 @@ function Index () {
                                 urlApiData={dependFetchEquipoVisitanteInput}
                                 name={Labels.EquipoVisitanteID}
                                 label='Equipo Visitante'
-                                formManager={formManager} />
+                                formManager={formManager}
+                                disabled={formManager.values['_id'] !== null} />
                         </Grid>
                     </Grid>
+                    <Box ref={containerGolesSection} />
                     <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
                         <LoadingButton loading={formManager.isSubmitting} variant="contained" type='submit' color='success' disabled={!formManager.isValid}>
                             {Labels.Guardar}
@@ -338,6 +581,101 @@ function Index () {
                     </Stack>
                 </Form>
             </SectionCollapse>
+            <Portal container={containerGolesSection.current}>
+
+                <Grid container columnSpacing={5} justifyContent='center'>
+                    <Grid item xs={6}>
+                        <Card variant='outlined' sx={{ backgroundColor: t => t.palette.grey[100] }}>
+                            <CardHeader title={Labels.Goles} subheader='Local' avatar={<Avatar>
+                                <SportsSoccer />
+                            </Avatar>} />
+                            <CardContent>
+                                <Form handleSubmit={formManagerGolesLocal.handleSubmit}>
+                                    <Stack direction='row' >
+                                        <AutoCompleteInput
+                                            urlApiData={dependFetchJugadoresLocalInput}
+                                            name={Labels.JugadorID}
+                                            label='Jugador'
+                                            formManager={formManagerGolesLocal} />
+                                        <NumberInput
+                                            name={Labels.Cantidad}
+                                            label=''
+                                            formManager={formManagerGolesLocal}
+                                            validator={Validator.SoloNumerosEnterosPositivos}
+                                            width={50}
+                                        />
+                                        <IconButton type='submit' disabled={disabledButtonAddGolLocal()} disableRipple>
+                                            <Add />
+                                        </IconButton>
+                                    </Stack>
+                                </Form>
+                                <DataGrid
+                                    loading={loading}
+                                    rows={partidoForm.GolesEquipoLocal.length ? partidoForm.GolesEquipoLocal : []}
+                                    columns={columnsGolesLocal}
+                                    localeText={LocaleDataGrid.Spanish}
+                                    pageSize={5}
+                                    rowsPerPageOptions={[5]}
+                                    disableSelectionOnClick
+                                    disableColumnFilter
+                                    disableColumnMenu
+                                    disableColumnSelector
+                                    hideFooter
+                                    autoHeight
+                                    density='compact'
+                                    getRowId={(row: GridRowModel) => row.JugadorID}
+                                />
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Card variant='outlined' sx={{ backgroundColor: t => t.palette.grey[100] }}>
+                            <CardHeader title={Labels.Goles} subheader='Visitante' avatar={<Avatar>
+                                <SportsSoccer />
+                            </Avatar>} />
+                            <CardContent>
+                                <Form handleSubmit={formManagerGolesVisitante.handleSubmit}>
+                                    <Stack direction='row' >
+                                        <AutoCompleteInput
+                                            urlApiData={dependFetchJugadoresVisitanteInput}
+                                            name={Labels.JugadorID}
+                                            label='Jugador'
+                                            formManager={formManagerGolesVisitante} />
+                                        <NumberInput
+                                            name={Labels.Cantidad}
+                                            label=''
+                                            formManager={formManagerGolesVisitante}
+                                            validator={Validator.SoloNumerosEnterosPositivos}
+                                            width={50}
+                                        />
+                                        <IconButton type='submit' disabled={disabledButtonAddGolVisitante()} disableRipple>
+                                            <Add />
+                                        </IconButton>
+                                    </Stack>
+                                </Form>
+                                <DataGrid
+                                    loading={loading}
+                                    rows={partidoForm.GolesEquipoVisitante.length ? partidoForm.GolesEquipoVisitante : []}
+                                    columns={columnsGolesVisitante}
+                                    localeText={LocaleDataGrid.Spanish}
+                                    pageSize={5}
+                                    rowsPerPageOptions={[5]}
+                                    disableSelectionOnClick
+                                    disableColumnFilter
+                                    disableColumnMenu
+                                    disableColumnSelector
+                                    hideFooter
+                                    autoHeight
+                                    density='compact'
+                                    getRowId={(row: GridRowModel) => row.JugadorID}
+                                />
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                </Grid>
+
+            </Portal>
             <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar partido' content='Se eliminará el partido. ¿Estás seguro?' handleOk={onDeleteDetail} />
         </>
     );
