@@ -306,7 +306,7 @@ export class PartidoLogic {
             session.startTransaction();
 
             await this.documentLoaderService.Query<Gol>(Gol.name)
-                .deleteMany({ Partido: id }, { session })
+                .deleteMany({ Partido: new Types.ObjectId(id) }, { session })
                 .exec();
 
             await partidoDomain.Delete({ session: session });

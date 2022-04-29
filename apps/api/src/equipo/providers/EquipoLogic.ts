@@ -98,7 +98,6 @@ export class EquipoLogic {
         if (!equipoDomain) return null;
 
         const tienePartidosJugadosOporJugar = await this.TienePartidosJugadosOporJugar(equipoDomain);
-        console.log(tienePartidosJugadosOporJugar)
 
         if (tienePartidosJugadosOporJugar)
         {
@@ -113,7 +112,7 @@ export class EquipoLogic {
             sesion.startTransaction();
 
             await this.documentLoaderService.Query<Jugador>(Jugador.name)
-                .updateMany({ Equipo: id }, { Equipo: null }, { session: sesion }).exec();
+                .updateMany({ Equipo: new Types.ObjectId(id) }, { Equipo: null }, { session: sesion }).exec();
 
             await equipoDomain.Delete({ session: sesion })
 
