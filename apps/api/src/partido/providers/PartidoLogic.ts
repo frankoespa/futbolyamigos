@@ -4,7 +4,7 @@ import { Partido } from "../schema/PartidoSchema";
 import { PartidoDomain } from "../domain/PartidoDomain";
 import { PartidoRepository } from "../repository/PartidoRepository";
 import { RegistrarPartidoDTO } from "../dtos/RegistrarPartidoDTO";
-import { Messages, PartidoResultadoDataView, RegistrarPartidoVM, RegistrarGolVM } from "@futbolyamigos/data";
+import { Messages, PartidoResultadoDataView, RegistrarPartidoVM, RegistrarGolVM, RegistrarSancionVM } from "@futbolyamigos/data";
 import { Types, Connection } from "mongoose";
 import { Equipo } from "../../equipo/schema/EquipoSchema";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
@@ -261,7 +261,7 @@ export class PartidoLogic {
                 const vo: RegistrarSancionVO = {
                     PartidoDomain: partidoDomain,
                     TorneoDomain: torneoDomainPersisted,
-                    EquipoDomain: equipoLocalDomainPersisted,
+                    EquipoDomain: equipoVisitanteDomainPersisted,
                     JugadorDomain: await this.documentLoaderService.GetById<Jugador, JugadorDomain>(Jugador.name, JugadorDomain, sancionVisitante.JugadorID),
                     TarjetaDomain: await this.documentLoaderService.GetById<Tarjeta, TarjetaDomain>(Tarjeta.name, TarjetaDomain, sancionVisitante.TarjetaID)
 
@@ -399,6 +399,26 @@ export class PartidoLogic {
             )
             .exec()
 
+        const sancionesEquipoLocal = await this.documentLoaderService
+            .Query<Sancion>(Sancion.name)
+            .find(
+                {
+                    Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                    Equipo: new Types.ObjectId(partidoDomain.Doc.EquipoLocal._id)
+                }
+            )
+            .exec()
+
+        const sancionesEquipoVisitante = await this.documentLoaderService
+            .Query<Sancion>(Sancion.name)
+            .find(
+                {
+                    Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                    Equipo: new Types.ObjectId(partidoDomain.Doc.EquipoVisitante._id)
+                }
+            )
+            .exec()
+
         return {
             _id: partidoDomain.Doc._id,
             Fecha: partidoDomain.Doc.Fecha,
@@ -419,6 +439,18 @@ export class PartidoLogic {
                 JugadorID: g.Jugador._id,
                 Cantidad: g.Cantidad,
                 Nombre: `${g.Jugador.Nombres} ${g.Jugador.Apellidos}`
+            })),
+            SancionesEquipoLocal: sancionesEquipoLocal.map<RegistrarSancionVM>(s => ({
+                _id: s._id,
+                JugadorID: s.Jugador._id,
+                Nombre: `${s.Jugador.Nombres} ${s.Jugador.Apellidos}`,
+                TarjetaID: s.Tarjeta._id
+            })),
+            SancionesEquipoVisitante: sancionesEquipoVisitante.map<RegistrarSancionVM>(s => ({
+                _id: s._id,
+                JugadorID: s.Jugador._id,
+                Nombre: `${s.Jugador.Nombres} ${s.Jugador.Apellidos}`,
+                TarjetaID: s.Tarjeta._id
             }))
         }
     }

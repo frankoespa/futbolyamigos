@@ -1,4 +1,5 @@
 import { RegistrarGolVM } from "../gol/RegistrarGolVM";
+import { RegistrarSancionVM } from "../sancion/RegistrarSancionVM";
 
 export class RegistrarPartidoVM {
 
@@ -21,5 +22,9 @@ export class RegistrarPartidoVM {
     GolesEquipoLocal: RegistrarGolVM[];
 
     GolesEquipoVisitante: RegistrarGolVM[]
+
+    SancionesEquipoLocal: RegistrarSancionVM[]
+
+    SancionesEquipoVisitante: RegistrarSancionVM[]
 
 }

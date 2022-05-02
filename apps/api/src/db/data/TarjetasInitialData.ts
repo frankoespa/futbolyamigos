@@ -10,5 +10,9 @@ export const TarjetasInitialData: AnyKeys<Tarjeta>[] = [
     {
         _id: 2,
         Description: 'Roja'
+    },
+    {
+        _id: 3,
+        Description: 'Roja (Doble Amarilla)'
     }
 ];
