@@ -20,6 +20,11 @@ import { GolDomain } from "../../gol/domain/GolDomain";
 import { Jugador } from "../../jugador/schema/JugadorSchema";
 import { JugadorDomain } from "../../jugador/domain/JugadorDomain";
 import { RegistrarGolVO } from "../../gol/valueObjects/RegistrarGolVO";
+import { Sancion } from "../../sancion/schema/SancionSchema";
+import { SancionDomain } from "../../sancion/domain/SancionDomain";
+import { RegistrarSancionVO } from "../../sancion/valueObjects/RegistrarSancionVO";
+import { Tarjeta } from "../../tarjeta/schema/TarjetaSchema";
+import { TarjetaDomain } from "../../tarjeta/domain/TarjetaDomain";
 
 @Injectable()
 export class PartidoLogic {
@@ -213,6 +218,132 @@ export class PartidoLogic {
                     .exec()
             }
 
+            const sancionesLocalCreated: Types.ObjectId[] = [];
+
+            for (const sancionLocal of registrarPartidoDTO.SancionesEquipoLocal)
+            {
+                let sancionDomain = await this.documentLoaderService.GetById<Sancion, SancionDomain>(Sancion.name, SancionDomain, sancionLocal._id);
+
+                const vo: RegistrarSancionVO = {
+                    PartidoDomain: partidoDomain,
+                    TorneoDomain: torneoDomainPersisted,
+                    EquipoDomain: equipoLocalDomainPersisted,
+                    JugadorDomain: await this.documentLoaderService.GetById<Jugador, JugadorDomain>(Jugador.name, JugadorDomain, sancionLocal.JugadorID),
+                    TarjetaDomain: await this.documentLoaderService.GetById<Tarjeta, TarjetaDomain>(Tarjeta.name, TarjetaDomain, sancionLocal.TarjetaID)
+
+                }
+
+                if (!sancionDomain)
+                {
+
+                    sancionDomain = await this.documentLoaderService.Create<Sancion, SancionDomain>(Sancion.name, SancionDomain);
+
+                    sancionDomain.Registrar(vo)
+
+                    await sancionDomain.Save({ session });
+                } else
+                {
+                    sancionDomain.Registrar(vo)
+
+                    await sancionDomain.Save({ session });
+
+                }
+
+                sancionesLocalCreated.push(new Types.ObjectId(sancionDomain.Doc._id));
+            }
+
+            const sancionesVisitanteCreated: Types.ObjectId[] = [];
+
+            for (const sancionVisitante of registrarPartidoDTO.SancionesEquipoVisitante)
+            {
+                let sancionDomain = await this.documentLoaderService.GetById<Sancion, SancionDomain>(Sancion.name, SancionDomain, sancionVisitante._id);
+
+                const vo: RegistrarSancionVO = {
+                    PartidoDomain: partidoDomain,
+                    TorneoDomain: torneoDomainPersisted,
+                    EquipoDomain: equipoLocalDomainPersisted,
+                    JugadorDomain: await this.documentLoaderService.GetById<Jugador, JugadorDomain>(Jugador.name, JugadorDomain, sancionVisitante.JugadorID),
+                    TarjetaDomain: await this.documentLoaderService.GetById<Tarjeta, TarjetaDomain>(Tarjeta.name, TarjetaDomain, sancionVisitante.TarjetaID)
+
+                }
+
+                if (!sancionDomain)
+                {
+
+                    sancionDomain = await this.documentLoaderService.Create<Sancion, SancionDomain>(Sancion.name, SancionDomain);
+
+                    sancionDomain.Registrar(vo)
+
+                    await sancionDomain.Save({ session });
+                } else
+                {
+                    sancionDomain.Registrar(vo)
+
+                    await sancionDomain.Save({ session });
+
+                }
+
+                sancionesVisitanteCreated.push(new Types.ObjectId(sancionDomain.Doc._id));
+            }
+
+            if (registrarPartidoDTO.SancionesEquipoLocal.length === 0)
+            {
+                const cantSancionesLocalPersisted = await this.documentLoaderService
+                    .Query<Sancion>(Sancion.name)
+                    .countDocuments({
+                        Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                        Equipo: new Types.ObjectId(equipoLocalDomainPersisted.Doc._id)
+                    }, { session })
+                    .exec();
+                if (cantSancionesLocalPersisted > 0)
+                    await this.documentLoaderService
+                        .Query<Sancion>(Sancion.name)
+                        .deleteMany({
+                            Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                            Equipo: new Types.ObjectId(equipoLocalDomainPersisted.Doc._id)
+                        }, { session })
+                        .exec()
+            } else
+            {
+                await this.documentLoaderService
+                    .Query<Sancion>(Sancion.name)
+                    .deleteMany({
+                        _id: { $nin: sancionesLocalCreated },
+                        Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                        Equipo: new Types.ObjectId(equipoLocalDomainPersisted.Doc._id)
+                    }, { session })
+                    .exec()
+            }
+
+            if (registrarPartidoDTO.SancionesEquipoVisitante.length === 0)
+            {
+                const cantSancionesVisitantePersisted = await this.documentLoaderService
+                    .Query<Sancion>(Sancion.name)
+                    .countDocuments({
+                        Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                        Equipo: new Types.ObjectId(equipoVisitanteDomainPersisted.Doc._id)
+                    }, { session })
+                    .exec();
+                if (cantSancionesVisitantePersisted > 0)
+                    await this.documentLoaderService
+                        .Query<Sancion>(Sancion.name)
+                        .deleteMany({
+                            Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                            Equipo: new Types.ObjectId(equipoVisitanteDomainPersisted.Doc._id)
+                        }, { session })
+                        .exec()
+            } else
+            {
+                await this.documentLoaderService
+                    .Query<Sancion>(Sancion.name)
+                    .deleteMany({
+                        _id: { $nin: sancionesVisitanteCreated },
+                        Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                        Equipo: new Types.ObjectId(equipoVisitanteDomainPersisted.Doc._id)
+                    }, { session })
+                    .exec()
+            }
+
             await session.commitTransaction();
 
             await session.endSession();
@@ -306,6 +437,10 @@ export class PartidoLogic {
             session.startTransaction();
 
             await this.documentLoaderService.Query<Gol>(Gol.name)
+                .deleteMany({ Partido: new Types.ObjectId(id) }, { session })
+                .exec();
+
+            await this.documentLoaderService.Query<Sancion>(Sancion.name)
                 .deleteMany({ Partido: new Types.ObjectId(id) }, { session })
                 .exec();
 

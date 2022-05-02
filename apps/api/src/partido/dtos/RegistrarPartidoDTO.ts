@@ -5,6 +5,7 @@ import { RequiredMongoId } from '../../global/base/validations/RequiredMongoId';
 import { OptionalInt } from '../../global/base/validations/OptionalInt';
 import { IsArray } from 'class-validator';
 import { RegistrarGolDTO } from './RegistrarGolDTO';
+import { RegistrarSancionDTO } from './RegistrarSancionDTO';
 
 export class RegistrarPartidoDTO {
 
@@ -37,5 +38,11 @@ export class RegistrarPartidoDTO {
 
     @IsArray()
     GolesEquipoVisitante: RegistrarGolDTO[]
+
+    @IsArray()
+    SancionesEquipoLocal: RegistrarSancionDTO[]
+
+    @IsArray()
+    SancionesEquipoVisitante: RegistrarSancionDTO[]
 
 }
