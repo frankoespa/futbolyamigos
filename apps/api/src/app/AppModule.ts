@@ -13,6 +13,7 @@ import { EquipoModule } from '../equipo/EquipoModule';
 import { JugadorModule } from '../jugador/JugadorModule';
 import { PartidoModule } from '../partido/PartidoModule';
 import { GolModule } from '../gol/GolModule';
+import { TarjetaModule } from '../tarjeta/TarjetaModule';
 
 @Module({
     imports: [
@@ -39,7 +40,8 @@ import { GolModule } from '../gol/GolModule';
         EquipoModule,
         JugadorModule,
         PartidoModule,
-        GolModule
+        GolModule,
+        TarjetaModule
     ],
     controllers: [],
     providers: [],

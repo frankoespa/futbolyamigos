@@ -29,3 +29,7 @@ export * from './lib/partido/PartidoResultadoDataView';
 export * from './lib/partido/RegistrarPartidoVM'
 
 export * from './lib/gol/RegistrarGolVM'
+
+export * from './lib/sancion/RegistrarSancionVM'
+
+export * from './lib/tarjeta/Tarjetas'

@@ -40,7 +40,7 @@ export function AutoCompleteInput (props: IPropsInput) {
     return (
         <Autocomplete
             options={loading ? [] : data}
-            onChange={(e, value: DropDownVM<string>) => {
+            onChange={(e, value: DropDownVM<string | number>) => {
                 setValue(value);
                 setFieldTouched(name);
                 setFieldValue(name, value !== null ? value._id : null);

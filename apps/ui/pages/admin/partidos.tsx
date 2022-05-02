@@ -151,8 +151,8 @@ function Index () {
     const formManagerGolesLocal = useFormManager<RegistrarGolVM>({
         initialValues: initialStateGolLocalForm,
         validations: {
-            [Labels.JugadorID]: Yup.string().nullable(),
-            [Labels.Cantidad]: Yup.number().nullable()
+            [Labels.JugadorID]: Yup.string().nullable().required(''),
+            [Labels.Cantidad]: Yup.number().nullable().required('')
         },
         onSubmit: async (gol: RegistrarGolVM, formikHelpers: FormikHelpers<RegistrarGolVM>) => {
             try
@@ -183,8 +183,8 @@ function Index () {
     const formManagerGolesVisitante = useFormManager<RegistrarGolVM>({
         initialValues: initialStateGolVisitanteForm,
         validations: {
-            [Labels.JugadorID]: Yup.string().nullable(),
-            [Labels.Cantidad]: Yup.number().nullable()
+            [Labels.JugadorID]: Yup.string().nullable().required(''),
+            [Labels.Cantidad]: Yup.number().nullable().required('')
         },
         onSubmit: async (gol: RegistrarGolVM, formikHelpers: FormikHelpers<RegistrarGolVM>) => {
             try
@@ -499,7 +499,7 @@ function Index () {
             <SectionCollapse title={Labels.Detalle} expanded={showsectionDetalle}>
                 <Form handleSubmit={formManager.handleSubmit}>
                     <Divider>Fecha y hora</Divider>
-                    <Grid container columnSpacing={5} justifyContent='center'>
+                    <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
                         <Grid item xs={3}>
                             <DateTimeInput
                                 name={Labels.Fecha}
@@ -510,7 +510,7 @@ function Index () {
                         </Grid>
                     </Grid>
                     <Divider>Torneo al que aplica</Divider>
-                    <Grid container columnSpacing={5} justifyContent='center'>
+                    <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
                         <Grid item xs={3}>
                             <AutoCompleteInput
                                 urlApiData='torneo/dropdown/todosNoFinalizados'
@@ -520,7 +520,7 @@ function Index () {
                         </Grid>
                     </Grid>
                     <Divider>Campo de juego</Divider>
-                    <Grid container columnSpacing={5} justifyContent='center'>
+                    <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
                         <Grid item xs={3}>
                             <AutoCompleteInput
                                 urlApiData='cancha/dropdown/todos'
@@ -531,7 +531,7 @@ function Index () {
 
                     </Grid>
                     <Divider>Resultado</Divider>
-                    <Grid container justifyContent='center'>
+                    <Grid container justifyContent='center' marginBottom={3}>
                         <Grid item xs={3}>
                             <AutoCompleteInput
                                 urlApiData={dependFetchEquipoLocalInput}
@@ -676,7 +676,7 @@ function Index () {
                 </Grid>
 
             </Portal>
-            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar partido' content='Se eliminará el partido. ¿Estás seguro?' handleOk={onDeleteDetail} />
+            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar partido' content='Se eliminará el partido. ¿Estás realmente seguro?' handleOk={onDeleteDetail} />
         </>
     );
 }
