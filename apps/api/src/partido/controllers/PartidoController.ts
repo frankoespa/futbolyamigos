@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { RegistrarPartidoDTO } from '../dtos/RegistrarPartidoDTO';
 import { PartidoLogic } from '../providers/PartidoLogic';
 import { Auth } from '../../auth/decorators/AuthComposition';
-import { PartidoResultadoDataView, RegistrarPartidoVM, Roles } from "@futbolyamigos/data";
+import { PartidoResultadoDataView, RegistrarPartidoVM, Roles, LineaTabla } from "@futbolyamigos/data";
 import { Types } from "mongoose";
 
 @Controller('partido')
@@ -34,5 +34,11 @@ export class PartidoController {
     async Eliminar (@Param('id') id: Types.ObjectId): Promise<void> {
 
         return await this.partidoLogic.EliminarPorId(id);
+    }
+
+    @Auth([Roles.Admin])
+    @Get('tabla/:id')
+    async ObtenerTablaPorTorneo (@Param('id') id: Types.ObjectId): Promise<LineaTabla[]> {
+        return await this.partidoLogic.ObtenerTabla(id);
     }
 }

@@ -20,7 +20,7 @@ import { LoadingButton } from '@mui/lab';
 import { DateTimeInput } from '../../src/form/input/DateTimeInput';
 import { NumberInput } from '../../src/form/input/NumberInput';
 import { Portal } from '@mui/base';
-import { Add, Delete as DeleteIcon, SportsSoccer } from '@mui/icons-material'
+import { Add, Delete as DeleteIcon, SportsSoccer, Sports } from '@mui/icons-material'
 import { yellow, red } from "@mui/material/colors";
 
 const columns: GridColDef[] = [
@@ -135,14 +135,21 @@ function Index () {
                 if (partido.ResultadoLocal === null && partido.ResultadoVisitante !== null ||
                     partido.ResultadoVisitante === null && partido.ResultadoLocal !== null)
                 {
-                    showNotificationFail('El Resultado cargado no es correcto.')
+                    showNotificationFail('El Resultado cargado no es correcto. Falta cargar un resultado.')
                     throw new Error();
                 }
 
-                if (partido.ResultadoLocal === null && sumaGolesLocal > 0 ||
-                    partido.ResultadoVisitante === null && sumaGolesVisitante > 0 ||
-                    sumaGolesLocal !== partido.ResultadoLocal ||
-                    sumaGolesVisitante !== partido.ResultadoVisitante)
+                if ((partido.ResultadoLocal === null && sumaGolesLocal > 0) ||
+                    (partido.ResultadoVisitante === null && sumaGolesVisitante > 0))
+                {
+                    showNotificationFail('El Resultado no coincide con los goles cargados.')
+                    throw new Error();
+                }
+
+                if ((partido.ResultadoLocal !== null &&
+                    sumaGolesLocal !== partido.ResultadoLocal) ||
+                    (partido.ResultadoVisitante !== null &&
+                        sumaGolesVisitante !== partido.ResultadoVisitante))
                 {
                     showNotificationFail('El Resultado no coincide con los goles cargados.')
                     throw new Error();
@@ -685,7 +692,7 @@ function Index () {
                 />
                 <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
                     <Button variant="contained" onClick={onCreateDetail}>
-                        {Labels.Crear}
+                        {Labels.Nuevo}
                     </Button>
                     <Button variant="contained" color='info' disabled={partidoSeleccionado.length ? false : true} onClick={onEditDetail}>
                         {Labels.Editar}
@@ -891,7 +898,7 @@ function Index () {
                         <Grid item xs={6}>
                             <Card variant='outlined' sx={{ backgroundColor: t => t.palette.grey[100] }}>
                                 <CardHeader title={Labels.Sanciones} subheader='Local' avatar={<Avatar>
-                                    <SportsSoccer />
+                                    <Sports />
                                 </Avatar>} />
                                 <CardContent>
                                     <Form handleSubmit={formManagerSancionLocal.handleSubmit}>
@@ -932,7 +939,7 @@ function Index () {
                         <Grid item xs={6}>
                             <Card variant='outlined' sx={{ backgroundColor: t => t.palette.grey[100] }}>
                                 <CardHeader title={Labels.Sanciones} subheader='Visitante' avatar={<Avatar>
-                                    <SportsSoccer />
+                                    <Sports />
                                 </Avatar>} />
                                 <CardContent>
                                     <Form handleSubmit={formManagerSancionVisitante.handleSubmit}>

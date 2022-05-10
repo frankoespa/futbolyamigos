@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { AccountCircle, EmojiEvents, Shield, Person, SportsSoccer } from '@mui/icons-material';
+import { AccountCircle, EmojiEvents, Shield, Person, SportsSoccer, Ballot, Grade } from '@mui/icons-material';
 import { AppBar, Box, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useUser } from '../api/auth/useUser';
@@ -77,7 +77,7 @@ function LayoutAdmin (props: IProps) {
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
                     >
-                        <MenuItem onClick={handleClose} sx={{ color: 'text.secondary' }}>Mis Datos</MenuItem>
+                        {/* <MenuItem onClick={handleClose} sx={{ color: 'text.secondary' }}>Mis Datos</MenuItem> */}
                         <MenuItem onClick={logout} sx={{ color: 'text.secondary' }}>Cerrar sesión</MenuItem>
                     </Menu>
                 </Toolbar>
@@ -137,6 +137,22 @@ function LayoutAdmin (props: IProps) {
                             <ListItemText primary={<Typography variant='body1' color='text.secondary'>Partidos</Typography>} />
                         </ListItem>
                     </Link>
+                    <Link href='/admin/tablas' passHref>
+                        <ListItem button>
+                            <ListItemIcon>
+                                <Ballot />
+                            </ListItemIcon>
+                            <ListItemText primary={<Typography variant='body1' color='text.secondary'>Tablas</Typography>} />
+                        </ListItem>
+                    </Link>
+                    {/* <Link href='/admin/goleadores' passHref>
+                        <ListItem button>
+                            <ListItemIcon>
+                                <Grade />
+                            </ListItemIcon>
+                            <ListItemText primary={<Typography variant='body1' color='text.secondary'>Goleadores</Typography>} />
+                        </ListItem>
+                    </Link> */}
                 </List>
             </Drawer>
             <Box

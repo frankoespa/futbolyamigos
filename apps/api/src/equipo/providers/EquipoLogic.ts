@@ -27,18 +27,19 @@ export class EquipoLogic {
 
         let torneoDomainPersisted: TorneoDomain = null;
 
-        if (registrarEquipoDTO.TorneoID)
-        {
+        torneoDomainPersisted = await this.documentLoaderService.GetById<Torneo, TorneoDomain>(Torneo.name, TorneoDomain, registrarEquipoDTO.TorneoID);
 
-            torneoDomainPersisted = await this.documentLoaderService.GetById<Torneo, TorneoDomain>(Torneo.name, TorneoDomain, registrarEquipoDTO.TorneoID);
+        if (registrarEquipoDTO.TorneoID && !torneoDomainPersisted) throw new ValidationException(Messages.NoSeEncuentraElTorneo);
 
-            if (!torneoDomainPersisted) throw new ValidationException(Messages.NoSeEncuentraElTorneo)
-            else
-            {
-                if (torneoDomainPersisted.Doc.Finalizado) throw new ValidationException(Messages.ElTorneoSeEncuentraFinalizado);
-            }
-
-        }
+        // if (
+        //     equipoDomainPersisted &&
+        //     equipoDomainPersisted.Doc.Torneo &&
+        //     torneoDomainPersisted &&
+        //     torneoDomainPersisted.Doc._id.toString() !== equipoDomainPersisted.Doc.Torneo._id.toString() &&
+        //     !equipoDomainPersisted.Doc.Torneo.Finalizado)
+        // {
+        //     throw new ValidationException(Messages.NoEsPosibleModificarElTorneoPorQueNoFinalizo);
+        // }
 
         if (equipoDomainPersisted)
         {

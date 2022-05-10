@@ -219,7 +219,7 @@ function Index () {
                 </Box>
                 <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
                     <Button variant="contained" onClick={onCreateDetail}>
-                        {Labels.Crear}
+                        {Labels.Nuevo}
                     </Button>
                     <Button variant="contained" color='info' disabled={torneoSeleccionado.length ? false : true} onClick={onEditDetail}>
                         {Labels.Editar}
@@ -260,6 +260,7 @@ function Index () {
                             <CheckBoxInput name={Labels.Finalizado}
                                 label={Labels.Finalizado}
                                 formManager={formManager}
+                                disabled={formManager.values['_id'] === null}
                             />
                         </Grid>
                     </Grid>
