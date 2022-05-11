@@ -179,14 +179,14 @@ function Index () {
                 />
                 <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
                     <Button variant="contained" onClick={onCreateDetail}>
-                        {Labels.Crear}
+                        {Labels.Nuevo}
                     </Button>
                     <Button variant="contained" color='info' disabled={equipoSeleccionado.length ? false : true} onClick={onEditDetail}>
                         {Labels.Editar}
                     </Button>
-                    <Button variant="contained" color='error' disabled={equipoSeleccionado.length ? false : true} onClick={onDeleteDialogAlert}>
+                    {/* <Button variant="contained" color='error' disabled={equipoSeleccionado.length ? false : true} onClick={onDeleteDialogAlert}>
                         {Labels.Eliminar}
-                    </Button>
+                    </Button> */}
                 </Stack>
             </SectionCollapse>
             <SectionCollapse title={Labels.Detalle} expanded={showsectionDetalle}>

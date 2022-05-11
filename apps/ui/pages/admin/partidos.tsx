@@ -1,15 +1,15 @@
 import SectionCollapse from '../../src/components/SectionCollapse';
 import { useRef, useState } from 'react';
-import { DataGrid, GridActionsCellItem, GridColDef, GridColumns, GridRowModel, GridRowParams, GridSelectionModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridCellParams, GridColDef, GridColumns, GridRowModel, GridRowParams, GridSelectionModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import moment from 'moment'
 import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
-import { Labels, TorneoResultadoDataView, Validator, RegistrarGolVM, RegistrarJugadorVM } from "@futbolyamigos/data";
+import { Labels, TorneoResultadoDataView, Validator, RegistrarGolVM, RegistrarJugadorVM, RegistrarSancionVM } from "@futbolyamigos/data";
 import * as Yup from 'yup';
 import { Form } from '../../src/form/Form';
 import { useApiManager } from '../../src/api/useApiManager';
 import { FormikHelpers } from 'formik';
-import { RegistrarPartidoVM } from "@futbolyamigos/data";
+import { RegistrarPartidoVM, Tarjetas } from "@futbolyamigos/data";
 import { useSWRConfig } from "swr";
 import { useNotification } from '../../src/notifications/useNotification';
 import { DialogAlert } from '../../src/components/DialogAlert';
@@ -20,8 +20,8 @@ import { LoadingButton } from '@mui/lab';
 import { DateTimeInput } from '../../src/form/input/DateTimeInput';
 import { NumberInput } from '../../src/form/input/NumberInput';
 import { Portal } from '@mui/base';
-import { Add, Delete as DeleteIcon, SportsSoccer } from '@mui/icons-material'
-
+import { Add, Delete as DeleteIcon, SportsSoccer, Sports } from '@mui/icons-material'
+import { yellow, red } from "@mui/material/colors";
 
 const columns: GridColDef[] = [
     {
@@ -79,7 +79,9 @@ function Index () {
         ResultadoLocal: null,
         ResultadoVisitante: null,
         GolesEquipoLocal: [],
-        GolesEquipoVisitante: []
+        GolesEquipoVisitante: [],
+        SancionesEquipoLocal: [],
+        SancionesEquipoVisitante: []
     };
 
     const initialStateGolLocalForm: RegistrarGolVM = {
@@ -95,12 +97,26 @@ function Index () {
         Nombre: null,
         Cantidad: null
     };
+
+    const initialStateSancionLocalForm: RegistrarSancionVM = {
+        _id: null,
+        JugadorID: null,
+        Nombre: null,
+        TarjetaID: null
+    };
+
+    const initialStateSancionVisitanteForm: RegistrarSancionVM = {
+        _id: null,
+        JugadorID: null,
+        Nombre: null,
+        TarjetaID: null
+    };
     const [partidoForm, setPartidoForm] = useState<RegistrarPartidoVM>(initialStatePartidoForm);
     const [openDialog, setOpenDialog] = useState(false);
     const formManager = useFormManager<RegistrarPartidoVM>({
         initialValues: partidoForm,
         validations: {
-            [Labels.Fecha]: Yup.date().required().typeError('formato incorrecto'),
+            [Labels.Fecha]: Yup.date().required().typeError('requerido'),
             [Labels.TorneoID]: Yup.string().nullable().required('requerido'),
             [Labels.CanchaID]: Yup.string().nullable(),
             [Labels.EquipoLocalID]: Yup.string().nullable().required('requerido'),
@@ -119,21 +135,28 @@ function Index () {
                 if (partido.ResultadoLocal === null && partido.ResultadoVisitante !== null ||
                     partido.ResultadoVisitante === null && partido.ResultadoLocal !== null)
                 {
-                    showNotificationFail('El Resultado cargado no es correcto.')
+                    showNotificationFail('El Resultado cargado no es correcto. Falta cargar un resultado.')
                     throw new Error();
                 }
 
-                if (partido.ResultadoLocal === null && sumaGolesLocal > 0 ||
-                    partido.ResultadoVisitante === null && sumaGolesVisitante > 0 ||
-                    sumaGolesLocal !== partido.ResultadoLocal ||
-                    sumaGolesVisitante !== partido.ResultadoVisitante)
+                if ((partido.ResultadoLocal === null && sumaGolesLocal > 0) ||
+                    (partido.ResultadoVisitante === null && sumaGolesVisitante > 0))
+                {
+                    showNotificationFail('El Resultado no coincide con los goles cargados.')
+                    throw new Error();
+                }
+
+                if ((partido.ResultadoLocal !== null &&
+                    sumaGolesLocal !== partido.ResultadoLocal) ||
+                    (partido.ResultadoVisitante !== null &&
+                        sumaGolesVisitante !== partido.ResultadoVisitante))
                 {
                     showNotificationFail('El Resultado no coincide con los goles cargados.')
                     throw new Error();
                 }
 
                 await Post('partido', partido);
-                mutate('partido', true);
+                mutate(dependFetchPartidos, true);
                 resetForm();
                 setShowSectionDetalle(false);
                 setPartidoSeleccionado([]);
@@ -212,16 +235,111 @@ function Index () {
 
     })
 
+    const formManagerSancionLocal = useFormManager<RegistrarSancionVM>({
+        initialValues: initialStateSancionLocalForm,
+        validations: {
+            [Labels.JugadorID]: Yup.string().nullable().required(''),
+            [Labels.TarjetaID]: Yup.number().nullable().required('')
+        },
+        onSubmit: async (sancion: RegistrarSancionVM, formikHelpers: FormikHelpers<RegistrarSancionVM>) => {
+            try
+            {
+                if (partidoForm.SancionesEquipoLocal.some(i => i.JugadorID === sancion.JugadorID))
+                {
+                    showNotificationFail('El jugador que intentas agregar ya se encuentra en la lista.')
+                    throw new Error();
+                }
+
+                const jugador = await Get<RegistrarJugadorVM>(`jugador/${sancion.JugadorID}`);
+                sancion.Nombre = `${jugador.Nombres} ${jugador.Apellidos}`
+                setPartidoForm({
+                    ...formManager.values,
+                    SancionesEquipoLocal: [...partidoForm.SancionesEquipoLocal, sancion]
+                })
+                resetSancionLocalForm()
+
+            } catch (e)
+            {
+                return;
+            }
+
+        }
+
+    })
+
+    const formManagerSancionVisitante = useFormManager<RegistrarSancionVM>({
+        initialValues: initialStateSancionVisitanteForm,
+        validations: {
+            [Labels.JugadorID]: Yup.string().nullable().required(''),
+            [Labels.TarjetaID]: Yup.number().nullable().required('')
+        },
+        onSubmit: async (sancion: RegistrarSancionVM, formikHelpers: FormikHelpers<RegistrarSancionVM>) => {
+            try
+            {
+                if (partidoForm.SancionesEquipoVisitante.some(i => i.JugadorID === sancion.JugadorID))
+                {
+                    showNotificationFail('El jugador que intentas agregar ya se encuentra en la lista.')
+                    throw new Error();
+                }
+
+                const jugador = await Get<RegistrarJugadorVM>(`jugador/${sancion.JugadorID}`);
+                sancion.Nombre = `${jugador.Nombres} ${jugador.Apellidos}`
+                setPartidoForm({
+                    ...formManager.values,
+                    SancionesEquipoVisitante: [...partidoForm.SancionesEquipoVisitante, sancion]
+                })
+                resetSancionVisitanteForm()
+
+            } catch (e)
+            {
+                return;
+            }
+
+        }
+
+    })
+
+    const initialStateTorneo: { TorneoID: string } = {
+        TorneoID: null
+    };
+
+    const formManagerTorneo = useFormManager<{ TorneoID: string }>({
+        initialValues: initialStateTorneo,
+        validations: {
+            [Labels.TorneoID]: Yup.string().nullable()
+        },
+        onSubmit: async (torneo: { TorneoID: string }, formikHelpers: FormikHelpers<{ TorneoID: string }>) => {
+            console.log()
+        }
+
+    })
+
+    const dependFetchPartidos = () => {
+        if (!formManagerTorneo.values[Labels.TorneoID])
+        {
+            return null
+
+        } else
+        {
+
+            return `partido/obtenerTodosPorTorneo/${formManagerTorneo.values[Labels.TorneoID]}`;
+
+        }
+
+    }
+
     const refFechaForm = useRef<HTMLInputElement>();
     const containerGolesSection = useRef(null);
+    const containerSancionesSection = useRef(null);
 
-    const { data: partidosFromDB, loading } = useGetSWR<TorneoResultadoDataView[]>('partido');
+    const { data: partidosFromDB, loading } = useGetSWR<TorneoResultadoDataView[]>(dependFetchPartidos);
 
     const onCreateDetail = () => {
         resetForm();
         setShowSectionDetalle(true);
         setPartidoSeleccionado([]);
         focusFechaForm();
+        formManager.setFieldValue(Labels.TorneoID, formManagerTorneo.values[Labels.TorneoID]);
     };
 
     const onCancelDetail = () => {
@@ -234,6 +352,8 @@ function Index () {
         formManager.setValues(initialStatePartidoForm);
         resetGolLocalForm();
         resetGolVisitanteForm();
+        resetSancionLocalForm();
+        resetSancionVisitanteForm();
         setPartidoForm(initialStatePartidoForm)
     }
 
@@ -243,6 +363,14 @@ function Index () {
 
     const resetGolVisitanteForm = () => {
         formManagerGolesVisitante.setValues(initialStateGolVisitanteForm);
+    }
+
+    const resetSancionLocalForm = () => {
+        formManagerSancionLocal.setValues(initialStateSancionLocalForm);
+    }
+
+    const resetSancionVisitanteForm = () => {
+        formManagerSancionVisitante.setValues(initialStateSancionVisitanteForm);
     }
 
     const onEditDetail = async () => {
@@ -268,7 +396,7 @@ function Index () {
         try
         {
             await Delete(`partido/${partidoSeleccionado[0].toString()}`);
-            mutate('partido', true);
+            mutate(dependFetchPartidos, true);
             setOpenDialog(false);
             setPartidoSeleccionado([]);
             showNotificationSuccess('Se eliminó exitosamente.');
@@ -388,6 +516,22 @@ function Index () {
 
     }
 
+    const deleteSancionLocal = (params: GridRowParams) => {
+        setPartidoForm({
+            ...formManager.values,
+            SancionesEquipoLocal: partidoForm.SancionesEquipoLocal.filter(v => v.JugadorID !== params.id)
+        })
+
+    }
+
+    const deleteSancionVisitante = (params: GridRowParams) => {
+        setPartidoForm({
+            ...formManager.values,
+            SancionesEquipoVisitante: partidoForm.SancionesEquipoVisitante.filter(v => v.JugadorID !== params.id)
+        })
+
+    }
+
     const columnsGolesLocal: GridColumns = [
         {
             field: Labels.Nombre,
@@ -450,11 +594,114 @@ function Index () {
         }
     ];
 
+    const columnsSancionLocal: GridColumns = [
+        {
+            field: Labels.Nombre,
+            headerName: 'Nombre',
+            type: 'string',
+            flex: 1,
+        },
+        {
+            field: Labels.TarjetaID,
+            headerName: 'Tarjeta',
+            type: 'string',
+            flex: 1,
+            valueFormatter: (params: GridValueFormatterParams) => {
+                switch (params.value)
+                {
+                    case Tarjetas.Amarilla:
+                        return 'Amarilla';
+                    case Tarjetas.Roja:
+                        return 'Roja';
+                    case Tarjetas.RojaDobleAmarilla:
+                        return 'Roja (Doble Amarilla)';
+                    default:
+                        return '';
+                }
+            },
+            cellClassName: (params: GridCellParams<number>) => {
+                return params.value === Tarjetas.Amarilla ? 'amarilla' : 'roja'
+            }
+
+        },
+        {
+            field: 'actions',
+            type: 'actions',
+            getActions: (params: GridRowParams) => [
+                <GridActionsCellItem
+                    icon={<DeleteIcon />}
+                    label="Delete"
+                    onClick={() => deleteSancionLocal(params)}
+                    key={1}
+                />,
+            ]
+
+
+        }
+    ];
+
+    const columnsSancionVisitante: GridColumns = [
+        {
+            field: Labels.Nombre,
+            headerName: 'Nombre',
+            type: 'string',
+            flex: 1,
+        },
+        {
+            field: Labels.TarjetaID,
+            headerName: 'Tarjeta',
+            type: 'string',
+            flex: 1,
+            valueFormatter: (params: GridValueFormatterParams) => {
+                switch (params.value)
+                {
+                    case Tarjetas.Amarilla:
+                        return 'Amarilla';
+                    case Tarjetas.Roja:
+                        return 'Roja';
+                    case Tarjetas.RojaDobleAmarilla:
+                        return 'Roja (Doble Amarilla)';
+                    default:
+                        return '';
+                }
+            },
+            cellClassName: (params: GridCellParams<number>) => {
+                return params.value === Tarjetas.Amarilla ? 'amarilla' : 'roja'
+            }
+
+        },
+        {
+            field: 'actions',
+            type: 'actions',
+            getActions: (params: GridRowParams) => [
+                <GridActionsCellItem
+                    icon={<DeleteIcon />}
+                    label="Delete"
+                    onClick={() => deleteSancionVisitante(params)}
+                    key={1}
+                />,
+            ]
+
+
+        }
+    ];
+
     return (
         <>
+            <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
+                <Grid item xs={3}>
+                    <Form handleSubmit={formManagerTorneo.handleSubmit}>
+                        <AutoCompleteInput
+                            urlApiData='torneo/dropdown/todos'
+                            name={Labels.TorneoID}
+                            label={Labels.NombreTorneo}
+                            formManager={formManagerTorneo} />
+                    </Form>
+                </Grid>
+            </Grid>
             <SectionCollapse title={Labels.Partidos} expanded>
                 <DataGrid
-                    loading={loading}
+                    loading={loading && formManagerTorneo.values[Labels.TorneoID] !== null}
                     rows={partidosFromDB?.length ? partidosFromDB : []}
                     columns={columns}
                     localeText={LocaleDataGrid.Spanish}
@@ -485,8 +732,8 @@ function Index () {
                     getRowId={(row: GridRowModel) => row._id}
                 />
                 <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
-                    <Button variant="contained" onClick={onCreateDetail}>
-                        {Labels.Crear}
+                    <Button variant="contained" onClick={onCreateDetail} disabled={!formManagerTorneo.values[Labels.TorneoID]}>
+                        {Labels.Nuevo}
                     </Button>
                     <Button variant="contained" color='info' disabled={partidoSeleccionado.length ? false : true} onClick={onEditDetail}>
                         {Labels.Editar}
@@ -513,10 +760,11 @@ function Index () {
                     <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
                         <Grid item xs={3}>
                             <AutoCompleteInput
-                                urlApiData='torneo/dropdown/todosNoFinalizados'
+                                urlApiData='torneo/dropdown/todos'
                                 name={Labels.TorneoID}
                                 label='Torneo'
-                                formManager={formManager} />
+                                formManager={formManager}
+                                disabled={true} />
                         </Grid>
                     </Grid>
                     <Divider>Campo de juego</Divider>
@@ -570,7 +818,8 @@ function Index () {
                                 disabled={formManager.values['_id'] !== null} />
                         </Grid>
                     </Grid>
-                    <Box ref={containerGolesSection} />
+                    <Box ref={containerGolesSection} marginBottom={3} />
+                    <Box ref={containerSancionesSection} />
                     <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
                         <LoadingButton loading={formManager.isSubmitting} variant="contained" type='submit' color='success' disabled={!formManager.isValid}>
                             {Labels.Guardar}
@@ -583,7 +832,7 @@ function Index () {
             </SectionCollapse>
             <Portal container={containerGolesSection.current}>
 
-                <Grid container columnSpacing={5} justifyContent='center'>
+                <Grid container columnSpacing={5}>
                     <Grid item xs={6}>
                         <Card variant='outlined' sx={{ backgroundColor: t => t.palette.grey[100] }}>
                             <CardHeader title={Labels.Goles} subheader='Local' avatar={<Avatar>
@@ -675,6 +924,104 @@ function Index () {
 
                 </Grid>
 
+            </Portal>
+            <Portal container={containerSancionesSection.current}>
+                <Box sx={{
+                    '& .amarilla': {
+                        backgroundColor: yellow[600],
+                        color: 'white'
+                    },
+                    '& .roja': {
+                        backgroundColor: red[600],
+                        color: 'white'
+                    }
+                }}>
+                    <Grid container columnSpacing={5}>
+                        <Grid item xs={6}>
+                            <Card variant='outlined' sx={{ backgroundColor: t => t.palette.grey[100] }}>
+                                <CardHeader title={Labels.Sanciones} subheader='Local' avatar={<Avatar>
+                                    <Sports />
+                                </Avatar>} />
+                                <CardContent>
+                                    <Form handleSubmit={formManagerSancionLocal.handleSubmit}>
+                                        <Stack direction='row' >
+                                            <AutoCompleteInput
+                                                urlApiData={dependFetchJugadoresLocalInput}
+                                                name={Labels.JugadorID}
+                                                label='Jugador'
+                                                formManager={formManagerSancionLocal} />
+                                            <AutoCompleteInput
+                                                urlApiData='tarjeta/dropdown/todos'
+                                                name={Labels.TarjetaID}
+                                                label='Tarjeta'
+                                                formManager={formManagerSancionLocal} />
+                                            <IconButton type='submit' disabled={!formManagerSancionLocal.isValid} disableRipple>
+                                                <Add />
+                                            </IconButton>
+                                        </Stack>
+                                    </Form>
+                                    <DataGrid
+                                        rows={partidoForm.SancionesEquipoLocal.length ? partidoForm.SancionesEquipoLocal : []}
+                                        columns={columnsSancionLocal}
+                                        localeText={LocaleDataGrid.Spanish}
+                                        pageSize={5}
+                                        rowsPerPageOptions={[5]}
+                                        disableSelectionOnClick
+                                        disableColumnFilter
+                                        disableColumnMenu
+                                        disableColumnSelector
+                                        hideFooter
+                                        autoHeight
+                                        density='compact'
+                                        getRowId={(row: GridRowModel) => row.JugadorID}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Card variant='outlined' sx={{ backgroundColor: t => t.palette.grey[100] }}>
+                                <CardHeader title={Labels.Sanciones} subheader='Visitante' avatar={<Avatar>
+                                    <Sports />
+                                </Avatar>} />
+                                <CardContent>
+                                    <Form handleSubmit={formManagerSancionVisitante.handleSubmit}>
+                                        <Stack direction='row' >
+                                            <AutoCompleteInput
+                                                urlApiData={dependFetchJugadoresVisitanteInput}
+                                                name={Labels.JugadorID}
+                                                label='Jugador'
+                                                formManager={formManagerSancionVisitante} />
+                                            <AutoCompleteInput
+                                                urlApiData='tarjeta/dropdown/todos'
+                                                name={Labels.TarjetaID}
+                                                label='Tarjeta'
+                                                formManager={formManagerSancionVisitante} />
+                                            <IconButton type='submit' disabled={!formManagerSancionVisitante.isValid} disableRipple>
+                                                <Add />
+                                            </IconButton>
+                                        </Stack>
+                                    </Form>
+                                    <DataGrid
+                                        rows={partidoForm.SancionesEquipoVisitante.length ? partidoForm.SancionesEquipoVisitante : []}
+                                        columns={columnsSancionVisitante}
+                                        localeText={LocaleDataGrid.Spanish}
+                                        pageSize={5}
+                                        rowsPerPageOptions={[5]}
+                                        disableSelectionOnClick
+                                        disableColumnFilter
+                                        disableColumnMenu
+                                        disableColumnSelector
+                                        hideFooter
+                                        autoHeight
+                                        density='compact'
+                                        getRowId={(row: GridRowModel) => row.JugadorID}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </Grid>
+
+                    </Grid>
+                </Box>
             </Portal>
             <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar partido' content='Se eliminará el partido. ¿Estás realmente seguro?' handleOk={onDeleteDetail} />
         </>

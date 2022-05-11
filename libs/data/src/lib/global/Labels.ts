@@ -13,7 +13,7 @@ export enum Labels {
     IniciarSesion = 'Iniciar Sesión',
     Eliminar = 'Eliminar',
     Editar = 'Editar',
-    Crear = 'Crear',
+    Nuevo = 'Nuevo',
     Guardar = 'Guardar',
     Cancelar = 'Cancelar',
     Torneos = 'Torneos',
@@ -47,6 +47,19 @@ export enum Labels {
     ResultadoVisitante = 'ResultadoVisitante',
     JugadorID = 'JugadorID',
     Cantidad = 'Cantidad',
-    Goles = 'Goles'
+    Goles = 'Goles',
+    TarjetaID = 'TarjetaID',
+    Sanciones = 'Sanciones',
+    Posicion = 'Posicion',
+    Puntos = 'Puntos',
+    PartidosJugados = 'PartidosJugados',
+    PartidosGanados = 'PartidosGanados',
+    PartidosPerdidos = 'PartidosPerdidos',
+    PartidosEmpatados = 'PartidosEmpatados',
+    GolesFavor = 'GolesFavor',
+    GolesContra = 'GolesContra',
+    DiferenciaGoles = 'DiferenciaGoles',
+    Tabla = 'Tabla',
+    Ver = 'Ver'
 
 }

@@ -4,6 +4,8 @@ export class RegistrarSancionVM {
 
     JugadorID: string;
 
+    Nombre: string;
+
     TarjetaID: number
 
 }

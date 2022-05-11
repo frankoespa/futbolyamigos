@@ -4,7 +4,7 @@ import { Partido } from "../schema/PartidoSchema";
 import { PartidoDomain } from "../domain/PartidoDomain";
 import { PartidoRepository } from "../repository/PartidoRepository";
 import { RegistrarPartidoDTO } from "../dtos/RegistrarPartidoDTO";
-import { Messages, PartidoResultadoDataView, RegistrarPartidoVM, RegistrarGolVM } from "@futbolyamigos/data";
+import { Messages, PartidoResultadoDataView, RegistrarPartidoVM, RegistrarGolVM, RegistrarSancionVM, LineaTabla } from "@futbolyamigos/data";
 import { Types, Connection } from "mongoose";
 import { Equipo } from "../../equipo/schema/EquipoSchema";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
@@ -38,8 +38,13 @@ export class PartidoLogic {
 
         const torneoDomainPersisted = await this.documentLoaderService.GetById<Torneo, TorneoDomain>(Torneo.name, TorneoDomain, registrarPartidoDTO.TorneoID);
 
-        if (!torneoDomainPersisted && registrarPartidoDTO.TorneoID)
+        if (!torneoDomainPersisted)
             throw new ValidationException(Messages.NoSeEncuentraElTorneo)
+
+        if (torneoDomainPersisted.Doc.Finalizado)
+        {
+            throw new ValidationException(Messages.ElTorneoSeEncuentraFinalizado);
+        }
 
         const equipoLocalDomainPersisted = await this.documentLoaderService.GetById<Equipo, EquipoDomain>(Equipo.name, EquipoDomain, registrarPartidoDTO.EquipoLocalID);
 
@@ -261,7 +266,7 @@ export class PartidoLogic {
                 const vo: RegistrarSancionVO = {
                     PartidoDomain: partidoDomain,
                     TorneoDomain: torneoDomainPersisted,
-                    EquipoDomain: equipoLocalDomainPersisted,
+                    EquipoDomain: equipoVisitanteDomainPersisted,
                     JugadorDomain: await this.documentLoaderService.GetById<Jugador, JugadorDomain>(Jugador.name, JugadorDomain, sancionVisitante.JugadorID),
                     TarjetaDomain: await this.documentLoaderService.GetById<Tarjeta, TarjetaDomain>(Tarjeta.name, TarjetaDomain, sancionVisitante.TarjetaID)
 
@@ -373,6 +378,22 @@ export class PartidoLogic {
         }))
     }
 
+    async ObtenerTodosPorTorneo (torneoID: Types.ObjectId): Promise<PartidoResultadoDataView[]> {
+
+        const partidos = await this.partidoRepository.ObtenerTodosPorTorneo(torneoID);
+
+        return partidos.map<PartidoResultadoDataView>(p => ({
+            _id: p._id,
+            Fecha: p.Fecha,
+            NombreTorneo: p.Torneo.Nombre,
+            NroCancha: p.Cancha ? p.Cancha.Identificador : null,
+            NombreEquipoLocal: p.EquipoLocal.Nombre,
+            NombreEquipoVisitante: p.EquipoVisitante.Nombre,
+            ResultadoLocal: p.ResultadoLocal,
+            ResultadoVisitante: p.ResultadoVisitante
+        }))
+    }
+
     async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarPartidoVM> {
 
         const partidoDomain = await this.partidoRepository.FindWithId(id);
@@ -391,6 +412,26 @@ export class PartidoLogic {
 
         const golesEquipoVisitante = await this.documentLoaderService
             .Query<Gol>(Gol.name)
+            .find(
+                {
+                    Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                    Equipo: new Types.ObjectId(partidoDomain.Doc.EquipoVisitante._id)
+                }
+            )
+            .exec()
+
+        const sancionesEquipoLocal = await this.documentLoaderService
+            .Query<Sancion>(Sancion.name)
+            .find(
+                {
+                    Partido: new Types.ObjectId(partidoDomain.Doc._id),
+                    Equipo: new Types.ObjectId(partidoDomain.Doc.EquipoLocal._id)
+                }
+            )
+            .exec()
+
+        const sancionesEquipoVisitante = await this.documentLoaderService
+            .Query<Sancion>(Sancion.name)
             .find(
                 {
                     Partido: new Types.ObjectId(partidoDomain.Doc._id),
@@ -419,6 +460,18 @@ export class PartidoLogic {
                 JugadorID: g.Jugador._id,
                 Cantidad: g.Cantidad,
                 Nombre: `${g.Jugador.Nombres} ${g.Jugador.Apellidos}`
+            })),
+            SancionesEquipoLocal: sancionesEquipoLocal.map<RegistrarSancionVM>(s => ({
+                _id: s._id,
+                JugadorID: s.Jugador._id,
+                Nombre: `${s.Jugador.Nombres} ${s.Jugador.Apellidos}`,
+                TarjetaID: s.Tarjeta._id
+            })),
+            SancionesEquipoVisitante: sancionesEquipoVisitante.map<RegistrarSancionVM>(s => ({
+                _id: s._id,
+                JugadorID: s.Jugador._id,
+                Nombre: `${s.Jugador.Nombres} ${s.Jugador.Apellidos}`,
+                TarjetaID: s.Tarjeta._id
             }))
         }
     }
@@ -456,5 +509,210 @@ export class PartidoLogic {
 
             throw new ValidationException(error.message);
         }
+    }
+
+    async ObtenerTabla (torneoID: Types.ObjectId): Promise<LineaTabla[]> {
+
+        const tabla: LineaTabla[] = [];
+
+        const equiposComoLocalIDs = await this.documentLoaderService
+            .Query<Partido>(Partido.name)
+            .find({
+                Torneo: new Types.ObjectId(torneoID)
+            })
+            .distinct('EquipoLocal')
+            .exec();
+
+        const equiposComoVisitanteIDs = await this.documentLoaderService
+            .Query<Partido>(Partido.name)
+            .find({
+                Torneo: new Types.ObjectId(torneoID)
+            })
+            .distinct('EquipoVisitante')
+            .exec();
+
+        let todosLosEquiposDelTorneo: string[] = equiposComoLocalIDs.concat(equiposComoVisitanteIDs).map(i => i.toString());
+        todosLosEquiposDelTorneo = [...new Set([...todosLosEquiposDelTorneo])]
+
+        for (const equipoID of todosLosEquiposDelTorneo)
+        {
+            let PUNTOS = 0;
+            let PARTIDOS_JUGADOS = 0;
+            let PARTIDOS_GANADOS = 0;
+            let PARTIDOS_PERDIDOS = 0;
+            let PARTIDOS_EMPATADOS = 0;
+            let GOLES_FAVOR = 0;
+            let GOLES_CONTRA = 0;
+            let DIFERENCIA_GOLES = 0;
+
+            const equipo = await this.documentLoaderService.GetById<Equipo, EquipoDomain>(Equipo.name, EquipoDomain, new Types.ObjectId(equipoID));
+
+            const totalPartidosGanados = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    Torneo: new Types.ObjectId(torneoID),
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    $or: [
+                        {
+                            EquipoLocal: new Types.ObjectId(equipoID),
+                            $expr: {
+                                $gt: [
+                                    "$ResultadoLocal",
+                                    "$ResultadoVisitante"
+                                ]
+                            }
+                        },
+                        {
+                            EquipoVisitante: new Types.ObjectId(equipoID),
+                            $expr: {
+                                $gt: [
+                                    "$ResultadoVisitante",
+                                    "$ResultadoLocal"
+                                ]
+                            }
+                        }
+
+                    ]
+                })
+                .countDocuments()
+                .exec()
+
+            const totalPartidosPerdidos = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    Torneo: new Types.ObjectId(torneoID),
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    $or: [
+                        {
+                            EquipoLocal: new Types.ObjectId(equipoID),
+                            $expr: {
+                                $gt: [
+                                    "$ResultadoVisitante",
+                                    "$ResultadoLocal"
+                                ]
+                            }
+                        },
+                        {
+                            EquipoVisitante: new Types.ObjectId(equipoID),
+                            $expr: {
+                                $gt: [
+                                    "$ResultadoLocal",
+                                    "$ResultadoVisitante"
+                                ]
+                            }
+                        }
+
+                    ]
+                })
+                .countDocuments()
+                .exec()
+
+            const totalPartidosJugados = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    Torneo: new Types.ObjectId(torneoID),
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    $or: [
+                        {
+                            EquipoLocal: new Types.ObjectId(equipoID)
+                        },
+                        {
+                            EquipoVisitante: new Types.ObjectId(equipoID)
+                        }
+
+                    ]
+                })
+                .countDocuments()
+                .exec()
+
+            const partidosComoLocal = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    Torneo: new Types.ObjectId(torneoID),
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    EquipoLocal: new Types.ObjectId(equipoID)
+                })
+                .exec();
+
+            const partidosComoVisitante = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    Torneo: new Types.ObjectId(torneoID),
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    EquipoVisitante: new Types.ObjectId(equipoID)
+                })
+                .exec();
+
+
+            partidosComoLocal.forEach(p => {
+                GOLES_FAVOR += p.ResultadoLocal;
+            })
+
+            partidosComoVisitante.forEach(p => {
+                GOLES_FAVOR += p.ResultadoVisitante;
+            })
+
+            partidosComoLocal.forEach(p => {
+                GOLES_CONTRA += p.ResultadoVisitante;
+            })
+
+            partidosComoVisitante.forEach(p => {
+                GOLES_CONTRA += p.ResultadoLocal;
+            })
+
+            PARTIDOS_EMPATADOS = totalPartidosJugados - totalPartidosGanados - totalPartidosPerdidos;
+            PUNTOS = (totalPartidosGanados * 3) + PARTIDOS_EMPATADOS;
+            PARTIDOS_JUGADOS = totalPartidosJugados;
+            PARTIDOS_GANADOS = totalPartidosGanados;
+            PARTIDOS_PERDIDOS = totalPartidosPerdidos;
+            DIFERENCIA_GOLES = GOLES_FAVOR - GOLES_CONTRA
+
+            tabla.push({
+                Posicion: tabla.length + 1,
+                NombreEquipo: equipo.Doc.Nombre,
+                Puntos: PUNTOS,
+                PartidosJugados: PARTIDOS_JUGADOS,
+                PartidosGanados: PARTIDOS_GANADOS,
+                PartidosPerdidos: PARTIDOS_PERDIDOS,
+                PartidosEmpatados: PARTIDOS_EMPATADOS,
+                GolesFavor: GOLES_FAVOR,
+                GolesContra: GOLES_CONTRA,
+                DiferenciaGoles: DIFERENCIA_GOLES
+            })
+
+        }
+
+        tabla.sort((a, b) => b.Puntos - a.Puntos)
+        tabla.forEach((l, index) => {
+            l.Posicion = index + 1
+        })
+
+        return tabla;
+
     }
 }

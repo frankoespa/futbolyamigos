@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { RegistrarPartidoDTO } from '../dtos/RegistrarPartidoDTO';
 import { PartidoLogic } from '../providers/PartidoLogic';
 import { Auth } from '../../auth/decorators/AuthComposition';
-import { PartidoResultadoDataView, RegistrarPartidoVM, Roles } from "@futbolyamigos/data";
+import { PartidoResultadoDataView, RegistrarPartidoVM, Roles, LineaTabla } from "@futbolyamigos/data";
 import { Types } from "mongoose";
 
 @Controller('partido')
@@ -23,6 +23,13 @@ export class PartidoController {
     }
 
     @Auth([Roles.Admin])
+    @Get('obtenerTodosPorTorneo/:id')
+    async ObtenerTodosPorTorneo (@Param('id') torneoID: Types.ObjectId): Promise<PartidoResultadoDataView[]> {
+
+        return await this.partidoLogic.ObtenerTodosPorTorneo(torneoID);
+    }
+
+    @Auth([Roles.Admin])
     @Get(':id')
     async ObtenerPorId (@Param('id') id: Types.ObjectId): Promise<RegistrarPartidoVM> {
 
@@ -34,5 +41,11 @@ export class PartidoController {
     async Eliminar (@Param('id') id: Types.ObjectId): Promise<void> {
 
         return await this.partidoLogic.EliminarPorId(id);
+    }
+
+    @Auth([Roles.Admin])
+    @Get('tabla/:id')
+    async ObtenerTablaPorTorneo (@Param('id') torneoID: Types.ObjectId): Promise<LineaTabla[]> {
+        return await this.partidoLogic.ObtenerTabla(torneoID);
     }
 }

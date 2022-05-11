@@ -169,7 +169,7 @@ function Index () {
                 />
                 <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
                     <Button variant="contained" onClick={onCreateDetail}>
-                        {Labels.Crear}
+                        {Labels.Nuevo}
                     </Button>
                     <Button variant="contained" color='info' disabled={canchaSeleccionada.length ? false : true} onClick={onEditDetail}>
                         {Labels.Editar}
