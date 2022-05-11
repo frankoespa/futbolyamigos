@@ -23,6 +23,13 @@ export class PartidoController {
     }
 
     @Auth([Roles.Admin])
+    @Get('obtenerTodosPorTorneo/:id')
+    async ObtenerTodosPorTorneo (@Param('id') torneoID: Types.ObjectId): Promise<PartidoResultadoDataView[]> {
+
+        return await this.partidoLogic.ObtenerTodosPorTorneo(torneoID);
+    }
+
+    @Auth([Roles.Admin])
     @Get(':id')
     async ObtenerPorId (@Param('id') id: Types.ObjectId): Promise<RegistrarPartidoVM> {
 
@@ -38,7 +45,7 @@ export class PartidoController {
 
     @Auth([Roles.Admin])
     @Get('tabla/:id')
-    async ObtenerTablaPorTorneo (@Param('id') id: Types.ObjectId): Promise<LineaTabla[]> {
-        return await this.partidoLogic.ObtenerTabla(id);
+    async ObtenerTablaPorTorneo (@Param('id') torneoID: Types.ObjectId): Promise<LineaTabla[]> {
+        return await this.partidoLogic.ObtenerTabla(torneoID);
     }
 }

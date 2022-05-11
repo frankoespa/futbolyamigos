@@ -38,8 +38,13 @@ export class PartidoLogic {
 
         const torneoDomainPersisted = await this.documentLoaderService.GetById<Torneo, TorneoDomain>(Torneo.name, TorneoDomain, registrarPartidoDTO.TorneoID);
 
-        if (!torneoDomainPersisted && registrarPartidoDTO.TorneoID)
+        if (!torneoDomainPersisted)
             throw new ValidationException(Messages.NoSeEncuentraElTorneo)
+
+        if (torneoDomainPersisted.Doc.Finalizado)
+        {
+            throw new ValidationException(Messages.ElTorneoSeEncuentraFinalizado);
+        }
 
         const equipoLocalDomainPersisted = await this.documentLoaderService.GetById<Equipo, EquipoDomain>(Equipo.name, EquipoDomain, registrarPartidoDTO.EquipoLocalID);
 
@@ -373,6 +378,22 @@ export class PartidoLogic {
         }))
     }
 
+    async ObtenerTodosPorTorneo (torneoID: Types.ObjectId): Promise<PartidoResultadoDataView[]> {
+
+        const partidos = await this.partidoRepository.ObtenerTodosPorTorneo(torneoID);
+
+        return partidos.map<PartidoResultadoDataView>(p => ({
+            _id: p._id,
+            Fecha: p.Fecha,
+            NombreTorneo: p.Torneo.Nombre,
+            NroCancha: p.Cancha ? p.Cancha.Identificador : null,
+            NombreEquipoLocal: p.EquipoLocal.Nombre,
+            NombreEquipoVisitante: p.EquipoVisitante.Nombre,
+            ResultadoLocal: p.ResultadoLocal,
+            ResultadoVisitante: p.ResultadoVisitante
+        }))
+    }
+
     async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarPartidoVM> {
 
         const partidoDomain = await this.partidoRepository.FindWithId(id);
@@ -510,8 +531,8 @@ export class PartidoLogic {
             .distinct('EquipoVisitante')
             .exec();
 
-        let todosLosEquiposDelTorneo: Types.ObjectId[] = equiposComoLocalIDs.concat(equiposComoVisitanteIDs);
-        todosLosEquiposDelTorneo = [...new Set([...equiposComoLocalIDs, ...equiposComoVisitanteIDs])]
+        let todosLosEquiposDelTorneo: string[] = equiposComoLocalIDs.concat(equiposComoVisitanteIDs).map(i => i.toString());
+        todosLosEquiposDelTorneo = [...new Set([...todosLosEquiposDelTorneo])]
 
         for (const equipoID of todosLosEquiposDelTorneo)
         {

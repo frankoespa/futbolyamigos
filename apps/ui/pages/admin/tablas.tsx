@@ -1,15 +1,11 @@
 import SectionCollapse from '../../src/components/SectionCollapse';
-import { useState } from 'react';
 import { DataGrid, GridColDef, GridRowModel } from '@mui/x-data-grid';
 import { Grid } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
 import { Labels, LineaTabla } from "@futbolyamigos/data";
 import * as Yup from 'yup';
 import { Form } from '../../src/form/Form';
-import { useApiManager } from '../../src/api/useApiManager';
 import { FormikHelpers } from 'formik';
-import { useSWRConfig } from "swr";
-import { useNotification } from '../../src/notifications/useNotification';
 import { useGetSWR } from '../../src/api/useGetSWR';
 import { LocaleDataGrid } from '../../src/components/datagrid/LocaleDataGrid';
 import { AutoCompleteInput } from '../../src/form/input/AutoCompleteInput';
@@ -116,20 +112,18 @@ const columns: GridColDef[] = [
 ];
 
 function Index () {
-    const { Post, Get, Delete } = useApiManager();
-    const { showNotificationSuccess } = useNotification();
-    const { mutate } = useSWRConfig();
+
     const initialStateTorneo: { TorneoID: string } = {
         TorneoID: null
     };
-    const [tabla, setTabla] = useState<LineaTabla[]>([]);
+
     const formManager = useFormManager<{ TorneoID: string }>({
         initialValues: initialStateTorneo,
         validations: {
             [Labels.TorneoID]: Yup.string().nullable()
         },
         onSubmit: async (torneo: { TorneoID: string }, formikHelpers: FormikHelpers<{ TorneoID: string }>) => {
-
+            console.log()
         }
 
     })

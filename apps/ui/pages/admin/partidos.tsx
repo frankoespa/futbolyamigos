@@ -116,7 +116,7 @@ function Index () {
     const formManager = useFormManager<RegistrarPartidoVM>({
         initialValues: partidoForm,
         validations: {
-            [Labels.Fecha]: Yup.date().required().typeError('formato incorrecto'),
+            [Labels.Fecha]: Yup.date().required().typeError('requerido'),
             [Labels.TorneoID]: Yup.string().nullable().required('requerido'),
             [Labels.CanchaID]: Yup.string().nullable(),
             [Labels.EquipoLocalID]: Yup.string().nullable().required('requerido'),
@@ -156,7 +156,7 @@ function Index () {
                 }
 
                 await Post('partido', partido);
-                mutate('partido', true);
+                mutate(dependFetchPartidos, true);
                 resetForm();
                 setShowSectionDetalle(false);
                 setPartidoSeleccionado([]);
@@ -299,17 +299,47 @@ function Index () {
 
     })
 
+    const initialStateTorneo: { TorneoID: string } = {
+        TorneoID: null
+    };
+
+    const formManagerTorneo = useFormManager<{ TorneoID: string }>({
+        initialValues: initialStateTorneo,
+        validations: {
+            [Labels.TorneoID]: Yup.string().nullable()
+        },
+        onSubmit: async (torneo: { TorneoID: string }, formikHelpers: FormikHelpers<{ TorneoID: string }>) => {
+            console.log()
+        }
+
+    })
+
+    const dependFetchPartidos = () => {
+        if (!formManagerTorneo.values[Labels.TorneoID])
+        {
+            return null
+
+        } else
+        {
+
+            return `partido/obtenerTodosPorTorneo/${formManagerTorneo.values[Labels.TorneoID]}`;
+
+        }
+
+    }
+
     const refFechaForm = useRef<HTMLInputElement>();
     const containerGolesSection = useRef(null);
     const containerSancionesSection = useRef(null);
 
-    const { data: partidosFromDB, loading } = useGetSWR<TorneoResultadoDataView[]>('partido');
+    const { data: partidosFromDB, loading } = useGetSWR<TorneoResultadoDataView[]>(dependFetchPartidos);
 
     const onCreateDetail = () => {
         resetForm();
         setShowSectionDetalle(true);
         setPartidoSeleccionado([]);
         focusFechaForm();
+        formManager.setFieldValue(Labels.TorneoID, formManagerTorneo.values[Labels.TorneoID]);
     };
 
     const onCancelDetail = () => {
@@ -366,7 +396,7 @@ function Index () {
         try
         {
             await Delete(`partido/${partidoSeleccionado[0].toString()}`);
-            mutate('partido', true);
+            mutate(dependFetchPartidos, true);
             setOpenDialog(false);
             setPartidoSeleccionado([]);
             showNotificationSuccess('Se eliminó exitosamente.');
@@ -658,9 +688,20 @@ function Index () {
 
     return (
         <>
+            <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
+                <Grid item xs={3}>
+                    <Form handleSubmit={formManagerTorneo.handleSubmit}>
+                        <AutoCompleteInput
+                            urlApiData='torneo/dropdown/todos'
+                            name={Labels.TorneoID}
+                            label={Labels.NombreTorneo}
+                            formManager={formManagerTorneo} />
+                    </Form>
+                </Grid>
+            </Grid>
             <SectionCollapse title={Labels.Partidos} expanded>
                 <DataGrid
-                    loading={loading}
+                    loading={loading && formManagerTorneo.values[Labels.TorneoID] !== null}
                     rows={partidosFromDB?.length ? partidosFromDB : []}
                     columns={columns}
                     localeText={LocaleDataGrid.Spanish}
@@ -691,7 +732,7 @@ function Index () {
                     getRowId={(row: GridRowModel) => row._id}
                 />
                 <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
-                    <Button variant="contained" onClick={onCreateDetail}>
+                    <Button variant="contained" onClick={onCreateDetail} disabled={!formManagerTorneo.values[Labels.TorneoID]}>
                         {Labels.Nuevo}
                     </Button>
                     <Button variant="contained" color='info' disabled={partidoSeleccionado.length ? false : true} onClick={onEditDetail}>
@@ -719,10 +760,11 @@ function Index () {
                     <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
                         <Grid item xs={3}>
                             <AutoCompleteInput
-                                urlApiData='torneo/dropdown/todosNoFinalizados'
+                                urlApiData='torneo/dropdown/todos'
                                 name={Labels.TorneoID}
                                 label='Torneo'
-                                formManager={formManager} />
+                                formManager={formManager}
+                                disabled={true} />
                         </Grid>
                     </Grid>
                     <Divider>Campo de juego</Divider>
