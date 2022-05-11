@@ -109,7 +109,7 @@ function Index () {
             [Labels.Nombres]: Yup.string().required('requerido'),
             [Labels.Apellidos]: Yup.string().required('requerido'),
             [Labels.FechaNacimiento]: Yup.date().nullable(),
-            [Labels.Dni]: Yup.string().required('requerido'),
+            [Labels.Dni]: Yup.string().nullable().required('requerido'),
             [Labels.Email]: Yup.string().email('email inválido').nullable(),
             [Labels.Telefono]: Yup.string().nullable().matches(/54[0-9][0-9][0-9][0-9]{7}/, { excludeEmptyString: true, message: 'El formato tiene que ser: +54 (xxx) x xx xx xx' }),
             [Labels.EquipoID]: Yup.string().nullable()
