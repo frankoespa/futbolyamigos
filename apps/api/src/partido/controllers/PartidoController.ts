@@ -48,4 +48,10 @@ export class PartidoController {
     async ObtenerTablaPorTorneo (@Param('id') torneoID: Types.ObjectId): Promise<LineaTabla[]> {
         return await this.partidoLogic.ObtenerTabla(torneoID);
     }
+
+    @Auth([Roles.Admin])
+    @Get('tablaGeneral/:id')
+    async ObtenerTablaPorTorneoCompuesto (@Param('id') torneoCompuestoID: Types.ObjectId): Promise<LineaTabla[]> {
+        return await this.partidoLogic.ObtenerTablaGeneral(torneoCompuestoID);
+    }
 }

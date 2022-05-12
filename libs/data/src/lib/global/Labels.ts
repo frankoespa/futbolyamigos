@@ -65,6 +65,10 @@ export enum Labels {
     NombreTorneoClausura = 'NombreTorneoClausura',
     TorneoAperturaID = 'TorneoAperturaID',
     TorneoClausuraID = 'TorneoClausuraID',
-    TorneosCompuestos = 'TorneosCompuestos'
+    TorneosCompuestos = 'TorneosCompuestos',
+    TorneoCompuestoID = 'TorneoCompuestoID',
+    NombreTorneoCompuesto = 'NombreTorneoCompuesto',
+    TablaGeneral = 'Tabla General',
+
 
 }

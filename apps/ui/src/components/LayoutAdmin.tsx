@@ -153,6 +153,14 @@ function LayoutAdmin (props: IProps) {
                             <ListItemText primary={<Typography variant='body1' color='text.secondary'>Tablas</Typography>} />
                         </ListItem>
                     </Link>
+                    <Link href='/admin/tablascompuestas' passHref>
+                        <ListItem button>
+                            <ListItemIcon>
+                                <Ballot />
+                            </ListItemIcon>
+                            <ListItemText primary={<Typography variant='body1' color='text.secondary'>Tablas Compuestas</Typography>} />
+                        </ListItem>
+                    </Link>
                     {/* <Link href='/admin/goleadores' passHref>
                         <ListItem button>
                             <ListItemIcon>
