@@ -34,3 +34,6 @@ export * from './lib/gol/RegistrarGolVM'
 export * from './lib/sancion/RegistrarSancionVM'
 
 export * from './lib/tarjeta/Tarjetas'
+
+export * from './lib/torneoCompuesto/RegistrarTorneoCompuestoVM';
+export * from './lib/torneoCompuesto/TorneoCompuestoResultadoDataView';

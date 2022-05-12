@@ -25,6 +25,8 @@ import { SancionDomain } from "../../sancion/domain/SancionDomain";
 import { RegistrarSancionVO } from "../../sancion/valueObjects/RegistrarSancionVO";
 import { Tarjeta } from "../../tarjeta/schema/TarjetaSchema";
 import { TarjetaDomain } from "../../tarjeta/domain/TarjetaDomain";
+import { TorneoCompuesto } from "../../compuesto/schema/TorneoCompuestoSchema";
+import { TorneoCompuestoDomain } from "../../compuesto/domain/TorneoCompuestoDomain";
 
 @Injectable()
 export class PartidoLogic {
@@ -658,6 +660,289 @@ export class PartidoLogic {
                 .Query<Partido>(Partido.name)
                 .find({
                     Torneo: new Types.ObjectId(torneoID),
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    EquipoVisitante: new Types.ObjectId(equipoID)
+                })
+                .exec();
+
+
+            partidosComoLocal.forEach(p => {
+                GOLES_FAVOR += p.ResultadoLocal;
+            })
+
+            partidosComoVisitante.forEach(p => {
+                GOLES_FAVOR += p.ResultadoVisitante;
+            })
+
+            partidosComoLocal.forEach(p => {
+                GOLES_CONTRA += p.ResultadoVisitante;
+            })
+
+            partidosComoVisitante.forEach(p => {
+                GOLES_CONTRA += p.ResultadoLocal;
+            })
+
+            PARTIDOS_EMPATADOS = totalPartidosJugados - totalPartidosGanados - totalPartidosPerdidos;
+            PUNTOS = (totalPartidosGanados * 3) + PARTIDOS_EMPATADOS;
+            PARTIDOS_JUGADOS = totalPartidosJugados;
+            PARTIDOS_GANADOS = totalPartidosGanados;
+            PARTIDOS_PERDIDOS = totalPartidosPerdidos;
+            DIFERENCIA_GOLES = GOLES_FAVOR - GOLES_CONTRA
+
+            tabla.push({
+                Posicion: tabla.length + 1,
+                NombreEquipo: equipo.Doc.Nombre,
+                Puntos: PUNTOS,
+                PartidosJugados: PARTIDOS_JUGADOS,
+                PartidosGanados: PARTIDOS_GANADOS,
+                PartidosPerdidos: PARTIDOS_PERDIDOS,
+                PartidosEmpatados: PARTIDOS_EMPATADOS,
+                GolesFavor: GOLES_FAVOR,
+                GolesContra: GOLES_CONTRA,
+                DiferenciaGoles: DIFERENCIA_GOLES
+            })
+
+        }
+
+        tabla.sort((a, b) => b.Puntos - a.Puntos)
+        tabla.forEach((l, index) => {
+            l.Posicion = index + 1
+        })
+
+        return tabla;
+
+    }
+
+    async ObtenerTablaGeneral (torneoCompuestoID: Types.ObjectId): Promise<LineaTabla[]> {
+
+        const tabla: LineaTabla[] = [];
+
+        const torneoCompuestoDomain = await this.documentLoaderService.GetById<TorneoCompuesto, TorneoCompuestoDomain>(TorneoCompuesto.name, TorneoCompuestoDomain, torneoCompuestoID);
+
+        if (!torneoCompuestoDomain)
+            throw new ValidationException(Messages.NoSeEncuentraElTorneoCompuesto);
+
+        const equiposComoLocalIDs = await this.documentLoaderService
+            .Query<Partido>(Partido.name)
+            .find({
+                $or: [
+                    {
+                        Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                    },
+                    {
+                        Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                    }
+                ]
+            })
+            .distinct('EquipoLocal')
+            .exec();
+
+        const equiposComoVisitanteIDs = await this.documentLoaderService
+            .Query<Partido>(Partido.name)
+            .find({
+                $or: [
+                    {
+                        Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                    },
+                    {
+                        Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                    }
+                ]
+            })
+            .distinct('EquipoVisitante')
+            .exec();
+
+        let todosLosEquiposDelTorneo: string[] = equiposComoLocalIDs.concat(equiposComoVisitanteIDs).map(i => i.toString());
+        todosLosEquiposDelTorneo = [...new Set([...todosLosEquiposDelTorneo])]
+
+        for (const equipoID of todosLosEquiposDelTorneo)
+        {
+            let PUNTOS = 0;
+            let PARTIDOS_JUGADOS = 0;
+            let PARTIDOS_GANADOS = 0;
+            let PARTIDOS_PERDIDOS = 0;
+            let PARTIDOS_EMPATADOS = 0;
+            let GOLES_FAVOR = 0;
+            let GOLES_CONTRA = 0;
+            let DIFERENCIA_GOLES = 0;
+
+            const equipo = await this.documentLoaderService.GetById<Equipo, EquipoDomain>(Equipo.name, EquipoDomain, new Types.ObjectId(equipoID));
+
+            const totalPartidosGanados = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    $or: [
+                        {
+                            $or: [
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                                },
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                                }
+                            ],
+                            EquipoLocal: new Types.ObjectId(equipoID),
+                            $expr: {
+                                $gt: [
+                                    "$ResultadoLocal",
+                                    "$ResultadoVisitante"
+                                ]
+                            }
+                        },
+                        {
+                            $or: [
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                                },
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                                }
+                            ],
+                            EquipoVisitante: new Types.ObjectId(equipoID),
+                            $expr: {
+                                $gt: [
+                                    "$ResultadoVisitante",
+                                    "$ResultadoLocal"
+                                ]
+                            }
+                        }
+
+                    ]
+                })
+                .countDocuments()
+                .exec()
+
+            const totalPartidosPerdidos = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    $or: [
+                        {
+                            $or: [
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                                },
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                                }
+                            ],
+                            EquipoLocal: new Types.ObjectId(equipoID),
+                            $expr: {
+                                $gt: [
+                                    "$ResultadoVisitante",
+                                    "$ResultadoLocal"
+                                ]
+                            }
+                        },
+                        {
+                            $or: [
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                                },
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                                }
+                            ],
+                            EquipoVisitante: new Types.ObjectId(equipoID),
+                            $expr: {
+                                $gt: [
+                                    "$ResultadoLocal",
+                                    "$ResultadoVisitante"
+                                ]
+                            }
+                        }
+
+                    ]
+                })
+                .countDocuments()
+                .exec()
+
+            const totalPartidosJugados = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    $or: [
+                        {
+                            $or: [
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                                },
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                                }
+                            ],
+                            EquipoLocal: new Types.ObjectId(equipoID)
+                        },
+                        {
+                            $or: [
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                                },
+                                {
+                                    Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                                }
+                            ],
+                            EquipoVisitante: new Types.ObjectId(equipoID)
+                        }
+
+                    ]
+                })
+                .countDocuments()
+                .exec()
+
+            const partidosComoLocal = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    $or: [
+                        {
+                            Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                        },
+                        {
+                            Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                        }
+                    ],
+                    ResultadoLocal: {
+                        $ne: null
+                    },
+                    ResultadoVisitante: {
+                        $ne: null
+                    },
+                    EquipoLocal: new Types.ObjectId(equipoID)
+                })
+                .exec();
+
+            const partidosComoVisitante = await this.documentLoaderService
+                .Query<Partido>(Partido.name)
+                .find({
+                    $or: [
+                        {
+                            Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoApertura._id)
+                        },
+                        {
+                            Torneo: new Types.ObjectId(torneoCompuestoDomain.Doc.TorneoClausura._id)
+                        }
+                    ],
                     ResultadoLocal: {
                         $ne: null
                     },

@@ -105,6 +105,14 @@ function LayoutAdmin (props: IProps) {
                             <ListItemText primary={<Typography variant='body1' color='text.secondary'>Torneos</Typography>} />
                         </ListItem>
                     </Link>
+                    <Link href='/admin/torneoscompuestos' passHref>
+                        <ListItem button>
+                            <ListItemIcon>
+                                <EmojiEvents />
+                            </ListItemIcon>
+                            <ListItemText primary={<Typography variant='body1' color='text.secondary'>Torneos Compuestos</Typography>} />
+                        </ListItem>
+                    </Link>
                     <Link href='/admin/equipos' passHref>
                         <ListItem button>
                             <ListItemIcon>
@@ -143,6 +151,14 @@ function LayoutAdmin (props: IProps) {
                                 <Ballot />
                             </ListItemIcon>
                             <ListItemText primary={<Typography variant='body1' color='text.secondary'>Tablas</Typography>} />
+                        </ListItem>
+                    </Link>
+                    <Link href='/admin/tablascompuestas' passHref>
+                        <ListItem button>
+                            <ListItemIcon>
+                                <Ballot />
+                            </ListItemIcon>
+                            <ListItemText primary={<Typography variant='body1' color='text.secondary'>Tablas Compuestas</Typography>} />
                         </ListItem>
                     </Link>
                     {/* <Link href='/admin/goleadores' passHref>

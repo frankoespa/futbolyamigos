@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { RegistrarTorneoDTO } from '../dtos/RegistrarTorneoDTO';
 import { TorneoLogic } from '../providers/TorneoLogic';
 import { Auth } from '../../auth/decorators/AuthComposition';
@@ -49,5 +49,11 @@ export class TorneoController {
     async ObtenerTodosNoFinalizadosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
 
         return await this.torneoLogic.ObtenerTodosNoFinalizadosDropDown();
+    }
+
+    @Auth([Roles.Admin])
+    @Get('dropdown/todosDiscriminando')
+    async ObtenerTodosDiscriminandoDropDown (@Query('torneoID') torneoDiscriminadoID: string): Promise<DropDownVM<Types.ObjectId>[]> {
+        return await this.torneoLogic.ObtenerTodosDiscriminandoDropDown(torneoDiscriminadoID);
     }
 }
