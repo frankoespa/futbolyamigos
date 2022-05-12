@@ -154,4 +154,14 @@ export class TorneoLogic {
             Description: t.Nombre
         }))
     }
+
+    async ObtenerTodosDiscriminandoDropDown (torneoDiscriminadoID: string): Promise<DropDownVM<Types.ObjectId>[]> {
+
+        const torneos = await this.torneoRepository.ObtenerTodosDiscriminandoDropDown(torneoDiscriminadoID);
+
+        return torneos.map<DropDownVM<Types.ObjectId>>(t => ({
+            _id: t._id,
+            Description: t.Nombre
+        }))
+    }
 }

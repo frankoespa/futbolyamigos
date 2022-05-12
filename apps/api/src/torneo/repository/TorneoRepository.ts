@@ -18,4 +18,11 @@ export class TorneoRepository extends RepositoryBase<Torneo, TorneoDomain> {
         return await this.model.find({ Finalizado: false }).exec();
     }
 
+    async ObtenerTodosDiscriminandoDropDown (torneoDiscriminadoID: string): Promise<Torneo[]> {
+
+        return await this.model.find({
+            _id: { $ne: new Types.ObjectId(torneoDiscriminadoID) },
+        }).exec()
+    }
+
 }

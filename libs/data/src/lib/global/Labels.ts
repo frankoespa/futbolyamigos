@@ -60,6 +60,11 @@ export enum Labels {
     GolesContra = 'GolesContra',
     DiferenciaGoles = 'DiferenciaGoles',
     Tabla = 'Tabla',
-    Ver = 'Ver'
+    Ver = 'Ver',
+    NombreTorneoApertura = 'NombreTorneoApertura',
+    NombreTorneoClausura = 'NombreTorneoClausura',
+    TorneoAperturaID = 'TorneoAperturaID',
+    TorneoClausuraID = 'TorneoClausuraID',
+    TorneosCompuestos = 'TorneosCompuestos'
 
 }
