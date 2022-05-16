@@ -28,8 +28,8 @@ const columns: GridColDef[] = [
         field: Labels.NombreEquipo,
         headerName: 'Equipo',
         type: 'string',
-        flex: 1,
-        sortable: false
+        flex: 5,
+        sortable: false,
 
     },
     {
