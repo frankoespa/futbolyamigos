@@ -37,7 +37,6 @@ export class TorneoController {
         return await this.torneoLogic.EliminarPorId(id);
     }
 
-    @Auth([Roles.Admin])
     @Get('dropdown/todos')
     async ObtenerTodosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
 
