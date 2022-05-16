@@ -79,14 +79,14 @@ export const Nav = () => {
                                     <Typography>Inicio</Typography>
                                 </MenuItem>
                             </Link>
-                            <Link href='/torneos/mastreinta' passHref>
+                            <Link href='/tablas' passHref>
                                 <MenuItem onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
-                                    <Typography>Torneo(+30)</Typography>
+                                    <Typography>Tablas</Typography>
                                 </MenuItem>
                             </Link>
-                            <Link href='/torneos/libre' passHref>
+                            <Link href='/tablascompuestas' passHref>
                                 <MenuItem onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
-                                    <Typography>Torneo(Libre)</Typography>
+                                    <Typography>Tablas Acumuladas</Typography>
                                 </MenuItem>
                             </Link>
                             <Link href='/nosotros' passHref>
@@ -124,7 +124,7 @@ export const Nav = () => {
                             onClick={handleClick}
                             endIcon={<KeyboardArrowDown />}
                         >
-                            Torneos
+                            Ver
                         </Button>
                         <Menu
                             id="basic-menu"
@@ -136,11 +136,11 @@ export const Nav = () => {
                             }}
                             PaperProps={{ style: { backgroundColor: theme.palette.text.secondary } }}
                         >
-                            <Link href='/torneos/mastreinta' passHref>
-                                <MenuItem onClick={handleClose}>+30</MenuItem>
+                            <Link href='/tablas' passHref>
+                                <MenuItem onClick={handleClose}>Tablas</MenuItem>
                             </Link>
-                            <Link href='/torneos/libre' passHref>
-                                <MenuItem onClick={handleClose}>Libre</MenuItem>
+                            <Link href='/tablascompuestas' passHref>
+                                <MenuItem onClick={handleClose}>Tablas Acumuladas</MenuItem>
                             </Link>
                         </Menu>
 
