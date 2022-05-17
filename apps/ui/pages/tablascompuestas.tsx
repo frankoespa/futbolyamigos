@@ -151,7 +151,7 @@ function TablasCompuestas () {
         <>
             <Head>
                 <title>Tablas Acumuladas</title>
-                <meta name="description" content="Tablas Acumuladas de fútbol amateur en Rosario (Santa Fe) categoría libre " />
+                <meta name="description" content="Tablas de posiciones acumuladas de Fútbol y Amigos" />
             </Head>
             <Box sx={{
                 minHeight: '100vh',

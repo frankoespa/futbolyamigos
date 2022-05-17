@@ -151,7 +151,7 @@ function Tablas () {
         <>
             <Head>
                 <title>Tablas</title>
-                <meta name="description" content="Tablas de fútbol amateur en Rosario (Santa Fe) categoría libre " />
+                <meta name="description" content="Tablas de posiciones de Fútbol y Amigos" />
             </Head>
             <Box sx={{
                 minHeight: '100vh',
