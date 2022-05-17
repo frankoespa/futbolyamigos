@@ -95,7 +95,7 @@ export class JugadorLogic {
             Email: t.Doc.Email,
             Telefono: t.Doc.Telefono,
             NombreEquipo: t.Doc.Equipo ? t.Doc.Equipo.Nombre : null
-        }))
+        })).reverse()
     }
 
     async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarJugadorVM> {

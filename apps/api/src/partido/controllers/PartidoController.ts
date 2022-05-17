@@ -22,7 +22,6 @@ export class PartidoController {
         return await this.partidoLogic.ObtenerTodos();
     }
 
-    @Auth([Roles.Admin])
     @Get('obtenerTodosPorTorneo/:id')
     async ObtenerTodosPorTorneo (@Param('id') torneoID: Types.ObjectId): Promise<PartidoResultadoDataView[]> {
 

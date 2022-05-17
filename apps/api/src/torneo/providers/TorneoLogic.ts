@@ -85,7 +85,7 @@ export class TorneoLogic {
 
         }
 
-        return torneoResultadoDataView;
+        return torneoResultadoDataView.reverse();
     }
 
     async ObtenerPorId (id: Types.ObjectId): Promise<RegistrarTorneoVM> {
@@ -142,7 +142,7 @@ export class TorneoLogic {
         return torneos.map<DropDownVM<Types.ObjectId>>(t => ({
             _id: t.Doc._id,
             Description: t.Doc.Nombre
-        }))
+        })).reverse()
     }
 
     async ObtenerTodosNoFinalizadosDropDown (): Promise<DropDownVM<Types.ObjectId>[]> {
@@ -152,7 +152,7 @@ export class TorneoLogic {
         return torneos.map<DropDownVM<Types.ObjectId>>(t => ({
             _id: t._id,
             Description: t.Nombre
-        }))
+        })).reverse()
     }
 
     async ObtenerTodosDiscriminandoDropDown (torneoDiscriminadoID: string): Promise<DropDownVM<Types.ObjectId>[]> {
@@ -162,6 +162,6 @@ export class TorneoLogic {
         return torneos.map<DropDownVM<Types.ObjectId>>(t => ({
             _id: t._id,
             Description: t.Nombre
-        }))
+        })).reverse()
     }
 }

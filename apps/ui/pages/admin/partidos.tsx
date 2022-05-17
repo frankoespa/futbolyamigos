@@ -4,7 +4,7 @@ import { DataGrid, GridActionsCellItem, GridCellParams, GridColDef, GridColumns,
 import moment from 'moment'
 import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
 import { useFormManager } from '../../src/form/useFormManager';
-import { Labels, TorneoResultadoDataView, Validator, RegistrarGolVM, RegistrarJugadorVM, RegistrarSancionVM } from "@futbolyamigos/data";
+import { Labels, Validator, RegistrarGolVM, RegistrarJugadorVM, RegistrarSancionVM, PartidoResultadoDataView } from "@futbolyamigos/data";
 import * as Yup from 'yup';
 import { Form } from '../../src/form/Form';
 import { useApiManager } from '../../src/api/useApiManager';
@@ -21,7 +21,7 @@ import { DateTimeInput } from '../../src/form/input/DateTimeInput';
 import { NumberInput } from '../../src/form/input/NumberInput';
 import { Portal } from '@mui/base';
 import { Add, Delete as DeleteIcon, SportsSoccer, Sports } from '@mui/icons-material'
-import { yellow, red } from "@mui/material/colors";
+import { yellow, red, green, deepOrange } from "@mui/material/colors";
 
 const columns: GridColDef[] = [
     {
@@ -31,7 +31,7 @@ const columns: GridColDef[] = [
         flex: 1,
         valueFormatter: (params: GridValueFormatterParams) => {
             if (!params.value) return null;
-            return moment(params.value as Date).format('D-M-YYYY H:mm');
+            return moment(params.value as Date).format('DD-MM-YYYY H:mm[hs]');
         },
     },
     {
@@ -47,9 +47,9 @@ const columns: GridColDef[] = [
         flex: 1,
         valueGetter: (params: GridValueGetterParams<any, any>) => {
 
-            const resultadoLocal = params.row[Labels.ResultadoLocal] || params.row[Labels.ResultadoLocal] === 0 ? `[${params.row[Labels.ResultadoLocal]}]` : '';
+            const resultadoLocal = params.row[Labels.ResultadoLocal] || params.row[Labels.ResultadoLocal] === 0 ? `[ ${params.row[Labels.ResultadoLocal]} ]` : '';
 
-            const resultadoVisitante = params.row[Labels.ResultadoVisitante] || params.row[Labels.ResultadoVisitante] === 0 ? `[${params.row[Labels.ResultadoVisitante]}]` : '';
+            const resultadoVisitante = params.row[Labels.ResultadoVisitante] || params.row[Labels.ResultadoVisitante] === 0 ? `[ ${params.row[Labels.ResultadoVisitante]} ]` : '';
 
             return `${params.row[Labels.NombreEquipoLocal]} ${resultadoLocal} vs ${resultadoVisitante} ${params.row[Labels.NombreEquipoVisitante]}`
         },
@@ -60,6 +60,24 @@ const columns: GridColDef[] = [
         headerName: Labels.NroCancha,
         type: 'string',
         flex: 1,
+    },
+    {
+        field: 'Estado',
+        headerName: 'Estado',
+        type: 'string',
+        flex: 1,
+        valueGetter: (params: GridValueGetterParams<any, any>) => {
+            if (params.row[Labels.ResultadoLocal] ||
+                params.row[Labels.ResultadoLocal] === 0 ||
+                params.row[Labels.ResultadoVisitante] ||
+                params.row[Labels.ResultadoVisitante] === 0) return 'Finalizado';
+
+            return 'Pendiente';
+        },
+        cellClassName: (params: GridCellParams<string>) => {
+            return params.value === 'Finalizado' ? 'finalizado' : 'pendiente'
+        }
+
     }
 ];
 
@@ -152,6 +170,15 @@ function Index () {
                         sumaGolesVisitante !== partido.ResultadoVisitante))
                 {
                     showNotificationFail('El Resultado no coincide con los goles cargados.')
+                    throw new Error();
+                }
+
+                if (partido.ResultadoLocal === null &&
+                    partido.ResultadoVisitante === null &&
+                    (partido.SancionesEquipoLocal.length > 0 ||
+                        partido.SancionesEquipoVisitante.length > 0))
+                {
+                    showNotificationFail('No es posible cargar sanciones a un partido pendiente de juego.')
                     throw new Error();
                 }
 
@@ -332,7 +359,7 @@ function Index () {
     const containerGolesSection = useRef(null);
     const containerSancionesSection = useRef(null);
 
-    const { data: partidosFromDB, loading } = useGetSWR<TorneoResultadoDataView[]>(dependFetchPartidos);
+    const { data: partidosFromDB, loading } = useGetSWR<PartidoResultadoDataView[]>(dependFetchPartidos);
 
     const onCreateDetail = () => {
         resetForm();
@@ -414,7 +441,7 @@ function Index () {
     }
 
     const dependFetchEquipoLocalInput = () => {
-        if (!formManager.values[Labels.TorneoID])
+        if (!formManager.values[Labels.TorneoID] || formManager.values['_id'] !== null)
         {
             return 'equipo/dropdown/todos';
         } else
@@ -431,7 +458,7 @@ function Index () {
     }
 
     const dependFetchEquipoVisitanteInput = () => {
-        if (!formManager.values[Labels.TorneoID])
+        if (!formManager.values[Labels.TorneoID] || formManager.values['_id'] !== null)
         {
             return 'equipo/dropdown/todos';
 
@@ -700,37 +727,48 @@ function Index () {
                 </Grid>
             </Grid>
             <SectionCollapse title={Labels.Partidos} expanded>
-                <DataGrid
-                    loading={loading && formManagerTorneo.values[Labels.TorneoID] !== null}
-                    rows={partidosFromDB?.length ? partidosFromDB : []}
-                    columns={columns}
-                    localeText={LocaleDataGrid.Spanish}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    pagination
-                    disableSelectionOnClick
-                    autoHeight
-                    onSelectionModelChange={(newSelectionModel) => {
-                        if (newSelectionModel.length > 1)
-                        {
-                            const selectionSet = new Set(partidoSeleccionado);
-                            const result = newSelectionModel.filter((s) => !selectionSet.has(s));
-                            setPartidoSeleccionado(result);
+                <Box sx={{
+                    '& .finalizado': {
+                        backgroundColor: green[300],
+                        color: 'white'
+                    },
+                    '& .pendiente': {
+                        backgroundColor: deepOrange[300],
+                        color: 'white'
+                    }
+                }}>
+                    <DataGrid
+                        loading={loading && formManagerTorneo.values[Labels.TorneoID] !== null}
+                        rows={partidosFromDB?.length ? partidosFromDB : []}
+                        columns={columns}
+                        localeText={LocaleDataGrid.Spanish}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        pagination
+                        disableSelectionOnClick
+                        autoHeight
+                        onSelectionModelChange={(newSelectionModel) => {
+                            if (newSelectionModel.length > 1)
+                            {
+                                const selectionSet = new Set(partidoSeleccionado);
+                                const result = newSelectionModel.filter((s) => !selectionSet.has(s));
+                                setPartidoSeleccionado(result);
 
-                        } else
-                        {
-                            setPartidoSeleccionado(newSelectionModel);
-                        }
-                    }}
-                    selectionModel={partidoSeleccionado}
-                    checkboxSelection
-                    sx={{
-                        '.MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer': {
-                            display: "none"
-                        }
-                    }}
-                    getRowId={(row: GridRowModel) => row._id}
-                />
+                            } else
+                            {
+                                setPartidoSeleccionado(newSelectionModel);
+                            }
+                        }}
+                        selectionModel={partidoSeleccionado}
+                        checkboxSelection
+                        sx={{
+                            '.MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer': {
+                                display: "none"
+                            }
+                        }}
+                        getRowId={(row: GridRowModel) => row._id}
+                    />
+                </Box>
                 <Stack direction='row' justifyContent="right" mt={2} spacing={1}>
                     <Button variant="contained" onClick={onCreateDetail} disabled={!formManagerTorneo.values[Labels.TorneoID]}>
                         {Labels.Nuevo}
