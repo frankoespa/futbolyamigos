@@ -224,9 +224,9 @@ function Index () {
                     <Button variant="contained" color='info' disabled={torneoSeleccionado.length ? false : true} onClick={onEditDetail}>
                         {Labels.Editar}
                     </Button>
-                    <Button variant="contained" color='error' disabled={torneoSeleccionado.length ? false : true} onClick={onDeleteDialogAlert}>
+                    {/* <Button variant="contained" color='error' disabled={torneoSeleccionado.length ? false : true} onClick={onDeleteDialogAlert}>
                         {Labels.Eliminar}
-                    </Button>
+                    </Button> */}
                 </Stack>
             </SectionCollapse>
             <SectionCollapse title={Labels.Detalle} expanded={showsectionDetalle}>
@@ -274,7 +274,7 @@ function Index () {
                     </Stack>
                 </Form>
             </SectionCollapse>
-            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar torneo' content='Se eliminará el torneo, todos sus partidos y se desasociarán todos los equipos inscriptos. ¿Estás realmente seguro?' handleOk={onDeleteDetail} />
+            <DialogAlert setOpen={setOpenDialog} open={openDialog} title='Eliminar torneo' content='Se eliminará el torneo, los torneos compuestos de los que sea parte, todos sus partidos y se desasociarán todos los equipos inscriptos. ¿Estás realmente seguro?' handleOk={onDeleteDetail} />
         </>
     );
 }

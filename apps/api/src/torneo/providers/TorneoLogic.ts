@@ -10,6 +10,9 @@ import { Equipo } from "../../equipo/schema/EquipoSchema";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
 import { InjectConnection } from "@nestjs/mongoose";
 import { Partido } from "../../partido/schema/PartidoSchema";
+import { Gol } from "../../gol/schema/GolSchema";
+import { Sancion } from "../../sancion/schema/SancionSchema";
+import { TorneoCompuesto } from "../../compuesto/schema/TorneoCompuestoSchema";
 
 @Injectable()
 export class TorneoLogic {
@@ -121,6 +124,24 @@ export class TorneoLogic {
 
             await this.documentLoaderService.Query<Partido>(Partido.name)
                 .deleteMany({ Torneo: new Types.ObjectId(id) }, { session: sesion }).exec();
+
+            await this.documentLoaderService.Query<Gol>(Gol.name)
+                .deleteMany({ Torneo: new Types.ObjectId(id) }, { session: sesion }).exec();
+
+            await this.documentLoaderService.Query<Sancion>(Sancion.name)
+                .deleteMany({ Torneo: new Types.ObjectId(id) }, { session: sesion }).exec();
+
+            await this.documentLoaderService.Query<TorneoCompuesto>(TorneoCompuesto.name)
+                .deleteMany({
+                    $or: [
+                        {
+                            TorneoApertura: new Types.ObjectId(id)
+                        },
+                        {
+                            TorneoClausura: new Types.ObjectId(id)
+                        }
+                    ]
+                }, { session: sesion }).exec();
 
             await torneoDomain.Delete({ session: sesion });
 
