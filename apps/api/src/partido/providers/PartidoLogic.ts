@@ -709,12 +709,21 @@ export class PartidoLogic {
 
         }
 
-        tabla.sort((a, b) => b.Puntos - a.Puntos)
-        tabla.forEach((l, index) => {
+        let listaPts: number[] = [];
+        const tablaFinal: LineaTabla[] = [];
+        listaPts = [...new Set(tabla.map(l => l.Puntos))];
+        listaPts.sort((a, b) => b - a);
+        listaPts.forEach(pt => {
+
+            tablaFinal.push(...tabla.filter(lt => lt.Puntos === pt).sort((a, b) => b.DiferenciaGoles - a.DiferenciaGoles))
+
+        })
+
+        tablaFinal.forEach((l, index) => {
             l.Posicion = index + 1
         })
 
-        return tabla;
+        return tablaFinal;
 
     }
 
@@ -992,12 +1001,21 @@ export class PartidoLogic {
 
         }
 
-        tabla.sort((a, b) => b.Puntos - a.Puntos)
-        tabla.forEach((l, index) => {
+        let listaPts: number[] = [];
+        const tablaFinal: LineaTabla[] = [];
+        listaPts = [...new Set(tabla.map(l => l.Puntos))];
+        listaPts.sort((a, b) => b - a);
+        listaPts.forEach(pt => {
+
+            tablaFinal.push(...tabla.filter(lt => lt.Puntos === pt).sort((a, b) => b.DiferenciaGoles - a.DiferenciaGoles))
+
+        })
+
+        tablaFinal.forEach((l, index) => {
             l.Posicion = index + 1
         })
 
-        return tabla;
+        return tablaFinal;
 
     }
 }
