@@ -89,6 +89,11 @@ export const Nav = () => {
                                     <Typography>Tablas Acumuladas</Typography>
                                 </MenuItem>
                             </Link>
+                            <Link href='/goleadores' passHref>
+                                <MenuItem onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
+                                    <Typography>Goleadores</Typography>
+                                </MenuItem>
+                            </Link>
                             <Link href='/fixture' passHref>
                                 <MenuItem onClick={handleCloseNavMenu} sx={{ color: 'text.secondary' }}>
                                     <Typography>Fixture</Typography>
@@ -146,6 +151,9 @@ export const Nav = () => {
                             </Link>
                             <Link href='/tablascompuestas' passHref>
                                 <MenuItem onClick={handleClose}>Tablas Acumuladas</MenuItem>
+                            </Link>
+                            <Link href='/goleadores' passHref>
+                                <MenuItem onClick={handleClose}>Goleadores</MenuItem>
                             </Link>
                             <Link href='/fixture' passHref>
                                 <MenuItem onClick={handleClose}>Fixture</MenuItem>
