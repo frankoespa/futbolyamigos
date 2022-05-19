@@ -69,7 +69,9 @@ export enum Labels {
     TorneoCompuestoID = 'TorneoCompuestoID',
     NombreTorneoCompuesto = 'NombreTorneoCompuesto',
     TablaGeneral = 'Tabla General',
-    Fixture = 'Fixture'
+    Fixture = 'Fixture',
+    NombreJugador = 'NombreJugador',
+    Goleadores = 'Goleadores'
 
 
 }

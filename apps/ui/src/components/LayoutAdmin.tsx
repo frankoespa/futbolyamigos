@@ -161,14 +161,14 @@ function LayoutAdmin (props: IProps) {
                             <ListItemText primary={<Typography variant='body1' color='text.secondary'>Tablas Compuestas</Typography>} />
                         </ListItem>
                     </Link>
-                    {/* <Link href='/admin/goleadores' passHref>
+                    <Link href='/admin/goleadores' passHref>
                         <ListItem button>
                             <ListItemIcon>
                                 <Grade />
                             </ListItemIcon>
                             <ListItemText primary={<Typography variant='body1' color='text.secondary'>Goleadores</Typography>} />
                         </ListItem>
-                    </Link> */}
+                    </Link>
                 </List>
             </Drawer>
             <Box
