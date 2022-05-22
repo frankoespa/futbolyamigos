@@ -157,21 +157,21 @@ function Index () {
                     throw new Error();
                 }
 
-                if ((partido.ResultadoLocal === null && sumaGolesLocal > 0) ||
-                    (partido.ResultadoVisitante === null && sumaGolesVisitante > 0))
-                {
-                    showNotificationFail('El Resultado no coincide con los goles cargados.')
-                    throw new Error();
-                }
+                // if ((partido.ResultadoLocal === null && sumaGolesLocal > 0) ||
+                //     (partido.ResultadoVisitante === null && sumaGolesVisitante > 0))
+                // {
+                //     showNotificationFail('El Resultado no coincide con los goles cargados.')
+                //     throw new Error();
+                // }
 
-                if ((partido.ResultadoLocal !== null &&
-                    sumaGolesLocal !== partido.ResultadoLocal) ||
-                    (partido.ResultadoVisitante !== null &&
-                        sumaGolesVisitante !== partido.ResultadoVisitante))
-                {
-                    showNotificationFail('El Resultado no coincide con los goles cargados.')
-                    throw new Error();
-                }
+                // if ((partido.ResultadoLocal !== null &&
+                //     sumaGolesLocal !== partido.ResultadoLocal) ||
+                //     (partido.ResultadoVisitante !== null &&
+                //         sumaGolesVisitante !== partido.ResultadoVisitante))
+                // {
+                //     showNotificationFail('El Resultado no coincide con los goles cargados.')
+                //     throw new Error();
+                // }
 
                 if (partido.ResultadoLocal === null &&
                     partido.ResultadoVisitante === null &&
