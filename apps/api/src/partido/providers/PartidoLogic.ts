@@ -236,7 +236,8 @@ export class PartidoLogic {
                     TorneoDomain: torneoDomainPersisted,
                     EquipoDomain: equipoLocalDomainPersisted,
                     JugadorDomain: await this.documentLoaderService.GetById<Jugador, JugadorDomain>(Jugador.name, JugadorDomain, sancionLocal.JugadorID),
-                    TarjetaDomain: await this.documentLoaderService.GetById<Tarjeta, TarjetaDomain>(Tarjeta.name, TarjetaDomain, sancionLocal.TarjetaID)
+                    TarjetaDomain: await this.documentLoaderService.GetById<Tarjeta, TarjetaDomain>(Tarjeta.name, TarjetaDomain, sancionLocal.TarjetaID),
+                    TotalFechas: sancionLocal.TotalFechas
 
                 }
 
@@ -270,7 +271,8 @@ export class PartidoLogic {
                     TorneoDomain: torneoDomainPersisted,
                     EquipoDomain: equipoVisitanteDomainPersisted,
                     JugadorDomain: await this.documentLoaderService.GetById<Jugador, JugadorDomain>(Jugador.name, JugadorDomain, sancionVisitante.JugadorID),
-                    TarjetaDomain: await this.documentLoaderService.GetById<Tarjeta, TarjetaDomain>(Tarjeta.name, TarjetaDomain, sancionVisitante.TarjetaID)
+                    TarjetaDomain: await this.documentLoaderService.GetById<Tarjeta, TarjetaDomain>(Tarjeta.name, TarjetaDomain, sancionVisitante.TarjetaID),
+                    TotalFechas: sancionVisitante.TotalFechas
 
                 }
 
@@ -467,13 +469,15 @@ export class PartidoLogic {
                 _id: s._id,
                 JugadorID: s.Jugador._id,
                 Nombre: `${s.Jugador.Nombres} ${s.Jugador.Apellidos}`,
-                TarjetaID: s.Tarjeta._id
+                TarjetaID: s.Tarjeta._id,
+                TotalFechas: s.TotalFechas
             })),
             SancionesEquipoVisitante: sancionesEquipoVisitante.map<RegistrarSancionVM>(s => ({
                 _id: s._id,
                 JugadorID: s.Jugador._id,
                 Nombre: `${s.Jugador.Nombres} ${s.Jugador.Apellidos}`,
-                TarjetaID: s.Tarjeta._id
+                TarjetaID: s.Tarjeta._id,
+                TotalFechas: s.TotalFechas
             }))
         }
     }

@@ -71,7 +71,6 @@ export enum Labels {
     TablaGeneral = 'Tabla General',
     Fixture = 'Fixture',
     NombreJugador = 'NombreJugador',
-    Goleadores = 'Goleadores'
-
-
+    Goleadores = 'Goleadores',
+    TotalFechas = 'TotalFechas'
 }

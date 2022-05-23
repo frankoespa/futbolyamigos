@@ -28,6 +28,9 @@ export class Sancion extends Document {
     @Prop({ type: Types.ObjectId, ref: Tarjeta.name, autopopulate: true, required: true })
     Tarjeta: Tarjeta;
 
+    @Prop({ default: null })
+    TotalFechas?: number;
+
 }
 
 export const SancionSchema = SchemaFactory.createForClass(Sancion);

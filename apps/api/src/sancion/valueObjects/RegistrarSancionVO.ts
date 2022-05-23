@@ -15,4 +15,6 @@ export class RegistrarSancionVO {
     JugadorDomain: JugadorDomain;
 
     TarjetaDomain: TarjetaDomain;
+
+    TotalFechas?: number;
 }
