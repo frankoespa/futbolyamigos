@@ -1,5 +1,5 @@
 import SectionCollapse from '../../src/components/SectionCollapse';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DataGrid, GridActionsCellItem, GridCellParams, GridColDef, GridColumns, GridRowModel, GridRowParams, GridSelectionModel, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import moment from 'moment'
 import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
@@ -737,6 +737,21 @@ function Index () {
         }
     ];
 
+    const localTarjetaID = formManagerSancionLocal.values[Labels.TarjetaID];
+    const visitantelTarjetaID = formManagerSancionVisitante.values[Labels.TarjetaID];
+
+    useEffect(() => {
+        if (formManagerSancionLocal.values[Labels.TarjetaID] === Tarjetas.Amarilla || formManagerSancionLocal.values[Labels.TarjetaID] === null)
+            formManagerSancionLocal.setFieldValue(Labels.TotalFechas, null)
+
+    }, [localTarjetaID])
+
+    useEffect(() => {
+        if (formManagerSancionVisitante.values[Labels.TarjetaID] === Tarjetas.Amarilla || formManagerSancionVisitante.values[Labels.TarjetaID] === null)
+            formManagerSancionVisitante.setFieldValue(Labels.TotalFechas, null)
+
+    }, [visitantelTarjetaID])
+
     return (
         <>
             <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
@@ -1022,6 +1037,7 @@ function Index () {
                                                 label={Labels.TotalFechas}
                                                 formManager={formManagerSancionLocal}
                                                 validator={Validator.SoloNumerosEnterosPositivos}
+                                                disabled={formManagerSancionLocal.values[Labels.TarjetaID] === Tarjetas.Amarilla}
                                             />
                                             <IconButton type='submit' disabled={!formManagerSancionLocal.isValid} disableRipple>
                                                 <Add />
@@ -1069,6 +1085,7 @@ function Index () {
                                                 label={Labels.TotalFechas}
                                                 formManager={formManagerSancionVisitante}
                                                 validator={Validator.SoloNumerosEnterosPositivos}
+                                                disabled={formManagerSancionVisitante.values[Labels.TarjetaID] === Tarjetas.Amarilla}
                                             />
                                             <IconButton type='submit' disabled={!formManagerSancionVisitante.isValid} disableRipple>
                                                 <Add />
