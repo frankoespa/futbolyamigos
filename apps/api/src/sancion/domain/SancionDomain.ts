@@ -10,6 +10,7 @@ export class SancionDomain extends DomainBase<Sancion> {
         this.doc.Equipo = vo.EquipoDomain.Doc;
         this.doc.Jugador = vo.JugadorDomain.Doc;
         this.doc.Tarjeta = vo.TarjetaDomain.Doc;
+        this.doc.TotalFechas = vo.TotalFechas;
     }
 
 }

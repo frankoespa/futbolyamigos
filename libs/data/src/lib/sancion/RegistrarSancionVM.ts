@@ -6,6 +6,8 @@ export class RegistrarSancionVM {
 
     Nombre: string;
 
-    TarjetaID: number
+    TarjetaID: number;
+
+    TotalFechas?: number;
 
 }

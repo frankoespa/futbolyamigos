@@ -120,14 +120,16 @@ function Index () {
         _id: null,
         JugadorID: null,
         Nombre: null,
-        TarjetaID: null
+        TarjetaID: null,
+        TotalFechas: null
     };
 
     const initialStateSancionVisitanteForm: RegistrarSancionVM = {
         _id: null,
         JugadorID: null,
         Nombre: null,
-        TarjetaID: null
+        TarjetaID: null,
+        TotalFechas: null
     };
     const [partidoForm, setPartidoForm] = useState<RegistrarPartidoVM>(initialStatePartidoForm);
     const [openDialog, setOpenDialog] = useState(false);
@@ -157,21 +159,21 @@ function Index () {
                     throw new Error();
                 }
 
-                // if ((partido.ResultadoLocal === null && sumaGolesLocal > 0) ||
-                //     (partido.ResultadoVisitante === null && sumaGolesVisitante > 0))
-                // {
-                //     showNotificationFail('El Resultado no coincide con los goles cargados.')
-                //     throw new Error();
-                // }
+                if ((partido.ResultadoLocal === null && sumaGolesLocal > 0) ||
+                    (partido.ResultadoVisitante === null && sumaGolesVisitante > 0))
+                {
+                    showNotificationFail('El Resultado no coincide con los goles cargados.')
+                    throw new Error();
+                }
 
-                // if ((partido.ResultadoLocal !== null &&
-                //     sumaGolesLocal !== partido.ResultadoLocal) ||
-                //     (partido.ResultadoVisitante !== null &&
-                //         sumaGolesVisitante !== partido.ResultadoVisitante))
-                // {
-                //     showNotificationFail('El Resultado no coincide con los goles cargados.')
-                //     throw new Error();
-                // }
+                if ((partido.ResultadoLocal !== null &&
+                    sumaGolesLocal !== partido.ResultadoLocal) ||
+                    (partido.ResultadoVisitante !== null &&
+                        sumaGolesVisitante !== partido.ResultadoVisitante))
+                {
+                    showNotificationFail('El Resultado no coincide con los goles cargados.')
+                    throw new Error();
+                }
 
                 if (partido.ResultadoLocal === null &&
                     partido.ResultadoVisitante === null &&
@@ -266,7 +268,12 @@ function Index () {
         initialValues: initialStateSancionLocalForm,
         validations: {
             [Labels.JugadorID]: Yup.string().nullable().required(''),
-            [Labels.TarjetaID]: Yup.number().nullable().required('')
+            [Labels.TarjetaID]: Yup.number().nullable().required(''),
+            [Labels.TotalFechas]: Yup.number().when(Labels.TarjetaID, {
+                is: (tarjetaID) => tarjetaID === Tarjetas.Roja || tarjetaID === Tarjetas.RojaDobleAmarilla,
+                then: Yup.number().nullable().required(''),
+                otherwise: Yup.number().nullable(),
+            })
         },
         onSubmit: async (sancion: RegistrarSancionVM, formikHelpers: FormikHelpers<RegistrarSancionVM>) => {
             try
@@ -298,7 +305,12 @@ function Index () {
         initialValues: initialStateSancionVisitanteForm,
         validations: {
             [Labels.JugadorID]: Yup.string().nullable().required(''),
-            [Labels.TarjetaID]: Yup.number().nullable().required('')
+            [Labels.TarjetaID]: Yup.number().nullable().required(''),
+            [Labels.TotalFechas]: Yup.number().when(Labels.TarjetaID, {
+                is: (tarjetaID) => tarjetaID === Tarjetas.Roja || tarjetaID === Tarjetas.RojaDobleAmarilla,
+                then: Yup.number().nullable().required(''),
+                otherwise: Yup.number().nullable(),
+            })
         },
         onSubmit: async (sancion: RegistrarSancionVM, formikHelpers: FormikHelpers<RegistrarSancionVM>) => {
             try
@@ -652,6 +664,12 @@ function Index () {
 
         },
         {
+            field: Labels.TotalFechas,
+            headerName: Labels.TotalFechas,
+            type: 'number',
+            flex: 1,
+        },
+        {
             field: 'actions',
             type: 'actions',
             getActions: (params: GridRowParams) => [
@@ -696,6 +714,12 @@ function Index () {
                 return params.value === Tarjetas.Amarilla ? 'amarilla' : 'roja'
             }
 
+        },
+        {
+            field: Labels.TotalFechas,
+            headerName: Labels.TotalFechas,
+            type: 'number',
+            flex: 1,
         },
         {
             field: 'actions',
@@ -993,6 +1017,12 @@ function Index () {
                                                 name={Labels.TarjetaID}
                                                 label='Tarjeta'
                                                 formManager={formManagerSancionLocal} />
+                                            <NumberInput
+                                                name={Labels.TotalFechas}
+                                                label={Labels.TotalFechas}
+                                                formManager={formManagerSancionLocal}
+                                                validator={Validator.SoloNumerosEnterosPositivos}
+                                            />
                                             <IconButton type='submit' disabled={!formManagerSancionLocal.isValid} disableRipple>
                                                 <Add />
                                             </IconButton>
@@ -1034,6 +1064,12 @@ function Index () {
                                                 name={Labels.TarjetaID}
                                                 label='Tarjeta'
                                                 formManager={formManagerSancionVisitante} />
+                                            <NumberInput
+                                                name={Labels.TotalFechas}
+                                                label={Labels.TotalFechas}
+                                                formManager={formManagerSancionVisitante}
+                                                validator={Validator.SoloNumerosEnterosPositivos}
+                                            />
                                             <IconButton type='submit' disabled={!formManagerSancionVisitante.isValid} disableRipple>
                                                 <Add />
                                             </IconButton>
