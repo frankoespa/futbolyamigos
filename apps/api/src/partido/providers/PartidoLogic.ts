@@ -75,7 +75,8 @@ export class PartidoLogic {
             CanchaDomain: canchaDomainPersisted,
             TorneoDomain: torneoDomainPersisted,
             ResultadoLocal: registrarPartidoDTO.ResultadoLocal,
-            ResultadoVisitante: registrarPartidoDTO.ResultadoVisitante
+            ResultadoVisitante: registrarPartidoDTO.ResultadoVisitante,
+            NroFecha: registrarPartidoDTO.NroFecha
         }
 
         const session = await this.connection.startSession();
@@ -378,7 +379,8 @@ export class PartidoLogic {
             NombreEquipoLocal: p.Doc.EquipoLocal.Nombre,
             NombreEquipoVisitante: p.Doc.EquipoVisitante.Nombre,
             ResultadoLocal: p.Doc.ResultadoLocal,
-            ResultadoVisitante: p.Doc.ResultadoVisitante
+            ResultadoVisitante: p.Doc.ResultadoVisitante,
+            NroFecha: p.Doc.NroFecha
         }))
     }
 
@@ -394,7 +396,8 @@ export class PartidoLogic {
             NombreEquipoLocal: p.EquipoLocal.Nombre,
             NombreEquipoVisitante: p.EquipoVisitante.Nombre,
             ResultadoLocal: p.ResultadoLocal,
-            ResultadoVisitante: p.ResultadoVisitante
+            ResultadoVisitante: p.ResultadoVisitante,
+            NroFecha: p.NroFecha
         }))
     }
 
@@ -478,7 +481,8 @@ export class PartidoLogic {
                 Nombre: `${s.Jugador.Nombres} ${s.Jugador.Apellidos}`,
                 TarjetaID: s.Tarjeta._id,
                 TotalFechas: s.TotalFechas
-            }))
+            })),
+            NroFecha: partidoDomain.Doc.NroFecha
         }
     }
 

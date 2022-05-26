@@ -1,5 +1,6 @@
 import TextField from '@mui/material/TextField';
 import { FormikProps } from 'formik';
+import { Ref } from 'react';
 
 interface IPropsInput {
     name: string;
@@ -8,11 +9,12 @@ interface IPropsInput {
     size?: 'medium' | 'small';
     formManager: FormikProps<Record<any, any>>,
     validator: (value: string) => boolean
-    width?: number
+    width?: number,
+    refElement?: Ref<HTMLElement>;
 }
 
 export function NumberInput (props: IPropsInput) {
-    const { name, label, disabled, size, formManager, validator, width } = props;
+    const { name, label, disabled, size, formManager, validator, width, refElement } = props;
     const { values, touched, errors, handleBlur, setFieldValue, setFieldTouched } = formManager;
 
     const handleChangeCustom = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,6 +47,7 @@ export function NumberInput (props: IPropsInput) {
             disabled={disabled ? disabled : false}
             margin='normal'
             sx={{ width: width ? width : null }}
+            inputRef={refElement}
         />
     );
 }

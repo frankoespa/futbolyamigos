@@ -25,6 +25,14 @@ import { yellow, red, green, deepOrange } from "@mui/material/colors";
 
 const columns: GridColDef[] = [
     {
+        field: Labels.NroFecha,
+        headerName: Labels.NroFecha,
+        type: 'number',
+        flex: 1,
+        align: 'left',
+        headerAlign: 'left'
+    },
+    {
         field: Labels.Fecha,
         headerName: Labels.Fecha,
         type: 'date',
@@ -38,13 +46,13 @@ const columns: GridColDef[] = [
         field: Labels.NombreTorneo,
         headerName: 'Torneo',
         type: 'string',
-        flex: 1,
+        flex: 2,
     },
     {
         field: 'Enfrentamiento',
         headerName: 'Enfrentamiento',
         type: 'string',
-        flex: 1,
+        flex: 2,
         valueGetter: (params: GridValueGetterParams<any, any>) => {
 
             const resultadoLocal = params.row[Labels.ResultadoLocal] || params.row[Labels.ResultadoLocal] === 0 ? `[ ${params.row[Labels.ResultadoLocal]} ]` : '';
@@ -99,7 +107,8 @@ function Index () {
         GolesEquipoLocal: [],
         GolesEquipoVisitante: [],
         SancionesEquipoLocal: [],
-        SancionesEquipoVisitante: []
+        SancionesEquipoVisitante: [],
+        NroFecha: null
     };
 
     const initialStateGolLocalForm: RegistrarGolVM = {
@@ -142,7 +151,8 @@ function Index () {
             [Labels.EquipoLocalID]: Yup.string().nullable().required('requerido'),
             [Labels.EquipoVisitanteID]: Yup.string().nullable().required('requerido'),
             [Labels.ResultadoLocal]: Yup.number().nullable(),
-            [Labels.ResultadoVisitante]: Yup.number().nullable()
+            [Labels.ResultadoVisitante]: Yup.number().nullable(),
+            [Labels.NroFecha]: Yup.number().nullable().required('requerido'),
         },
         onSubmit: async (partido: RegistrarPartidoVM, formikHelpers: FormikHelpers<RegistrarPartidoVM>) => {
             try
@@ -367,7 +377,7 @@ function Index () {
 
     }
 
-    const refFechaForm = useRef<HTMLInputElement>();
+    const refNroFechaForm = useRef<HTMLInputElement>();
     const containerGolesSection = useRef(null);
     const containerSancionesSection = useRef(null);
 
@@ -377,7 +387,7 @@ function Index () {
         resetForm();
         setShowSectionDetalle(true);
         setPartidoSeleccionado([]);
-        focusFechaForm();
+        focusNroFechaForm();
         formManager.setFieldValue(Labels.TorneoID, formManagerTorneo.values[Labels.TorneoID]);
     };
 
@@ -419,7 +429,7 @@ function Index () {
             const partido = await Get<RegistrarPartidoVM>(`partido/${partidoSeleccionado[0].toString()}`);
             setPartidoForm(partido);
             setShowSectionDetalle(true);
-            focusFechaForm();
+            focusNroFechaForm();
 
         } catch (e)
         {
@@ -446,9 +456,9 @@ function Index () {
         }
     };
 
-    const focusFechaForm = () => {
+    const focusNroFechaForm = () => {
         setTimeout(() => {
-            refFechaForm.current.focus();
+            refNroFechaForm.current.focus();
         }, 0);
     }
 
@@ -822,14 +832,25 @@ function Index () {
             </SectionCollapse>
             <SectionCollapse title={Labels.Detalle} expanded={showsectionDetalle}>
                 <Form handleSubmit={formManager.handleSubmit}>
-                    <Divider>Fecha y hora</Divider>
+                    <Divider>Nro Fecha</Divider>
+                    <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
+                        <Grid item xs={3}>
+                            <NumberInput
+                                name={Labels.NroFecha}
+                                label={Labels.NroFecha}
+                                formManager={formManager}
+                                validator={Validator.SoloNumerosEnterosPositivos}
+                                refElement={refNroFechaForm}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Divider>Fecha</Divider>
                     <Grid container columnSpacing={5} justifyContent='center' marginBottom={3}>
                         <Grid item xs={3}>
                             <DateTimeInput
                                 name={Labels.Fecha}
                                 label={Labels.Fecha}
                                 formManager={formManager}
-                                refElement={refFechaForm}
                             />
                         </Grid>
                     </Grid>
@@ -1016,7 +1037,7 @@ function Index () {
                     <Grid container columnSpacing={5}>
                         <Grid item xs={6}>
                             <Card variant='outlined' sx={{ backgroundColor: t => t.palette.grey[100] }}>
-                                <CardHeader title={Labels.Sanciones} subheader='Local' avatar={<Avatar>
+                                <CardHeader title={Labels.Tarjetas} subheader='Local' avatar={<Avatar>
                                     <Sports />
                                 </Avatar>} />
                                 <CardContent>
@@ -1064,7 +1085,7 @@ function Index () {
                         </Grid>
                         <Grid item xs={6}>
                             <Card variant='outlined' sx={{ backgroundColor: t => t.palette.grey[100] }}>
-                                <CardHeader title={Labels.Sanciones} subheader='Visitante' avatar={<Avatar>
+                                <CardHeader title={Labels.Tarjetas} subheader='Visitante' avatar={<Avatar>
                                     <Sports />
                                 </Avatar>} />
                                 <CardContent>

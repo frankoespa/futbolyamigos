@@ -21,10 +21,12 @@ export class RegistrarPartidoVM {
 
     GolesEquipoLocal: RegistrarGolVM[];
 
-    GolesEquipoVisitante: RegistrarGolVM[]
+    GolesEquipoVisitante: RegistrarGolVM[];
 
-    SancionesEquipoLocal: RegistrarSancionVM[]
+    SancionesEquipoLocal: RegistrarSancionVM[];
 
-    SancionesEquipoVisitante: RegistrarSancionVM[]
+    SancionesEquipoVisitante: RegistrarSancionVM[];
+
+    NroFecha: number;
 
 }

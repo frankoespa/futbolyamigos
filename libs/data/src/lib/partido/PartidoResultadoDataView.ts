@@ -16,4 +16,6 @@ export class PartidoResultadoDataView {
 
     ResultadoVisitante?: number;
 
+    NroFecha: number;
+
 }
