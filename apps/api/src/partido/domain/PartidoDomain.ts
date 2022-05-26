@@ -13,7 +13,8 @@ export class PartidoDomain extends DomainBase<Partido> {
         this.doc.EquipoLocal = vo.EquipoLocalDomain.Doc;
         this.doc.EquipoVisitante = vo.EquipoVisitanteDomain.Doc;
         this.doc.ResultadoLocal = vo.ResultadoLocal === null || vo.ResultadoVisitante === null ? null : vo.ResultadoLocal;
-        this.doc.ResultadoVisitante = vo.ResultadoLocal === null || vo.ResultadoVisitante === null ? null : vo.ResultadoVisitante
+        this.doc.ResultadoVisitante = vo.ResultadoLocal === null || vo.ResultadoVisitante === null ? null : vo.ResultadoVisitante;
+        this.doc.NroFecha = vo.NroFecha
 
     }
 

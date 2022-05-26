@@ -49,7 +49,7 @@ export enum Labels {
     Cantidad = 'Cantidad',
     Goles = 'Goles',
     TarjetaID = 'TarjetaID',
-    Sanciones = 'Sanciones',
+    Tarjetas = 'Tarjetas',
     Posicion = 'Posicion',
     Puntos = 'Puntos',
     PartidosJugados = 'PartidosJugados',
@@ -72,5 +72,7 @@ export enum Labels {
     Fixture = 'Fixture',
     NombreJugador = 'NombreJugador',
     Goleadores = 'Goleadores',
-    TotalFechas = 'TotalFechas'
+    TotalFechas = 'TotalFechas',
+    NroFecha = 'NroFecha',
+
 }

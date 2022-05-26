@@ -18,6 +18,15 @@ import { green, deepOrange } from '@mui/material/colors';
 
 const columns: GridColDef[] = [
     {
+        field: Labels.NroFecha,
+        headerName: Labels.NroFecha,
+        type: 'number',
+        flex: 1,
+        align: 'left',
+        headerAlign: 'left',
+        sortable: false
+    },
+    {
         field: Labels.Fecha,
         headerName: Labels.Fecha,
         type: 'date',
@@ -26,6 +35,7 @@ const columns: GridColDef[] = [
             if (!params.value) return null;
             return moment(params.value as Date).format('DD-MM-YYYY H:mm[hs]');
         },
+        sortable: false
     },
     {
         field: 'Enfrentamiento',
@@ -40,6 +50,7 @@ const columns: GridColDef[] = [
 
             return `${params.row[Labels.NombreEquipoLocal]} ${resultadoLocal} vs ${resultadoVisitante} ${params.row[Labels.NombreEquipoVisitante]}`
         },
+        sortable: false
 
     },
     {
@@ -47,6 +58,7 @@ const columns: GridColDef[] = [
         headerName: Labels.NroCancha,
         type: 'string',
         flex: 1,
+        sortable: false
     },
     {
         field: 'Estado',
@@ -63,7 +75,8 @@ const columns: GridColDef[] = [
         },
         cellClassName: (params: GridCellParams<string>) => {
             return params.value === 'Finalizado' ? 'finalizado' : 'pendiente'
-        }
+        },
+        sortable: false
 
     }
 ];

@@ -32,6 +32,9 @@ export class Partido extends Document {
     @Prop({ default: null, min: 0 })
     ResultadoVisitante?: number;
 
+    @Prop({ required: true, min: 1 })
+    NroFecha: number;
+
 }
 
 export const PartidoSchema = SchemaFactory.createForClass(Partido);

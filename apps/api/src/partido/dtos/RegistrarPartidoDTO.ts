@@ -6,6 +6,7 @@ import { OptionalInt } from '../../global/base/validations/OptionalInt';
 import { IsArray } from 'class-validator';
 import { RegistrarGolDTO } from './RegistrarGolDTO';
 import { RegistrarSancionDTO } from './RegistrarSancionDTO';
+import { RequiredInt } from '../../global/base/validations/RequiredInt';
 
 export class RegistrarPartidoDTO {
 
@@ -44,5 +45,8 @@ export class RegistrarPartidoDTO {
 
     @IsArray()
     SancionesEquipoVisitante: RegistrarSancionDTO[]
+
+    @RequiredInt()
+    readonly NroFecha: number;
 
 }

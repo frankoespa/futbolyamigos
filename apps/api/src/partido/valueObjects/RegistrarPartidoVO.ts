@@ -18,4 +18,6 @@ export class RegistrarPartidoVO {
 
     ResultadoVisitante?: number;
 
+    NroFecha: number;
+
 }
