@@ -224,9 +224,9 @@ function Index () {
                     <Button variant="contained" color='info' disabled={torneoSeleccionado.length ? false : true} onClick={onEditDetail}>
                         {Labels.Editar}
                     </Button>
-                    {/* <Button variant="contained" color='error' disabled={torneoSeleccionado.length ? false : true} onClick={onDeleteDialogAlert}>
+                    <Button variant="contained" color='error' disabled={torneoSeleccionado.length ? false : true} onClick={onDeleteDialogAlert}>
                         {Labels.Eliminar}
-                    </Button> */}
+                    </Button>
                 </Stack>
             </SectionCollapse>
             <SectionCollapse title={Labels.Detalle} expanded={showsectionDetalle}>
