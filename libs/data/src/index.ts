@@ -33,6 +33,7 @@ export * from './lib/gol/RegistrarGolVM'
 export * from './lib/gol/LineaGoleadorVM'
 
 export * from './lib/sancion/RegistrarSancionVM'
+export * from './lib/sancion/LineaSancionadoVM'
 
 export * from './lib/tarjeta/Tarjetas'
 

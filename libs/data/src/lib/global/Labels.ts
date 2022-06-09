@@ -74,5 +74,9 @@ export enum Labels {
     Goleadores = 'Goleadores',
     TotalFechas = 'TotalFechas',
     NroFecha = 'NroFecha',
+    FechasRestantes = 'FechasRestantes',
+    FechasCumplidas = 'FechasCumplidas',
+    Descripcion = 'Descripcion',
+    Sancionados = 'Sancionados'
 
 }
