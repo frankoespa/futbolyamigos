@@ -5,11 +5,14 @@ import { JugadorDomain } from "../domain/JugadorDomain";
 import { JugadorRepository } from "../repository/JugadorRepository";
 import { RegistrarJugadorDTO } from "../dtos/RegistrarJugadorDTO";
 import { DropDownVM, JugadorResultadoDataView, Messages, RegistrarJugadorVM } from "@futbolyamigos/data";
-import { Types } from "mongoose";
+import { Types, Connection } from "mongoose";
 import { ValidationException } from "../../global/base/exceptions/ValidationException";
 import { Equipo } from "../../equipo/schema/EquipoSchema";
 import { EquipoDomain } from "../../equipo/domain/EquipoDomain";
 import { RegistrarJugadorVO } from "../valueObjects/RegistrarJugadorVO";
+import { InjectConnection } from "@nestjs/mongoose";
+import { Sancion } from "../../sancion/schema/SancionSchema";
+import { Gol } from "../../gol/schema/GolSchema";
 
 @Injectable()
 export class JugadorLogic {
@@ -117,10 +120,24 @@ export class JugadorLogic {
     }
 
     async EliminarPorId (id: Types.ObjectId): Promise<void> {
+
         const jugadorDomain = await this.jugadorRepository.FindWithId(id);
+
         if (!jugadorDomain) return null;
 
-        await jugadorDomain.Delete()
+        const listaSanciones = await this.documentLoaderService.Query<Sancion>(Sancion.name)
+            .find({ Jugador: new Types.ObjectId(id) }).exec();
+
+
+        const listaGoles = await this.documentLoaderService.Query<Gol>(Gol.name)
+            .find({ Jugador: new Types.ObjectId(id) }).exec();
+
+        if (listaSanciones.length > 0 || listaGoles.length > 0)
+        {
+            throw new ValidationException(Messages.NoSePuedeEliminarElJugadorPorqueSeEncuentraCargadoEnAlgunPartido)
+        }
+
+        await jugadorDomain.Delete();
     }
 
     async ObtenerTodosPorEquipoDropDown (equipoID: string): Promise<DropDownVM<Types.ObjectId>[]> {
